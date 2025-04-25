@@ -1,25 +1,20 @@
 import { Route, Routes } from "react-router-dom"
 import HomePage from "./pages/HomePage"
 import AuthPage from "./pages/AuthPage"
-import Layout from "./pages/community/layout/layout"
-import MembersPage from "./pages/community/pages/MembersPage"
-import CoursesPage from "./pages/community/pages/CoursesPage"
-import ChatPage from "./pages/community/pages/ChatPage"
-import ProfilePage from "./pages/community/pages/ProfilePage"
-import EventsPage from "./pages/community/pages/EventsPage"
-import AllCourses from "./pages/community/pages/AllCourses"
-import DashboardPage from "./pages/community/pages/DashboardPage"
-import CommunityBlog from "./pages/community/pages/CommunityBlog"
-import ExplorePage from "./pages/community/pages/Explorepage"
-import ManageCommunityPage from "./pages/community/manage/ManageCommunityPage"
-import CommunityActivityPage from "./pages/community/manage/CommunityActivityPage"
-import PendingApprovalsPage from "./pages/community/manage/PendingApprovalsPage"
 import DiscoverPage from "./pages/DiscoverPage"
 import CategoryPage from "./pages/CategoryPage"
 import CommunityPage from "./pages/CommunityPage"
 import ExpertPage from "./pages/ExpertPage"
 import AllExpertsPage from "./pages/AllExpertsPage"
 import NotFound from "./pages/NotFound"
+import CommunityPageFeed from "./pages/community/pages/CommunityPageFeed"
+import Layout from "./pages/community/layout/layout"
+import ClassroomPage from "./pages/community/pages/ClassroomPage"
+import MembersPage from "./pages/community/pages/MembersPage"
+import LeaderboardsPage from "./pages/community/pages/LeaderboardsPage"
+import AboutPage from "./pages/community/pages/AboutPage"
+import AdminPage from "./pages/communityAdmin/pages/AdminPage"
+import AdminLayout from "./pages/communityAdmin/adminlayout/adminLayout"
 
 const App = () => {
   return (
@@ -34,8 +29,35 @@ const App = () => {
         <Route path="/community-details/:id" element={<CommunityPage />} />
         <Route path="/category/:id" element={<CategoryPage />} />
 
-        {/* Community routes under Layout */}
+
+        {/* Community routes */} 
         <Route path="/community/*" element={
+          <Layout>
+          <Routes>
+          <Route path="feed" element={<CommunityPageFeed />} />
+          <Route path="classroom" element={<ClassroomPage />} />
+          <Route path="members" element={<MembersPage />} />
+          <Route path="leaderboards" element={<LeaderboardsPage />} />
+          <Route path="about" element={<AboutPage />} />
+          </Routes>
+        </Layout>
+      } /> 
+      
+      <Route path="/admin/*" element={
+          <AdminLayout>
+          <Routes>
+          <Route path="dashboard" element={<AdminPage />} />
+          <Route path="classroom" element={<ClassroomPage />} />
+          <Route path="members" element={<MembersPage />} />
+          <Route path="leaderboards" element={<LeaderboardsPage />} />
+          <Route path="about" element={<AboutPage />} />
+          </Routes>
+        </AdminLayout>
+      } />
+
+
+        {/* Community routes under Layout */}
+        {/* <Route path="/community/*" element={
           <Layout>
             <Routes>
               <Route path="dashboard" element={<DashboardPage />} />
@@ -54,7 +76,7 @@ const App = () => {
               <Route path="manage/:communityId/pending" element={<PendingApprovalsPage />} />
             </Routes>
           </Layout>
-        } />
+        } /> */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
