@@ -16,7 +16,7 @@ const tabs = [
       "Create your own community in just a few easy steps and start engaging with learners by sharing your content.",
     features: ["Customizable community pages", "Content management tools", "Member management", "Discussion forums"],
     image: "https://images.unsplash.com/photo-1488415032361-b7e238421f1b?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", 
-    color: "from-lime-500 to-lime-600"
+    color: "from-sky-500 to-sky-600"
   },
   {
     id: "monetize",
@@ -27,7 +27,7 @@ const tabs = [
       "Generate revenue through memberships, digital products, and exclusive content for your community members.",
     features: ["Multiple payment options", "Subscription management", "Digital product sales", "Automated billing"],
     image: "https://images.unsplash.com/photo-1488415032361-b7e238421f1b?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", 
-    color: "from-lime-500 to-lime-600"
+    color: "from-sky-500 to-sky-600"
   },
   {
     id: "livestream",
@@ -38,7 +38,7 @@ const tabs = [
       "Connect with your audience in real-time through high-quality live streaming and interactive sessions.",
     features: ["HD video streaming", "Live chat integration", "Recording capabilities", "Stream scheduling"],
     image: "https://images.unsplash.com/photo-1488415032361-b7e238421f1b?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", 
-    color: "from-lime-500 to-lime-600"
+    color: "from-sky-500 to-sky-600"
   },
   {
     id: "gamification",
@@ -48,7 +48,7 @@ const tabs = [
     description: "Increase engagement with gamification elements like badges, points, leaderboards, and challenges.",
     features: ["Custom achievement badges", "Point systems", "Leaderboards", "Challenges and rewards"],
     image: "https://images.unsplash.com/photo-1488415032361-b7e238421f1b?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", 
-    color: "from-lime-500 to-lime-600"
+    color: "from-sky-500 to-sky-600"
   },
 ]
 
@@ -65,7 +65,7 @@ export default function CommunitySection() {
     <section className="py-20 overflow-hidden relative">
       {/* Background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-lime-200  rounded-full blur-3xl opacity-20"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-sky-200  rounded-full blur-3xl opacity-20"></div>
         <div className="absolute top-1/2 -left-40 w-80 h-80 bg-blue-200  rounded-full blur-3xl opacity-20"></div>
       </div>
       
@@ -80,7 +80,7 @@ export default function CommunitySection() {
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
             <span className="text-[#0a2540] dark:text-white">Grow a dynamic community</span>
           </h2>
-          <h3 className="text-2xl md:text-4xl font-semibold text-lime-600 dark:text-lime-600 mb-8">
+          <h3 className="text-2xl md:text-4xl font-semibold text-sky-600 dark:text-sky-600 mb-8">
             That reflects your vision
           </h3>
           <p className="text-lg text-gray-600 dark:text-gray-300">
@@ -248,7 +248,7 @@ export default function CommunitySection() {
                 </AnimatePresence>
                 
                 {/* Decorative elements */}
-                <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-gradient-to-r from-lime-500/20 to-emerald-500/20 rounded-full blur-2xl"></div>
+                <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-gradient-to-r from-sky-500/20 to-emerald-500/20 rounded-full blur-2xl"></div>
               </div>
             </div>
           </div>

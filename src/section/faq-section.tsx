@@ -156,7 +156,7 @@ export default function FAQSection() {
                   placeholder="Search for questions..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 py-3 bg-gray-100 dark:bg-[#282c3d]/50 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder:text-gray-500 focus:border-lime-500 focus:ring-lime-500 focus:ring-opacity-50 rounded-xl"
+                  className="pl-10 py-3 bg-gray-100 dark:bg-[#282c3d]/50 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder:text-gray-500 focus:border-sky-500 focus:ring-sky-500 focus:ring-opacity-50 rounded-xl"
                 />
               </div>
 
@@ -166,7 +166,7 @@ export default function FAQSection() {
                   onClick={() => setActiveCategory("all")}
                   className={`w-full flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
                     activeCategory === "all"
-                      ? "bg-gradient-to-br from-lime-500 to-lime-700 text-white"
+                      ? "bg-gradient-to-br from-sky-500 to-sky-700 text-white"
                       : "bg-gray-100 dark:bg-[#282c3d]/50 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#282c3d]"
                   }`}
                 >
@@ -179,7 +179,7 @@ export default function FAQSection() {
                     onClick={() => setActiveCategory(category.id)}
                     className={`w-full flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
                       activeCategory === category.id
-                        ? "bg-lime-500 text-white"
+                        ? "bg-sky-500 text-white"
                         : "bg-gray-100 dark:bg-[#282c3d]/50 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#282c3d]"
                     }`}
                   >
@@ -196,7 +196,7 @@ export default function FAQSection() {
                 {filteredFaqs.length > 0 ? (
                   <>
                     <div className="flex items-center mb-6">
-                      <div className="p-2 rounded-full bg-lime-500/10 mr-3">
+                      <div className="p-2 rounded-full bg-sky-500/10 mr-3">
                         {activeCategoryIcon}
                       </div>
                       <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -219,7 +219,7 @@ export default function FAQSection() {
                           <span className="font-medium text-gray-900 dark:text-white">{faq.question}</span>
                           <div className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors ${
                             expandedId === faq.id 
-                              ? "bg-lime-500 text-white" 
+                              ? "bg-sky-500 text-white" 
                               : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"
                           }`}>
                             {expandedId === faq.id ? (
@@ -250,12 +250,12 @@ export default function FAQSection() {
                 ) : (
                   <div className="text-center py-16 px-6 bg-white dark:bg-[#282c3d]/30 rounded-2xl border border-gray-100 dark:border-gray-700/50">
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-[#282c3d] mb-4">
-                      <MessageSquare className="h-8 w-8 text-lime-600" />
+                      <MessageSquare className="h-8 w-8 text-sky-600" />
                     </div>
                     <h3 className="text-xl font-medium text-gray-900 dark:text-white mb-2">No results found</h3>
                     <p className="text-gray-600 dark:text-gray-400">
                       We couldn't find any FAQs matching your search. Try different keywords or{" "}
-                      <a href="#contact" className="text-lime-600 hover:text-[#f06292]">
+                      <a href="#contact" className="text-sky-600 hover:text-[#f06292]">
                         contact support
                       </a>
                       .
@@ -269,7 +269,7 @@ export default function FAQSection() {
                 <p className="text-gray-600 dark:text-gray-300 mb-4">Still have questions?</p>
                 <a
                   href="#contact"
-                  className="inline-flex items-center justify-center px-6 py-3 bg-lime-500 hover:bg-lime-500 text-white rounded-lg font-medium transition-colors"
+                  className="inline-flex items-center justify-center px-6 py-3 bg-sky-500 hover:bg-sky-500 text-white rounded-lg font-medium transition-colors"
                 >
                   Contact Support
                 </a>

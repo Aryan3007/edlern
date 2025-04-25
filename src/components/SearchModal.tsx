@@ -70,7 +70,7 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
                 placeholder="Type to search..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="w-full border border-gray-300 focus:border-lime-500 focus:ring focus:ring-lime-200 p-3 rounded-lg mb-6 outline-none transition-all"
+                className="w-full border border-gray-300 focus:border-sky-500 focus:ring focus:ring-sky-200 p-3 rounded-lg mb-6 outline-none transition-all"
             />
 
             <div className="space-y-3 max-h-72 overflow-y-auto">
@@ -85,7 +85,7 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
                     }}
                     >
                     {route.icon && (
-                        <span className="text-lime-500 text-xl mr-4">
+                        <span className="text-sky-500 text-xl mr-4">
                         {route.icon}
                         </span>
                     )}

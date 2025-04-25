@@ -57,7 +57,7 @@ export default function PricingSection() {
         { name: "Dedicated success manager", included: false },
       ],
       cta: "Start Free Trial",
-      color: "lime",
+      color: "sky",
       popular: true,
     },
     {
@@ -106,7 +106,7 @@ export default function PricingSection() {
     <section className="py-12 bg-white dark:bg-[#1a1d29] overflow-hidden relative" id="pricing">
       {/* Background decorations */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-[10%] left-[5%] w-[300px] h-[300px] rounded-full bg-lime-500/5 dark:bg-lime-500/10 blur-3xl"></div>
+        <div className="absolute top-[10%] left-[5%] w-[300px] h-[300px] rounded-full bg-sky-500/5 dark:bg-sky-500/10 blur-3xl"></div>
         <div className="absolute bottom-[10%] right-[5%] w-[300px] h-[300px] rounded-full bg-[#6E1FED]/5 dark:bg-[#6E1FED]/10 blur-3xl"></div>
       </div>
 
@@ -149,7 +149,7 @@ export default function PricingSection() {
               }`}
             >
               Yearly
-              <span className="ml-1 text-xs font-normal text-lime-600">Save 20%</span>
+              <span className="ml-1 text-xs font-normal text-sky-600">Save 20%</span>
             </button>
           </div>
         </div>
@@ -167,7 +167,7 @@ export default function PricingSection() {
             >
               {plan.popular && (
                 <div className="absolute -top-4 left-0 right-0 z-[20] flex justify-center">
-                  <div className="bg-lime-500 text-white text-xs font-medium px-4 py-1.5 rounded-full shadow-lg">
+                  <div className="bg-sky-500 text-white text-xs font-medium px-4 py-1.5 rounded-full shadow-lg">
                     Most Popular
                   </div>
                 </div>
@@ -175,8 +175,8 @@ export default function PricingSection() {
 
               <div
                 className={`h-full bg-white dark:bg-[#282c3d] rounded-2xl shadow-lg dark:shadow-none border ${
-                  plan.popular ? "border-lime-500 dark:border-lime-500" : "border-gray-100 dark:border-gray-700/30"
-                } overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-lime-500/50`}
+                  plan.popular ? "border-sky-500 dark:border-sky-500" : "border-gray-100 dark:border-gray-700/30"
+                } overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-sky-500/50`}
               >
                 <div className="p-8">
                   {/* Header */}
@@ -205,7 +205,7 @@ export default function PricingSection() {
                       </motion.div>
                     </AnimatePresence>
                     {billingCycle === "yearly" && plan.price.monthly > 0 && (
-                      <p className="text-lime-600 text-sm mt-2">Save ${plan.price.monthly * 12 * 0.2} per year</p>
+                      <p className="text-sky-600 text-sm mt-2">Save ${plan.price.monthly * 12 * 0.2} per year</p>
                     )}
                   </div>
 
@@ -216,8 +216,8 @@ export default function PricingSection() {
                       {plan.features.map((feature, i) => (
                         <li key={i} className="flex items-start">
                           {feature.included ? (
-                            <div className="flex-shrink-0 w-5 h-5 rounded-full bg-lime-500/10 flex items-center justify-center mr-3 mt-0.5">
-                              <Check className="h-3 w-3 text-lime-600" />
+                            <div className="flex-shrink-0 w-5 h-5 rounded-full bg-sky-500/10 flex items-center justify-center mr-3 mt-0.5">
+                              <Check className="h-3 w-3 text-sky-600" />
                             </div>
                           ) : (
                             <div className="flex-shrink-0 w-5 h-5 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mr-3 mt-0.5">
@@ -240,7 +240,7 @@ export default function PricingSection() {
                   <Button
                     className={`w-full ${
                       plan.popular
-                        ? "bg-gradient-to-br from-lime-500 to-lime-700 text-white"
+                        ? "bg-gradient-to-br from-sky-500 to-sky-700 text-white"
                         : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
                     } group`}
                   >
@@ -272,7 +272,7 @@ export default function PricingSection() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="bg-white dark:bg-[#282c3d] p-6 rounded-xl shadow-sm dark:shadow-none border border-gray-100 dark:border-gray-700/30"
               >
-                <div className="p-3 rounded-full bg-lime-500/10 w-fit mb-4">{feature.icon}</div>
+                <div className="p-3 rounded-full bg-sky-500/10 w-fit mb-4">{feature.icon}</div>
                 <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{feature.name}</h4>
                 <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
               </motion.div>
@@ -288,7 +288,7 @@ export default function PricingSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mt-24 bg-gradient-to-br from-lime-500  to-lime-700 rounded-3xl overflow-hidden"
+          className="mt-24 bg-gradient-to-br from-sky-500  to-sky-700 rounded-3xl overflow-hidden"
         >
           <div className="px-8 py-16 md:p-16 text-white">
             <div className="max-w-3xl mx-auto text-center">
@@ -298,7 +298,7 @@ export default function PricingSection() {
                 sales team to discuss your needs.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button className="bg-white text-lime-600 hover:bg-gray-100">Schedule a Demo</Button>
+                <Button className="bg-white text-sky-600 hover:bg-gray-100">Schedule a Demo</Button>
                 <Button variant="outline" className="border-white text-white bg-transparant ">
                   Contact Sales
                 </Button>

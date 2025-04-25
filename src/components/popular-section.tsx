@@ -66,7 +66,7 @@ function PopularCard({
         <div className="mb-2">
           <span className="text-xs font-medium text-gray-500">{category}</span>
         </div>
-        <h3 className="font-bold text-lg group-hover:text-lime-600">{title}</h3>
+        <h3 className="font-bold text-lg group-hover:text-sky-600">{title}</h3>
         <p className="text-gray-500 text-sm">{author}</p>
         <p className="text-sm mt-1">{price}</p>
       </div>

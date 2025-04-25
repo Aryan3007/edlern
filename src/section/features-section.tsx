@@ -119,7 +119,7 @@ export default function FeaturesSectionPro() {
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
             Everything You Need to Build a 
           </h2>
-          <h3 className="text-2xl md:text-4xl font-semibold text-lime-600 dark:text-lime-500 mb-6">
+          <h3 className="text-2xl md:text-4xl font-semibold text-sky-600 dark:text-sky-500 mb-6">
             Thriving Community
           </h3>
           <p className="text-lg text-gray-600 dark:text-gray-300">
@@ -145,12 +145,12 @@ export default function FeaturesSectionPro() {
               onMouseLeave={() => setActiveFeature(null)}
               className="group relative"
             >
-              <div className="h-full rounded-xl bg-white dark:bg-gray-800 border border-lime-700 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
+              <div className="h-full rounded-xl bg-white dark:bg-gray-800 border border-sky-700 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
                 <div className="p-6 md:p-8">
                   <div className="flex items-center mb-5">
                     <div className="h-10 w-10 rounded-lg flex items-center justify-center mr-4" 
                          style={{ backgroundColor: feature.color + "15" }}>
-                      <div className="text-lime-600 dark:text-lime-500">{feature.icon}</div>
+                      <div className="text-sky-600 dark:text-sky-500">{feature.icon}</div>
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                       {feature.title}
@@ -168,7 +168,7 @@ export default function FeaturesSectionPro() {
                       y: activeFeature === feature.id ? 0 : 10 
                     }}
                     transition={{ duration: 0.3 }}
-                    className="text-lime-600 dark:text-lime-500 font-medium flex items-center text-sm"
+                    className="text-sky-600 dark:text-sky-500 font-medium flex items-center text-sm"
                   >
                     Learn more
                     <motion.div
@@ -189,7 +189,7 @@ export default function FeaturesSectionPro() {
                   }}
                   transition={{ duration: 0.3 }}
                   style={{ originX: 0 }}
-                  className="h-0.5 bg-lime-500 absolute bottom-0 left-0 right-0"
+                  className="h-0.5 bg-sky-500 absolute bottom-0 left-0 right-0"
                 /> */}
               </div>
             </motion.div>

@@ -132,7 +132,7 @@ export function TestimonialsSection(): JSX.Element {
     return Array(5)
       .fill(0)
       .map((_, i) => (
-        <Star key={i} className={cn("h-4 w-4", i < rating ? "text-lime-500 fill-lime-500" : "text-neutral-300")} />
+        <Star key={i} className={cn("h-4 w-4", i < rating ? "text-sky-500 fill-sky-500" : "text-neutral-300")} />
       ))
   }
 
@@ -192,7 +192,7 @@ export function TestimonialsSection(): JSX.Element {
           <h2 className="heading-2 text-[#0a2540] text-3xl md:text-5xl font-bold mb-4 text-secondary-500">
             Loved by learning communities
           </h2>
-          <h3 className="text-2xl md:text-4xl font-semibold text-lime-600 dark:text-lime-600 mb-4 md:mb-8">
+          <h3 className="text-2xl md:text-4xl font-semibold text-sky-600 dark:text-sky-600 mb-4 md:mb-8">
             worldwide
           </h3>
           <p className="text-lg text-gray-600 dark:text-gray-300">
@@ -230,7 +230,7 @@ export function TestimonialsSection(): JSX.Element {
                       transition={{ delay: 0.3, duration: 0.5 }}
                       className="absolute top-6 right-6 bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-lg"
                     >
-                      <Quote className="h-6 w-6 text-lime-500" />
+                      <Quote className="h-6 w-6 text-sky-500" />
                     </motion.div>
                   </div>
 
@@ -257,7 +257,7 @@ export function TestimonialsSection(): JSX.Element {
                         transition={{ delay: 0.6, duration: 0.5 }}
                         className="flex items-center"
                       >
-                        <div className="relative w-12 h-12 md:w-14 md:h-14 mr-4 overflow-hidden rounded-full border-2 border-lime-100">
+                        <div className="relative w-12 h-12 md:w-14 md:h-14 mr-4 overflow-hidden rounded-full border-2 border-sky-100">
                           <img
                             src={testimonials[activeIndex].avatar || "/placeholder.svg"}
                             alt={testimonials[activeIndex].author}
@@ -273,7 +273,7 @@ export function TestimonialsSection(): JSX.Element {
                       </motion.div>
 
                       {/* Decorative element */}
-                      <div className="absolute -bottom-3 -left-3 h-6 w-6 rounded-full bg-lime-200"></div>
+                      <div className="absolute -bottom-3 -left-3 h-6 w-6 rounded-full bg-sky-200"></div>
                     </motion.div>
                   </div>
                 </div>
@@ -290,7 +290,7 @@ export function TestimonialsSection(): JSX.Element {
                   onClick={() => goToTestimonial(index)}
                   className={cn(
                     "w-3 h-3 rounded-full transition-all duration-300",
-                    activeIndex === index ? "bg-lime-500 w-8" : "bg-neutral-300 hover:bg-lime-300",
+                    activeIndex === index ? "bg-sky-500 w-8" : "bg-neutral-300 hover:bg-sky-300",
                   )}
                   aria-label={`Go to testimonial ${index + 1}`}
                 />
@@ -300,14 +300,14 @@ export function TestimonialsSection(): JSX.Element {
             <div className="flex space-x-3 order-1 md:order-2">
               <button
                 onClick={prevTestimonial}
-                className="p-2 rounded-full bg-lime-600 hover:bg-lime-700 duration-200 text-white border border-neutral-200 hover:border-lime-200 transition-colors"
+                className="p-2 rounded-full bg-sky-600 hover:bg-sky-700 duration-200 text-white border border-neutral-200 hover:border-sky-200 transition-colors"
                 aria-label="Previous testimonial"
               >
                 <ChevronLeft className="h-5 w-5" />
               </button>
               <button
                 onClick={nextTestimonial}
-                className="p-2 rounded-full bg-lime-600 hover:bg-lime-700 duration-200 text-white border border-neutral-200 hover:border-lime-200 transition-colors"
+                className="p-2 rounded-full bg-sky-600 hover:bg-sky-700 duration-200 text-white border border-neutral-200 hover:border-sky-200 transition-colors"
                 aria-label="Next testimonial"
               >
                 <ChevronRight className="h-5 w-5" />
@@ -419,7 +419,7 @@ function CounterStat({ value, suffix = "", label }: CounterStatProps): JSX.Eleme
         <span>{formattedCount}</span>
         <span>{suffix}</span>
       </div>
-      <p className="text-sm md:text-base text-lime-700 mt-1">{label}</p>
+      <p className="text-sm md:text-base text-sky-700 mt-1">{label}</p>
     </div>
   )
 }

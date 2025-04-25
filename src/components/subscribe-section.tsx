@@ -4,13 +4,13 @@ export default function SubscribeSection() {
   return (
     <section className="w-full py-12 md:py-24">
       <div className="container px-4 md:px-6">
-        <div className="relative overflow-hidden rounded-2xl bg-lime-600">
+        <div className="relative overflow-hidden rounded-2xl bg-sky-600">
           <div className="md:grid md:grid-cols-2 md:gap-8">
             <div className="p-8 md:p-12 flex flex-col justify-center">
               <h2 className="text-3xl font-bold tracking-tight text-white md:text-4xl mb-4">
                 Be the first to know about new creators and experiences
               </h2>
-              <Button className="bg-white text-lime-600 hover:bg-gray-100 w-fit">Subscribe to Discover</Button>
+              <Button className="bg-white text-sky-600 hover:bg-gray-100 w-fit">Subscribe to Discover</Button>
             </div>
             <div className="hidden md:block relative">
               <div className="grid grid-cols-2 gap-2 p-4">

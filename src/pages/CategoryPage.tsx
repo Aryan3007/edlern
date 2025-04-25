@@ -165,7 +165,7 @@ export default function CategoryPage() {
       <main className="flex-1">
         <div className="py-8">
           <div className="container px-4 md:px-6">
-            <Link to="/discover" className="text-lime-600 mb-4 hover:underline flex items-center gap-2">
+            <Link to="/discover" className="text-sky-600 mb-4 hover:underline flex items-center gap-2">
               <ArrowLeft className="h-4 w-4" />
               Back to Discover
             </Link>

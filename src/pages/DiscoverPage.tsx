@@ -21,8 +21,8 @@ export default function DiscoverPage() {
         <section className="w-full py-12 md:py-12">
           <div className="max-7xl mx-auto px-4 md:px-6">
             <div className="flex justify-center mb-8">
-              <div className="inline-flex items-center rounded-full bg-lime-100 px-4 py-1">
-                <span className="text-xs font-medium text-lime-600 mr-2">New</span>
+              <div className="inline-flex items-center rounded-full bg-sky-100 px-4 py-1">
+                <span className="text-xs font-medium text-sky-600 mr-2">New</span>
                 <Link to="#" className="text-xs font-medium text-gray-700 hover:underline">
                   Read the announcement
                 </Link>

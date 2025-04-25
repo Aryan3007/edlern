@@ -148,7 +148,7 @@ export default function CommunityPage() {
           <div className="container px-4 py-12">
             <div className="text-center">
               <h2 className="text-2xl font-bold mb-4">Community not found</h2>
-              <Link to="/discover" className="text-lime-600 hover:underline flex items-center justify-center gap-2">
+              <Link to="/discover" className="text-sky-600 hover:underline flex items-center justify-center gap-2">
                 <ArrowLeft className="h-4 w-4" />
                 Back to Discover
               </Link>
@@ -180,7 +180,7 @@ export default function CommunityPage() {
                 height={50}
                 className="h-10 w-auto object-contain bg-white p-1 rounded-md"
               />
-              <span className="text-white text-sm px-3 py-1 bg-lime-600 rounded-full">{community.category}</span>
+              <span className="text-white text-sm px-3 py-1 bg-sky-600 rounded-full">{community.category}</span>
             </div>
             <h1 className="text-3xl md:text-5xl font-bold text-white mb-2">{community.title}</h1>
             <p className="text-white/80">By {community.author}</p>
@@ -200,7 +200,7 @@ export default function CommunityPage() {
                 <ul className="space-y-3">
                   {community.features?.map((feature: string, index: number) => (
                     <li key={index} className="flex items-start gap-2">
-                      <Check className="h-5 w-5 text-lime-600 mt-0.5 flex-shrink-0" />
+                      <Check className="h-5 w-5 text-sky-600 mt-0.5 flex-shrink-0" />
                       <span>{feature}</span>
                     </li>
                   ))}
@@ -233,7 +233,7 @@ export default function CommunityPage() {
                   <h3 className="text-2xl font-bold">{community.price}</h3>
                   <p className="text-gray-500 text-sm">Join today and transform your life</p>
                 </div>
-                <Button className="w-full bg-lime-600 hover:bg-lime-700 mb-4">
+                <Button className="w-full bg-sky-600 hover:bg-sky-700 mb-4">
                   {community.price === "FREE" ? "Join Now" : "Subscribe Now"}
                 </Button>
                 <p className="text-xs text-center text-gray-500">

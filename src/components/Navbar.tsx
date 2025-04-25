@@ -209,7 +209,8 @@ const Navbar: React.FC = () => {
         <div className="container max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
           <div className="flex items-center gap-8">
             <Link to="/" className="font-bold text-2xl">
-              <span className="bg-gradient-to-r from-lime-500 to-lime-700 bg-clip-text text-transparent">ed</span>Lern
+              {/* <span className="bg-gradient-to-r from-sky-500 to-sky-700 bg-clip-text text-transparent">ed</span>Lern */}
+              <img src="/logo.png" className='w-24' alt="" />
             </Link>
 
             <nav className="hidden lg:flex items-center space-x-1">
@@ -218,8 +219,8 @@ const Navbar: React.FC = () => {
                   key={item.name}
                   onClick={() => item.hasDropdown && toggleDropdown(item.name)}
                   className={cn(
-                    "px-4 py-2 rounded-md hover:text-lime-500 flex items-center gap-1 transition-colors",
-                    activeDropdown === item.name && "text-lime-600",
+                    "px-4 py-2 rounded-md hover:text-sky-500 flex items-center gap-1 transition-colors",
+                    activeDropdown === item.name && "text-sky-600",
                   )}
                 >
                   <Link to={item.href} className="flex items-center gap-1">
@@ -237,12 +238,14 @@ const Navbar: React.FC = () => {
           </div>
 
           <div className="hidden lg:flex items-center gap-4">
-            <a href="/login" className="text-gray-600 hover:text-lime-500">
+            <Link to="/login" className="text-gray-600 hover:text-sky-500">
               Log in
-            </a>
-            <button className="bg-gradient-to-br from-lime-500 to-lime-600 text-white rounded-full px-6 py-2 font-medium transition hover:bg-lime-500">
+            </Link>
+            <Link to={"/community/feed"}>
+            <button className="bg-gradient-to-br from-sky-500 to-sky-600 text-white rounded-full px-6 py-2 font-medium transition hover:bg-sky-500">
               Get Started
             </button>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -293,16 +296,16 @@ const Navbar: React.FC = () => {
                             transition={{ duration: 0.3, delay: index * 0.05 }}
                             className="flex gap-4 group cursor-pointer"
                           >
-                            <div className="mt-1 text-gray-600 group-hover:text-lime-500 transition-colors">
+                            <div className="mt-1 text-gray-600 group-hover:text-sky-500 transition-colors">
                               {feature.icon}
                             </div>
                             <div>
                               <div className="flex items-center gap-2">
-                                <h4 className="font-medium text-gray-800 group-hover:text-lime-500 transition-colors">
+                                <h4 className="font-medium text-gray-800 group-hover:text-sky-500 transition-colors">
                                   {feature.title}
                                 </h4>
                                 {feature.isNew && (
-                                  <span className="text-xs bg-lime-100 text-lime-700 px-2 py-0.5 rounded-full">
+                                  <span className="text-xs bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full">
                                     New
                                   </span>
                                 )}
@@ -322,7 +325,7 @@ const Navbar: React.FC = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.3, delay: (features.length + index) * 0.05 }}
-                            className="bg-lime-100 rounded-xl p-4 text-gray-800 cursor-pointer"
+                            className="bg-sky-100 rounded-xl p-4 text-gray-800 cursor-pointer"
                           >
                             <h4 className="font-medium mb-1">{feature.title}</h4>
                             <p className="text-sm text-gray-600 mb-4">{feature.description}</p>
@@ -353,16 +356,16 @@ const Navbar: React.FC = () => {
                             transition={{ duration: 0.3, delay: index * 0.05 }}
                             className="flex gap-4 group cursor-pointer"
                           >
-                            <div className="mt-1 text-gray-500 group-hover:text-lime-500 transition-colors">
+                            <div className="mt-1 text-gray-500 group-hover:text-sky-500 transition-colors">
                               {item.icon}
                             </div>
                             <div>
                               <div className="flex items-center gap-2">
-                                <h4 className="font-medium group-hover:text-lime-500 transition-colors">
+                                <h4 className="font-medium group-hover:text-sky-500 transition-colors">
                                   {item.title}
                                 </h4>
                                 {item.isNew && (
-                                  <span className="text-xs bg-lime-100 text-lime-700 px-2 py-0.5 rounded-full">
+                                  <span className="text-xs bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full">
                                     New
                                   </span>
                                 )}
@@ -382,7 +385,7 @@ const Navbar: React.FC = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.3, delay: (resourcesItems.length + index) * 0.05 }}
-                            className="bg-lime-100 rounded-xl p-4 text-gray-800 cursor-pointer"
+                            className="bg-sky-100 rounded-xl p-4 text-gray-800 cursor-pointer"
                           >
                             <h4 className="font-medium mb-1">{feature.title}</h4>
                             <p className="text-sm text-gray-600 mb-4">{feature.description}</p>
@@ -424,7 +427,7 @@ const Navbar: React.FC = () => {
             >
               <div className='p-4'>
                 <Link to="/" className="font-bold text-2xl">
-                  <span className='text-lime-500'>ed</span>Lern
+                  <span className='text-sky-500'>ed</span>Lern
                 </Link>
                 <button
                   onClick={toggleMobileMenu}
@@ -478,12 +481,12 @@ const Navbar: React.FC = () => {
                                         transition={{ duration: 0.2, delay: index * 0.03 }}
                                         className="flex gap-3"
                                       >
-                                        <div className="text-lime-500">{feature.icon}</div>
+                                        <div className="text-sky-500">{feature.icon}</div>
                                         <div>
                                           <div className="flex items-center gap-2">
                                             <h4 className="font-medium">{feature.title}</h4>
                                             {feature.isNew && (
-                                              <span className="text-xs bg-[#d8f999] text-lime-500 px-2 py-0.5 rounded-full">
+                                              <span className="text-xs bg-[#d8f999] text-sky-500 px-2 py-0.5 rounded-full">
                                                 New
                                               </span>
                                             )}
@@ -508,12 +511,12 @@ const Navbar: React.FC = () => {
                                         transition={{ duration: 0.2, delay: index * 0.03 }}
                                         className="flex gap-3"
                                       >
-                                        <div className="text-lime-500">{item.icon}</div>
+                                        <div className="text-sky-500">{item.icon}</div>
                                         <div>
                                           <div className="flex items-center gap-2">
                                             <h4 className="font-medium">{item.title}</h4>
                                             {item.isNew && (
-                                              <span className="text-xs bg-[#d8f999] text-lime-500 px-2 py-0.5 rounded-full">
+                                              <span className="text-xs bg-[#d8f999] text-sky-500 px-2 py-0.5 rounded-full">
                                                 New
                                               </span>
                                             )}
@@ -540,13 +543,13 @@ const Navbar: React.FC = () => {
                 <div className="pt-4 space-y-4">
                   <a
                     href="/login"
-                    className="block w-full text-center py-3 text-lime-500 border border-[#d8f999] rounded-md hover:bg-[#d8f999] transition"
+                    className="block w-full text-center py-3 text-sky-500 border border-[#d8f999] rounded-md hover:bg-[#d8f999] transition"
                   >
                     Log in
                   </a>
                   <a
                     href="#"
-                    className="block w-full text-center py-3 text-white bg-lime-500 rounded-md hover:bg-[#c2185b] transition"
+                    className="block w-full text-center py-3 text-white bg-sky-500 rounded-md hover:bg-[#c2185b] transition"
                   >
                     Book a Call
                   </a>

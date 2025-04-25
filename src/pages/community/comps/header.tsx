@@ -228,7 +228,7 @@ export default function Header() {
               ))}
               <DropdownMenuSeparator />
               <DropdownMenuItem className="justify-center">
-                <Link to="/messages" className="text-sky-700 text-sm font-medium">
+                <Link to="/community/messages" className="text-sky-700 text-sm font-medium">
                   View all messages
                 </Link>
               </DropdownMenuItem>

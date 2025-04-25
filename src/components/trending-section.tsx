@@ -69,7 +69,7 @@ export default function TrendingSection() {
             <button
               onClick={() => setSelectedCategory(null)}
               className={`px-3 py-1 text-sm rounded-full transition-colors ${
-                selectedCategory === null ? "bg-lime-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                selectedCategory === null ? "bg-sky-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
               All
@@ -80,7 +80,7 @@ export default function TrendingSection() {
                 onClick={() => setSelectedCategory(category)}
                 className={`px-3 py-1 text-sm rounded-full capitalize transition-colors ${
                   selectedCategory === category
-                    ? "bg-lime-600 text-white"
+                    ? "bg-sky-600 text-white"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
@@ -137,7 +137,7 @@ function TrendingCard({
         <div className="mb-1">
           <span className="text-xs font-medium text-gray-500 capitalize">{category}</span>
         </div>
-        <h3 className="font-bold text-lg group-hover:text-lime-600">{title}</h3>
+        <h3 className="font-bold text-lg group-hover:text-sky-600">{title}</h3>
         <p className="text-gray-500 text-sm">{author}</p>
         <p className="text-sm mt-1">{price}</p>
       </div>

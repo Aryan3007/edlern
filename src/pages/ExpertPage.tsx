@@ -259,7 +259,7 @@ export default function ExpertPage() {
           <div className="container px-4 py-12">
             <div className="text-center">
               <h2 className="text-2xl font-bold mb-4">Expert not found</h2>
-              <Link to="/" className="text-lime-600 hover:underline flex items-center justify-center gap-2">
+              <Link to="/" className="text-sky-600 hover:underline flex items-center justify-center gap-2">
                 <ArrowLeft className="h-4 w-4" />
                 Back to home
               </Link>
@@ -298,7 +298,7 @@ export default function ExpertPage() {
                 <h2 className="text-2xl font-bold mb-4">Areas of Expertise</h2>
                 <div className="flex flex-wrap gap-2">
                   {expert.expertise?.map((area: string, index: number) => (
-                    <span key={index} className="px-3 py-1 bg-lime-100 text-lime-800 rounded-full text-sm font-medium">
+                    <span key={index} className="px-3 py-1 bg-sky-100 text-sky-800 rounded-full text-sm font-medium">
                       {area}
                     </span>
                   ))}
@@ -310,7 +310,7 @@ export default function ExpertPage() {
                 <ul className="space-y-3">
                   {expert.achievements?.map((achievement: string, index: number) => (
                     <li key={index} className="flex items-start gap-2">
-                      <Check className="h-5 w-5 text-lime-600 mt-0.5 flex-shrink-0" />
+                      <Check className="h-5 w-5 text-sky-600 mt-0.5 flex-shrink-0" />
                       <span>{achievement}</span>
                     </li>
                   ))}
@@ -352,7 +352,7 @@ export default function ExpertPage() {
                       alt={expert.name}
                       width={150}
                       height={150}
-                      className="rounded-full bg-lime-900 "
+                      className="rounded-full bg-sky-900 "
                     />
                   </div>
                   <h3 className="text-xl font-bold text-center mb-2">{expert.name}</h3>
@@ -399,7 +399,7 @@ export default function ExpertPage() {
                       </Link>
                     )}
                   </div>
-                  <Button className="w-full bg-lime-600 hover:bg-lime-700">Follow</Button>
+                  <Button className="w-full bg-sky-600 hover:bg-sky-700">Follow</Button>
                 </div>
 
                 {expert.communities && expert.communities.length > 0 && (
