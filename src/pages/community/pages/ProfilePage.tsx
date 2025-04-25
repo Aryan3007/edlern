@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
 import { CheckCircle2, MapPin, Calendar, Link2, Edit, Settings, Heart, MessageSquare } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
+import { Link } from "react-router-dom"
 
 export default function ProfilePage() {
   return (
@@ -60,9 +61,11 @@ export default function ProfilePage() {
 
                 <div className="flex gap-2 mt-6 w-full">
                   <Button className="flex-1">Follow</Button>
+                  <Link to="/community/profile/setting">
                   <Button variant="outline" size="icon">
                     <Edit className="h-4 w-4" />
                   </Button>
+                  </Link>
                 </div>
               </div>
             </CardContent>

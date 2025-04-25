@@ -209,7 +209,7 @@ export default function MessagesPage() {
 
   return (
     <div className="container select-none w-full lg:w-7xl mx-auto py-0">
-      <Card className="h-[calc(100vh-80px)] max-w-7xl mx-auto p-0 flex flex-col overflow-hidden">
+      <Card className="h-[calc(100svh-80px)] max-w-7xl mx-auto p-0 flex flex-col overflow-hidden">
         <div className="flex-1 grid grid-cols-1 md:grid-cols-3 h-full overflow-hidden">
           {/* Conversations List - Hidden on mobile when chat is open */}
           <div className={`border-r overflow-hidden flex flex-col ${showMobileChat ? 'hidden md:flex' : 'flex'}`}>

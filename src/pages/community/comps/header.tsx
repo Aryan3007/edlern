@@ -291,19 +291,19 @@ export default function Header() {
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 <DropdownMenuItem>
-                  <Link to="/profile" className="flex items-center w-full">
+                  <Link to="/community/profile" className="flex items-center w-full">
                     <User className="mr-2 h-4 w-4" />
                     <span>Profile</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Link to="/settings" className="flex items-center w-full">
+                  <Link to="/community/settings" className="flex items-center w-full">
                     <Settings className="mr-2 h-4 w-4" />
                     <span>Settings</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Link to="/my-courses" className="flex items-center w-full">
+                  <Link to="/community/my-courses" className="flex items-center w-full">
                     <BookOpen className="mr-2 h-4 w-4" />
                     <span>My Courses</span>
                   </Link>

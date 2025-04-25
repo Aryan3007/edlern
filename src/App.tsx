@@ -15,6 +15,9 @@ import LeaderboardsPage from "./pages/community/pages/LeaderboardsPage"
 import AboutPage from "./pages/community/pages/AboutPage"
 import CourseDetailPage from "./pages/community/pages/CourseDetailPage"
 import MessagesPage from "./pages/community/pages/MessagesPage"
+import ProfilePage from "./pages/community/pages/ProfilePage"
+import SettingsPage from "./pages/community/pages/SettingsPage"
+import MyCoursesPage from "./pages/community/pages/MyCoursesPage"
 
 const App = () => {
   return (
@@ -41,6 +44,9 @@ const App = () => {
           <Route path="leaderboards" element={<LeaderboardsPage />} />
           <Route path="about" element={<AboutPage />} />
           <Route path="messages" element={<MessagesPage />} />
+          <Route path="profile" element={<ProfilePage />} />
+          <Route path="my-courses" element={<MyCoursesPage />} />
+          <Route path="/profile/setting" element={<SettingsPage />} />
           </Routes>
         </Layout>
       } /> 

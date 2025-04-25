@@ -13,7 +13,7 @@ import { Camera, Lock, Shield, CreditCard, LogOut } from "lucide-react"
 
 export default function SettingsPage() {
   return (
-    <div className="container py-6">
+    <div className="container w-full lg:w-7xl py-6">
       <div className="flex flex-col gap-6">
         <Card>
           <CardHeader>
