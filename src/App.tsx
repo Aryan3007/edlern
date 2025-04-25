@@ -13,8 +13,6 @@ import ClassroomPage from "./pages/community/pages/ClassroomPage"
 import MembersPage from "./pages/community/pages/MembersPage"
 import LeaderboardsPage from "./pages/community/pages/LeaderboardsPage"
 import AboutPage from "./pages/community/pages/AboutPage"
-import AdminPage from "./pages/communityAdmin/pages/AdminPage"
-import AdminLayout from "./pages/communityAdmin/adminlayout/adminLayout"
 
 const App = () => {
   return (
@@ -43,17 +41,7 @@ const App = () => {
         </Layout>
       } /> 
       
-      <Route path="/admin/*" element={
-          <AdminLayout>
-          <Routes>
-          <Route path="dashboard" element={<AdminPage />} />
-          <Route path="classroom" element={<ClassroomPage />} />
-          <Route path="members" element={<MembersPage />} />
-          <Route path="leaderboards" element={<LeaderboardsPage />} />
-          <Route path="about" element={<AboutPage />} />
-          </Routes>
-        </AdminLayout>
-      } />
+    
 
 
         {/* Community routes under Layout */}
