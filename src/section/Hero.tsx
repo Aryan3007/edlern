@@ -42,6 +42,9 @@ export default function HeroSection() {
           </div>
         </div>
       </section>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 rounded-2xl overflow-hidden">
+        <video autoPlay loop muted  className="aspect-video rounded-2xl " src="https://edlern.com/wp-content/uploads/2025/03/IMG_1505.mp4"></video>
+      </div>
     </div>
 
 

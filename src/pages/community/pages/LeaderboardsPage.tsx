@@ -11,7 +11,7 @@ export default function LeaderboardsPage() {
       <div className="text-sm text-gray-500">Last updated: Apr 24th 2025 1:21am</div>
 
       <Tabs defaultValue="7day" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-6">
+        <TabsList className="grid w-full h-fit grid-cols-1 sm:grid-cols-3 gap-2 mb-6">
           <TabsTrigger value="7day">Leaderboard (7-day)</TabsTrigger>
           <TabsTrigger value="30day">Leaderboard (30-day)</TabsTrigger>
           <TabsTrigger value="alltime">Leaderboard (all-time)</TabsTrigger>

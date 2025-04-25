@@ -22,8 +22,6 @@ import {
   ThumbsUp,
   Share2,
   ChevronRight,
-  Menu,
-  X
 } from "lucide-react"
 
 // This would come from a database in a real app
@@ -231,7 +229,7 @@ export default function YouTubeStyleCourseLayout() {
   return (
     <div className="min-h-screen bg-background">
       {/* Main Container with consistent max-width */}
-      <div className="lg:w-7xl w-full mx-auto px-4">
+      <div className="max-w-7xl mx-auto">
         {/* Flex Layout Container */}
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Main Content Area */}
@@ -411,89 +409,77 @@ export default function YouTubeStyleCourseLayout() {
           </div>
 
           {/* Sidebar */}
-          <div className="w-full lg:w-4/12 relative">
-            {/* Mobile Toggle */}
-            <div className="lg:hidden sticky top-0 z-10 bg-background py-2 border-b">
-              <Button
-                variant="outline"
-                className="w-full flex items-center justify-between"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-              >
-                <span>Course Content</span>
-                {sidebarOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-              </Button>
-            </div>
-
+            <div className="w-full lg:w-4/12 relative">
             {/* Sidebar Content */}
-            <div className={`mt-2 lg:mt-4 ${sidebarOpen ? 'block' : 'hidden lg:block'}`}>
+            <div className={`mt-2 lg:mt-4 ${sidebarOpen || window.innerWidth < 1024 ? 'block' : 'hidden lg:block'}`}>
               {/* Course Progress */}
               <Card className="mb-4">
-                <CardContent className="p-4">
-                  <h2 className="font-bold">{course.title}</h2>
-                  <div className="mt-2">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium">Progress</span>
-                      <span className="text-sm text-muted-foreground">{course.progress}%</span>
-                    </div>
-                    <Progress value={course.progress} className="h-2" />
-                    <div className="text-xs text-muted-foreground mt-1">
-                      {course.completedLessons} of {course.totalLessons} lessons completed
-                    </div>
-                  </div>
-                </CardContent>
+              <CardContent className="p-4">
+                <h2 className="font-bold">{course.title}</h2>
+                <div className="mt-2">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm font-medium">Progress</span>
+                  <span className="text-sm text-muted-foreground">{course.progress}%</span>
+                </div>
+                <Progress value={course.progress} className="h-2" />
+                <div className="text-xs text-muted-foreground mt-1">
+                  {course.completedLessons} of {course.totalLessons} lessons completed
+                </div>
+                </div>
+              </CardContent>
               </Card>
 
               {/* Playlist */}
               <div className="border rounded-lg overflow-hidden mb-4">
-                <div className="p-3 bg-secondary/50 flex items-center justify-between">
-                  <h3 className="font-medium">Course Playlist</h3>
-                  <div className="text-xs text-muted-foreground">{course.totalLessons} videos</div>
-                </div>
+              <div className="p-3 bg-secondary/50 flex items-center justify-between">
+                <h3 className="font-medium">Course Playlist</h3>
+                <div className="text-xs text-muted-foreground">{course.totalLessons} videos</div>
+              </div>
 
-                {/* Course Content Accordion */}
-                <Accordion
-                  type="single"
-                  defaultValue={findCurrentModule()}
-                  collapsible
-                  className="w-full"
-                >
-                  {course.modules.map((module) => (
-                    <AccordionItem key={module.id} value={module.id} className="border-b last:border-0">
-                      <AccordionTrigger className="px-3 py-2 hover:bg-secondary/30 text-sm">
-                        <div className="text-left">
-                          <span>{module.title}</span>
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <div className="space-y-0">
-                          {module.lessons.map((lesson) => (
-                            <div
-                              key={lesson.id}
-                              className={`flex items-center gap-2 px-3 py-2 text-xs hover:bg-secondary/30 cursor-pointer transition-colors ${lesson.current ? "bg-secondary" : ""}`}
-                            >
-                              <div className="w-6 h-6 flex-shrink-0 flex items-center justify-center">
-                                {lesson.completed ? (
-                                  <CheckCircle2 className="h-4 w-4 text-sky-600" />
-                                ) : lesson.current ? (
-                                  <Play className="h-4 w-4 text-sky-600" fill="currentColor" />
-                                ) : (
-                                  <div className="h-4 w-4 rounded-full border border-muted-foreground/30" />
-                                )}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="font-medium truncate">{lesson.title}</div>
-                                <div className="text-xs text-muted-foreground">{lesson.duration}</div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
+              {/* Course Content Accordion */}
+              <Accordion
+                type="single"
+                defaultValue={findCurrentModule()}
+                collapsible
+                className="w-full"
+              >
+                {course.modules.map((module) => (
+                <AccordionItem key={module.id} value={module.id} className="border-b last:border-0">
+                  <AccordionTrigger className="px-3 py-2 hover:bg-secondary/30 text-sm">
+                  <div className="text-left">
+                    <span>{module.title}</span>
+                  </div>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                  <div className="space-y-0">
+                    {module.lessons.map((lesson) => (
+                    <div
+                      key={lesson.id}
+                      className={`flex items-center gap-2 px-3 py-2 text-xs hover:bg-secondary/30 cursor-pointer transition-colors ${lesson.current ? "bg-secondary" : ""}`}
+                    >
+                      <div className="w-6 h-6 flex-shrink-0 flex items-center justify-center">
+                      {lesson.completed ? (
+                        <CheckCircle2 className="h-4 w-4 text-sky-600" />
+                      ) : lesson.current ? (
+                        <Play className="h-4 w-4 text-sky-600" fill="currentColor" />
+                      ) : (
+                        <div className="h-4 w-4 rounded-full border border-muted-foreground/30" />
+                      )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                      <div className="font-medium truncate">{lesson.title}</div>
+                      <div className="text-xs text-muted-foreground">{lesson.duration}</div>
+                      </div>
+                    </div>
+                    ))}
+                  </div>
+                  </AccordionContent>
+                </AccordionItem>
+                ))}
+              </Accordion>
               </div>
             </div>
-          </div>
+            </div>
         </div>
       </div>
     </div>

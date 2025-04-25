@@ -116,7 +116,7 @@ export function CommunityFeed() {
         </CardContent>
       </Card>
 
-      <div className="flex items-center justify-between">
+      <div className="flex items-center gap-2 justify-between">
         <Tabs defaultValue="all" className="w-full" value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full max-w-md grid-cols-3">
             <TabsTrigger value="all">All Posts</TabsTrigger>
@@ -266,12 +266,14 @@ export function CommunityFeed() {
                       className="inline-block size-6 rounded-full ring-2 ring-white"
                     />
                   </div>
-                  <h1 className="text-gray-600">Liked by Aryan and {post.likes-1} others</h1>
+                  <h1 className="text-gray-600 lg:flex hidden">Liked by Aryan and {post.likes-1} others</h1>
                 </div>
                 <Button variant="ghost" size="sm" className="text-gray-600 hover:text-lime-600">
                   <Share2 className="h-4 w-4" />
                 </Button>
               </CardFooter>
+              <h1 className="text-gray-600 px-4 pb-2 flex lg:hidden">Liked by Aryan and {post.likes-1} others</h1>
+
             </Card>
           ))
         ) : (
