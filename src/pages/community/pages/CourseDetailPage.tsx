@@ -1,9 +1,16 @@
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 import {
   BookOpen,
   Clock,
@@ -11,11 +18,12 @@ import {
   FileText,
   MessageSquare,
   Play,
-  Star,
   CheckCircle2,
-  ChevronRight,
-  Heart,
+  ThumbsUp,
   Share2,
+  ChevronRight,
+  Menu,
+  X
 } from "lucide-react"
 
 // This would come from a database in a real app
@@ -29,6 +37,7 @@ const courseData = {
     image: "/placeholder.svg?height=40&width=40&text=HA",
     title: "Fitness Coach & Founder",
     verified: true,
+    subscribers: "245K",
   },
   progress: 35,
   totalLessons: 24,
@@ -39,6 +48,9 @@ const courseData = {
   students: 12580,
   lastUpdated: "March 2023",
   level: "Intermediate",
+  likes: 18542,
+  views: "325K",
+  uploadDate: "3 months ago",
   currentLesson: {
     id: "lesson-9",
     title: "Progressive Overload: The Key to Continuous Growth",
@@ -149,256 +161,339 @@ const courseData = {
       replies: 6,
     },
   ],
+  relatedCourses: [
+    {
+      id: "course-1",
+      title: "Mobility Fundamentals",
+      instructor: "Hamza Ahmed",
+      thumbnail: "/placeholder.svg?height=100&width=160&text=Mobility",
+      duration: "12 weeks",
+      views: "186K",
+    },
+    {
+      id: "course-2",
+      title: "Nutrition Master Plan",
+      instructor: "Mike Zhang",
+      thumbnail: "/placeholder.svg?height=100&width=160&text=Nutrition",
+      duration: "8 weeks",
+      views: "324K",
+    },
+    {
+      id: "course-3",
+      title: "Home Workout Blueprint",
+      instructor: "Sarah Johnson",
+      thumbnail: "/placeholder.svg?height=100&width=160&text=Home+Workouts",
+      duration: "10 weeks",
+      views: "212K",
+    },
+    {
+      id: "course-4",
+      title: "Strength Foundation",
+      instructor: "David Miller",
+      thumbnail: "/placeholder.svg?height=100&width=160&text=Strength",
+      duration: "16 weeks",
+      views: "143K",
+    },
+  ]
 }
 
-export default function CourseDetailPage({ params }: { params: { courseId: string } }) {
-  // In a real app, we would fetch the course data based on the courseId
+export default function YouTubeStyleCourseLayout() {
   const course = courseData
+  const [activeTab, setActiveTab] = useState("description")
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  // Find the current module for initial accordion state
+  const findCurrentModule = () => {
+    for (const module of course.modules) {
+      const hasCurrentLesson = module.lessons.some(lesson => lesson.current)
+      if (hasCurrentLesson) return module.id
+    }
+    return course.modules[0].id
+  }
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      if (window.innerWidth >= 1024) {
+        setSidebarOpen(true)
+      } else {
+        setSidebarOpen(false)
+      }
+    }
+
+    checkScreenSize()
+    window.addEventListener('resize', checkScreenSize)
+
+    return () => {
+      window.removeEventListener('resize', checkScreenSize)
+    }
+  }, [])
 
   return (
-    <div className="container py-6">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          {/* Video Player */}
-          <Card className="overflow-hidden">
-            <div className="aspect-video w-full bg-black relative">
-              <img
-                src={course.currentLesson.videoUrl || "/placeholder.svg"}
-                alt={course.currentLesson.title}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Button size="icon" className="h-16 w-16 rounded-full bg-lime-600/90 hover:bg-lime-600">
-                  <Play className="h-8 w-8 text-lime-600-foreground" fill="currentColor" />
-                </Button>
+    <div className="min-h-screen bg-background">
+      {/* Main Container with consistent max-width */}
+      <div className="lg:w-7xl w-full mx-auto px-4">
+        {/* Flex Layout Container */}
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Main Content Area */}
+          <div className="w-full lg:w-8/12">
+            {/* Video Player Container */}
+            <div className="w-full rounded-xl mt-4 overflow-hidden bg-black">
+              <div className="relative w-full" style={{ paddingBottom: '56.25%' }}> {/* 16:9 Aspect Ratio */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <img
+                    src={course.currentLesson.videoUrl}
+                    alt={course.currentLesson.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Button size="icon" className="h-16 w-16 rounded-full bg-sky-600/90 hover:bg-sky-600">
+                      <Play className="h-8 w-8 text-sky-600-foreground" fill="currentColor" />
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold">{course.currentLesson.title}</h2>
-                  <p className="text-muted-foreground mt-1">Lesson 9 of 24 • {course.currentLesson.duration}</p>
+            
+            {/* Video Info Section */}
+            <div className="py-4">
+              <h1 className="text-xl md:text-2xl font-bold">{course.currentLesson.title}</h1>
+
+              <div className="flex flex-wrap items-center justify-between mt-2 text-sm">
+                <div className="flex items-center text-muted-foreground">
+                  <span>{course.views} views • {course.uploadDate}</span>
                 </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="icon">
-                    <Heart className="h-4 w-4" />
+
+                <div className="flex items-center gap-4 mt-2 sm:mt-0">
+                  <Button variant="ghost" size="sm" className="flex items-center gap-1.5">
+                    <ThumbsUp className="h-4 w-4" />
+                    <span>{course.likes.toLocaleString()}</span>
                   </Button>
-                  <Button variant="outline" size="icon">
+
+                  <Button variant="ghost" size="sm" className="flex items-center gap-1.5">
                     <Share2 className="h-4 w-4" />
+                    <span>Share</span>
+                  </Button>
+
+                  <Button variant="ghost" size="sm" className="flex items-center gap-1.5">
+                    <Download className="h-4 w-4" />
+                    <span>Download</span>
                   </Button>
                 </div>
               </div>
+
               <Separator className="my-4" />
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src={course.instructor.image || "/placeholder.svg"} alt={course.instructor.name} />
-                    <AvatarFallback>{course.instructor.name.substring(0, 2)}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <div className="font-medium">{course.instructor.name}</div>
-                    <div className="text-sm text-muted-foreground">{course.instructor.title}</div>
-                  </div>
-                </div>
-                <p>{course.currentLesson.description}</p>
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <Clock className="h-4 w-4" />
-                    <span>{course.currentLesson.duration}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
-                    <span>
-                      {course.rating} ({course.reviews} reviews)
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <BookOpen className="h-4 w-4" />
-                    <span>{course.students.toLocaleString()} students</span>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
 
-          {/* Course Content Tabs */}
-          <Tabs defaultValue="content" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="content">Course Content</TabsTrigger>
-              <TabsTrigger value="resources">Resources</TabsTrigger>
-              <TabsTrigger value="discussions">Discussions</TabsTrigger>
-            </TabsList>
+              {/* Tabs with Consistent Width */}
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="grid w-full grid-cols-3 mb-4">
+                  <TabsTrigger value="description">Description</TabsTrigger>
+                  <TabsTrigger value="resources">Resources</TabsTrigger>
+                  <TabsTrigger value="comments">Comments</TabsTrigger>
+                </TabsList>
 
-            <TabsContent value="content" className="mt-6 space-y-6">
-              <div className="space-y-4">
-                {course.modules.map((module) => (
-                  <Card key={module.id} className="overflow-hidden">
-                    <CardHeader className="bg-secondary/50 p-4">
-                      <CardTitle className="text-lg">{module.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-0">
-                      {module.lessons.map((lesson) => (
-                        <div
-                          key={lesson.id}
-                          className={`flex items-center justify-between p-4 border-b last:border-0 hover:bg-secondary/30 transition-colors ${lesson.current ? "bg-lime-600/10" : ""}`}
-                        >
-                          <div className="flex items-center gap-3">
-                            {lesson.completed ? (
-                              <CheckCircle2 className="h-5 w-5 text-lime-600" />
-                            ) : lesson.current ? (
-                              <Play className="h-5 w-5 text-lime-600" fill="currentColor" />
-                            ) : (
-                              <div className="h-5 w-5 rounded-full border-2 border-muted-foreground/30" />
-                            )}
-                            <div>
-                              <div className="font-medium">{lesson.title}</div>
-                              <div className="text-sm text-muted-foreground">{lesson.duration}</div>
-                            </div>
-                          </div>
-                          <Button variant="ghost" size="icon">
-                            <ChevronRight className="h-5 w-5" />
-                          </Button>
-                        </div>
-                      ))}
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="resources" className="mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Course Resources</CardTitle>
-                  <CardDescription>Download supplementary materials for this course</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    {course.resources.map((resource) => (
-                      <div
-                        key={resource.id}
-                        className="flex items-center justify-between p-3 rounded-lg border hover:bg-secondary/50 transition-colors"
-                      >
-                        <div className="flex items-center gap-3">
-                          <FileText className="h-5 w-5 text-lime-600" />
-                          <div>
-                            <div className="font-medium">{resource.title}</div>
-                            <div className="text-sm text-muted-foreground">
-                              {resource.type} • {resource.size}
-                            </div>
-                          </div>
-                        </div>
-                        <Button variant="outline" size="sm" className="gap-1">
-                          <Download className="h-4 w-4" />
-                          Download
+                <TabsContent value="description" className="mt-0 w-full">
+                  <Card className="w-full">
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-3 mb-2">
+                        <Button variant="outline" size="sm" className="text-xs gap-1">
+                          <Clock className="h-3 w-3" /> {course.currentLesson.duration}
+                        </Button>
+                        <Button variant="outline" size="sm" className="text-xs gap-1">
+                          <BookOpen className="h-3 w-3" /> Lesson 9 of 24
                         </Button>
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
 
-            <TabsContent value="discussions" className="mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Course Discussions</CardTitle>
-                  <CardDescription>Join the conversation with other students</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {course.discussions.map((discussion) => (
-                      <div
-                        key={discussion.id}
-                        className="p-4 rounded-lg border hover:bg-secondary/50 transition-colors"
-                      >
-                        <div className="flex items-start gap-3">
-                          <Avatar className="h-10 w-10">
-                            <AvatarImage src={discussion.user.image || "/placeholder.svg"} alt={discussion.user.name} />
-                            <AvatarFallback>{discussion.user.name.substring(0, 2)}</AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1">
-                            <div className="flex items-center justify-between">
-                              <div className="font-medium">{discussion.user.name}</div>
-                              <div className="text-sm text-muted-foreground">{discussion.time}</div>
-                            </div>
-                            <p className="mt-1">{discussion.message}</p>
-                            <div className="flex items-center gap-2 mt-2">
-                              <Button variant="ghost" size="sm" className="gap-1 h-8">
-                                <MessageSquare className="h-3 w-3" />
-                                <span className="text-xs">{discussion.replies} replies</span>
-                              </Button>
-                            </div>
-                          </div>
+                      <div className="text-sm">
+                        <p className="mb-4">{course.currentLesson.description}</p>
+                        <p>This is lesson 9 of the {course.title} course. In this video, you'll learn how to properly implement progressive overload in your training routine to ensure continuous muscle growth and strength gains over time.</p>
+                      </div>
+
+                      <div className="mt-6">
+                        <h3 className="font-medium mb-2">Course Information</h3>
+                        <div className="grid grid-cols-2 gap-y-2 text-sm">
+                          <div>Level:</div>
+                          <div>{course.level}</div>
+                          <div>Duration:</div>
+                          <div>{course.duration}</div>
+                          <div>Total Students:</div>
+                          <div>{course.students.toLocaleString()}</div>
+                          <div>Last Updated:</div>
+                          <div>{course.lastUpdated}</div>
                         </div>
                       </div>
-                    ))}
-                    <Button className="w-full">View All Discussions</Button>
+
+                      <div className="flex justify-between mt-4">
+                        <Button variant="outline" size="sm" className="gap-2">
+                          <ChevronRight className="h-4 w-4 rotate-180" />
+                          Previous Lesson
+                        </Button>
+                        <Button size="sm" className="gap-2">
+                          Next Lesson
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                <TabsContent value="resources" className="mt-0 w-full">
+                  <Card className="w-full">
+                    <CardContent className="p-4">
+                      <div className="space-y-3">
+                        {course.resources.map((resource) => (
+                          <div
+                            key={resource.id}
+                            className="flex items-center justify-between p-3 rounded-lg border hover:bg-secondary/50 transition-colors"
+                          >
+                            <div className="flex items-center gap-3">
+                              <FileText className="h-5 w-5 text-sky-600" />
+                              <div>
+                                <div className="font-medium">{resource.title}</div>
+                                <div className="text-xs text-muted-foreground">
+                                  {resource.type} • {resource.size}
+                                </div>
+                              </div>
+                            </div>
+                            <Button variant="outline" size="sm" className="gap-1">
+                              <Download className="h-4 w-4" />
+                              Download
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                <TabsContent value="comments" className="mt-0 w-full">
+                  <Card className="w-full">
+                    <CardContent className="p-4">
+                      <div className="space-y-4">
+                        {course.discussions.map((discussion) => (
+                          <div
+                            key={discussion.id}
+                            className="py-4 border-b last:border-0"
+                          >
+                            <div className="flex items-start gap-3">
+                              <Avatar className="h-8 w-8">
+                                <AvatarImage src={discussion.user.image} alt={discussion.user.name} />
+                                <AvatarFallback>{discussion.user.name.substring(0, 2)}</AvatarFallback>
+                              </Avatar>
+                              <div className="flex-1">
+                                <div className="flex items-baseline gap-2">
+                                  <div className="font-medium text-sm">{discussion.user.name}</div>
+                                  <div className="text-xs text-muted-foreground">{discussion.time}</div>
+                                </div>
+                                <p className="mt-1 text-sm">{discussion.message}</p>
+                                <div className="flex items-center gap-2 mt-2">
+                                  <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs">
+                                    <ThumbsUp className="h-3 w-3" />
+                                    <span>Like</span>
+                                  </Button>
+                                  <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs">
+                                    <MessageSquare className="h-3 w-3" />
+                                    <span>Reply</span>
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                        <div className="pt-2">
+                          <Button variant="outline" className="w-full">Load More Comments</Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </Tabs>
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <div className="w-full lg:w-4/12 relative">
+            {/* Mobile Toggle */}
+            <div className="lg:hidden sticky top-0 z-10 bg-background py-2 border-b">
+              <Button
+                variant="outline"
+                className="w-full flex items-center justify-between"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+              >
+                <span>Course Content</span>
+                {sidebarOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+              </Button>
+            </div>
+
+            {/* Sidebar Content */}
+            <div className={`mt-2 lg:mt-4 ${sidebarOpen ? 'block' : 'hidden lg:block'}`}>
+              {/* Course Progress */}
+              <Card className="mb-4">
+                <CardContent className="p-4">
+                  <h2 className="font-bold">{course.title}</h2>
+                  <div className="mt-2">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-medium">Progress</span>
+                      <span className="text-sm text-muted-foreground">{course.progress}%</span>
+                    </div>
+                    <Progress value={course.progress} className="h-2" />
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {course.completedLessons} of {course.totalLessons} lessons completed
+                    </div>
                   </div>
                 </CardContent>
               </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
 
-        <div className="space-y-6">
-          {/* Course Info Card */}
-          <Card className="sticky top-20">
-            <CardHeader>
-              <CardTitle>{course.title}</CardTitle>
-              <CardDescription>{course.description}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium">Course Progress</span>
-                  <span className="text-sm text-muted-foreground">{course.progress}%</span>
+              {/* Playlist */}
+              <div className="border rounded-lg overflow-hidden mb-4">
+                <div className="p-3 bg-secondary/50 flex items-center justify-between">
+                  <h3 className="font-medium">Course Playlist</h3>
+                  <div className="text-xs text-muted-foreground">{course.totalLessons} videos</div>
                 </div>
-                <Progress value={course.progress} className="h-2" />
-                <div className="flex items-center justify-between mt-2 text-sm text-muted-foreground">
-                  <span>
-                    {course.completedLessons} of {course.totalLessons} lessons completed
-                  </span>
-                </div>
-              </div>
 
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="flex flex-col">
-                  <span className="text-muted-foreground">Duration</span>
-                  <span className="font-medium">{course.duration}</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-muted-foreground">Level</span>
-                  <span className="font-medium">{course.level}</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-muted-foreground">Last Updated</span>
-                  <span className="font-medium">{course.lastUpdated}</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-muted-foreground">Students</span>
-                  <span className="font-medium">{course.students.toLocaleString()}</span>
-                </div>
+                {/* Course Content Accordion */}
+                <Accordion
+                  type="single"
+                  defaultValue={findCurrentModule()}
+                  collapsible
+                  className="w-full"
+                >
+                  {course.modules.map((module) => (
+                    <AccordionItem key={module.id} value={module.id} className="border-b last:border-0">
+                      <AccordionTrigger className="px-3 py-2 hover:bg-secondary/30 text-sm">
+                        <div className="text-left">
+                          <span>{module.title}</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="space-y-0">
+                          {module.lessons.map((lesson) => (
+                            <div
+                              key={lesson.id}
+                              className={`flex items-center gap-2 px-3 py-2 text-xs hover:bg-secondary/30 cursor-pointer transition-colors ${lesson.current ? "bg-secondary" : ""}`}
+                            >
+                              <div className="w-6 h-6 flex-shrink-0 flex items-center justify-center">
+                                {lesson.completed ? (
+                                  <CheckCircle2 className="h-4 w-4 text-sky-600" />
+                                ) : lesson.current ? (
+                                  <Play className="h-4 w-4 text-sky-600" fill="currentColor" />
+                                ) : (
+                                  <div className="h-4 w-4 rounded-full border border-muted-foreground/30" />
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="font-medium truncate">{lesson.title}</div>
+                                <div className="text-xs text-muted-foreground">{lesson.duration}</div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
               </div>
-
-              <div className="flex items-center gap-1">
-                <Star className="h-5 w-5 text-amber-500 fill-amber-500" />
-                <Star className="h-5 w-5 text-amber-500 fill-amber-500" />
-                <Star className="h-5 w-5 text-amber-500 fill-amber-500" />
-                <Star className="h-5 w-5 text-amber-500 fill-amber-500" />
-                <Star className="h-5 w-5 text-amber-500 fill-amber-500 opacity-80" />
-                <span className="ml-2 text-sm font-medium">{course.rating}</span>
-                <span className="text-sm text-muted-foreground">({course.reviews} reviews)</span>
-              </div>
-
-              <div className="space-y-2">
-                <Button className="w-full">Continue Learning</Button>
-                <Button variant="outline" className="w-full">
-                  Download Certificate
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </div>
     </div>

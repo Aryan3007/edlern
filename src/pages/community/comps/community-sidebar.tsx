@@ -7,7 +7,7 @@ import { Trophy, Link2 } from "lucide-react"
 export function CommunitySidebar() {
   return (
     <div className="space-y-6">
-      <Card className="p-4">
+      <Card className="p-4 gap-2">
         <CardHeader className="p-0">
           <CardTitle className="text-xl">Adonis Gang</CardTitle>
         </CardHeader>

@@ -6,7 +6,7 @@ import { Link2, Users, Star, Lock } from "lucide-react"
 
 export default function AboutPage() {
   return (
-    <div className="container py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="container lg:py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2">
         <Card>
           <CardHeader className="pb-2">

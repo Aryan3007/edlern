@@ -74,8 +74,8 @@ export default function Header() {
   const isAdmin = true // This would be determined by user role in a real app
 
   return (
-    <header className="sticky  top-0 z-50 w-full border-b bg-background backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container  max-w-7xl mx-auto flex h-16 items-center px-2 sm:px-6">
+    <header className="sticky  top-0 z-50 w-full border-b bg-background backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <div className="container  max-w-7xl mx-auto flex h-16 items-center px-2">
         <div className="flex items-center gap-2 mr-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -183,7 +183,7 @@ export default function Header() {
                 <Link
                   key={item.name}
                   to={item.to}
-                  className={`text-sm font-medium transition-colors hover:text-sky-700 ${pathname["*"] === item.to.replace("/community/", "") ? "text-sky-700" : "text-foreground"
+                  className={`text-sm font-medium transition-colors hover:text-sky-700 ${pathname["*"] === item.to.replace("/community/", "") ? "text-sky-400" : "text-foreground"
                     }`}
                 >
                   {item.name}

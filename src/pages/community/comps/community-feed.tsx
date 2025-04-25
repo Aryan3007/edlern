@@ -222,10 +222,10 @@ export function CommunityFeed() {
                   </DropdownMenuContent>
                 </DropdownMenu>
               </CardHeader>
-              <CardContent className="p-4 flex flex-row gap-4">
+              <CardContent className="p-4 flex flex-col lg:flex-row gap-8">
                 <div className="flex-1 whitespace-pre-line">{post.content}</div>
                 {post.media && (
-                  <div className="rounded-md overflow-hidden w-64">
+                  <div className="rounded-md overflow-hidden w-full lg:w-56">
                     <img
                       src={post.media || "/placeholder.svg"}
                       alt="Post media"

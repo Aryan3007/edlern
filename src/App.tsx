@@ -13,6 +13,8 @@ import ClassroomPage from "./pages/community/pages/ClassroomPage"
 import MembersPage from "./pages/community/pages/MembersPage"
 import LeaderboardsPage from "./pages/community/pages/LeaderboardsPage"
 import AboutPage from "./pages/community/pages/AboutPage"
+import CourseDetailPage from "./pages/community/pages/CourseDetailPage"
+import MessagesPage from "./pages/community/pages/MessagesPage"
 
 const App = () => {
   return (
@@ -34,9 +36,11 @@ const App = () => {
           <Routes>
           <Route path="feed" element={<CommunityPageFeed />} />
           <Route path="classroom" element={<ClassroomPage />} />
+          <Route path="classroom/:courseId" element={<CourseDetailPage />} />
           <Route path="members" element={<MembersPage />} />
           <Route path="leaderboards" element={<LeaderboardsPage />} />
           <Route path="about" element={<AboutPage />} />
+          <Route path="messages" element={<MessagesPage />} />
           </Routes>
         </Layout>
       } /> 
