@@ -122,7 +122,7 @@ export default function Header() {
               </DropdownMenuItem>
               {isAdmin && (
                 <DropdownMenuItem>
-                  <Link to="/admin" className="flex items-center gap-2 w-full">
+                  <Link to="/community/admin/dashboard" className="flex items-center gap-2 w-full">
                     <span className="text-sky-700">Admin Dashboard</span>
                   </Link>
                 </DropdownMenuItem>
@@ -194,7 +194,7 @@ export default function Header() {
         )}
 
         <div className="flex items-center gap-2">
-          <Link to="/admin" className="hidden lg:flex">
+          <Link to="/community/admin/dashboard" className="hidden lg:flex">
           <Button variant="outline">Admin</Button>
           </Link>
           <ThemeToggle />

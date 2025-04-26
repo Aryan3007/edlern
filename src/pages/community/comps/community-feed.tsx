@@ -236,11 +236,11 @@ export function CommunityFeed() {
               </CardContent>
               <CardFooter className="p-4 pt-0 flex justify-between">
                 <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm" className="gap-1 text-gray-600 hover:text-lime-600">
+                  <Button variant="ghost" size="sm" className="gap-1 text-gray-600 hover:text-pink-600">
                     <Heart className="h-4 w-4" />
                     <span>{post.likes}</span>
                   </Button>
-                  <Button variant="ghost" size="sm" className="gap-1 text-gray-600 hover:text-lime-600">
+                  <Button variant="ghost" size="sm" className="gap-1 text-gray-600 hover:text-sky-600">
                     <MessageSquare className="h-4 w-4" />
                     <span>{post.comments}</span>
                   </Button>
@@ -268,7 +268,7 @@ export function CommunityFeed() {
                   </div>
                   <h1 className="text-gray-600 lg:flex hidden">Liked by Aryan and {post.likes-1} others</h1>
                 </div>
-                <Button variant="ghost" size="sm" className="text-gray-600 hover:text-lime-600">
+                <Button variant="ghost" size="sm" className="text-gray-600 hover:text-sky-600">
                   <Share2 className="h-4 w-4" />
                 </Button>
               </CardFooter>

@@ -18,6 +18,16 @@ import MessagesPage from "./pages/community/pages/MessagesPage"
 import ProfilePage from "./pages/community/pages/ProfilePage"
 import SettingsPage from "./pages/community/pages/SettingsPage"
 import MyCoursesPage from "./pages/community/pages/MyCoursesPage"
+import AdminPage from "./pages/communityAdmin/pages/AdminPage"
+import AdminLayout from "./pages/communityAdmin/Layout/AdminLayout"
+import AdminMembersPage from "./pages/communityAdmin/pages/AdminMembersPage"
+import AdminContentPage from "./pages/communityAdmin/pages/AdminContentPage"
+import AdminCoursesPage from "./pages/communityAdmin/pages/AdminCoursesPage"
+import AdminMessagesPage from "./pages/communityAdmin/pages/AdminMessagesPage"
+import AdminReportsPage from "./pages/communityAdmin/pages/AdminReportsPage"
+import AdminNotificationsPage from "./pages/communityAdmin/pages/AdminNotificationsPage"
+import AdminModerationPage from "./pages/communityAdmin/pages/AdminModerationPage"
+import AdminSettingsPage from "./pages/communityAdmin/pages/AdminSettingsPage"
 
 const App = () => {
   return (
@@ -49,6 +59,23 @@ const App = () => {
           <Route path="/profile/setting" element={<SettingsPage />} />
           </Routes>
         </Layout>
+      } />  
+      
+      <Route path="/community/admin/*" element={
+          <AdminLayout>
+          <Routes>
+          <Route path="dashboard" element={<AdminPage />} />
+          <Route path="members" element={<AdminMembersPage />} />
+          <Route path="content" element={<AdminContentPage />} />
+          <Route path="courses" element={<AdminCoursesPage />} />
+          <Route path="messages" element={<AdminMessagesPage />} />
+          <Route path="reports" element={<AdminReportsPage />} />
+          <Route path="notifications" element={<AdminNotificationsPage />} />
+          <Route path="moderation" element={<AdminModerationPage />} />
+          <Route path="settings" element={<AdminSettingsPage />} />
+       
+          </Routes>
+        </AdminLayout>
       } /> 
       
     
