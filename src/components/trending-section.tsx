@@ -61,7 +61,7 @@ export default function TrendingSection() {
   }, [selectedCategory])
 
   return (
-    <section className="w-full py-12">
+    <section className="w-full text-black py-12">
       <div className="container px-4 md:px-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
           <h2 className="text-3xl font-bold tracking-tight">Trending</h2>

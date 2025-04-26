@@ -10,8 +10,15 @@ import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Camera, Lock, Shield, CreditCard, LogOut } from "lucide-react"
+import { useEffect } from "react"
 
 export default function SettingsPage() {
+      useEffect(() => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }, []);
   return (
     <div className="container w-full lg:w-7xl py-6">
       <div className="flex flex-col gap-6">

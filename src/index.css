@@ -4,7 +4,9 @@
 /* body{
   background: #1e2130;
 } */
-
+html{
+  scroll-behavior: smooth;
+}
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

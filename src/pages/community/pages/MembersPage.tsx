@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { CheckCircle2, Search, Filter, Calendar, MapPin, MessageSquare, Link2 } from "lucide-react"
+import { useEffect } from "react"
 
 const members = Array.from({ length: 20 }).map((_, i) => ({
   id: i + 1,
@@ -25,6 +26,12 @@ const members = Array.from({ length: 20 }).map((_, i) => ({
 }))
 
 export default function MembersPage() {
+      useEffect(() => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }, []);
   return (
     <div className="grid relative  grid-cols-1 lg:grid-cols-3 gap-6 lg:py-6 space-y-6">
       <div className="lg:col-span-1 hidden lg:block ">

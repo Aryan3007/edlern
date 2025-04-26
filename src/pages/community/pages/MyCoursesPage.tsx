@@ -5,8 +5,15 @@ import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Search, Filter, BookOpen, Clock, Award, CheckCircle2 } from "lucide-react"
+import { useEffect } from "react"
 
 export default function MyCoursesPage() {
+      useEffect(() => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }, []);
   return (
     <div className="container py-6">
       <div className="flex flex-col gap-6">

@@ -133,6 +133,12 @@ export default function CategoryPage() {
   const [communities, setCommunities] = useState<Community[]>([])
   const [categoryName, setCategoryName] = useState("")
   const [loading, setLoading] = useState(true)
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
 
   useEffect(() => {
     if (params.id) {

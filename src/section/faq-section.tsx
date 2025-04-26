@@ -130,15 +130,15 @@ export default function FAQSection() {
   const activeCategoryIcon = faqCategories.find(cat => cat.id === activeCategory)?.icon || <HelpCircle className="h-5 w-5" />
 
   return (
-    <section className="py-16 md:py-24 bg-white dark:bg-[#1a1d29]" id="faq">
+    <section className="py-16 md:py-24 bg-white :bg-[#1a1d29]" id="faq">
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 :text-white mb-4">
               Frequently Asked Questions
             </h2>
-            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            <p className="text-gray-600 :text-gray-300 max-w-2xl mx-auto">
               Find answers to common questions about our platform, features, and services. Can't find what you're
               looking for? Contact our support team.
             </p>
@@ -149,14 +149,14 @@ export default function FAQSection() {
               {/* Search bar */}
               <div className="relative lg:flex hidden mb-6">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                  <Search className="h-5 w-5 text-gray-400 :text-gray-500" />
                 </div>
                 <Input
                   type="text"
                   placeholder="Search for questions..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 py-3 bg-gray-100 dark:bg-[#282c3d]/50 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder:text-gray-500 focus:border-sky-500 focus:ring-sky-500 focus:ring-opacity-50 rounded-xl"
+                  className="pl-10 py-3 bg-gray-100 :bg-[#282c3d]/50 border-gray-200 :border-gray-700 text-gray-900 :text-white placeholder:text-gray-500 focus:border-sky-500 focus:ring-sky-500 focus:ring-opacity-50 rounded-xl"
                 />
               </div>
 
@@ -167,7 +167,7 @@ export default function FAQSection() {
                   className={`w-full flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
                     activeCategory === "all"
                       ? "bg-gradient-to-br from-sky-500 to-sky-700 text-white"
-                      : "bg-gray-100 dark:bg-[#282c3d]/50 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#282c3d]"
+                      : "bg-gray-100 :bg-[#282c3d]/50 text-gray-700 :text-gray-300 hover:bg-gray-200 :hover:bg-[#282c3d]"
                   }`}
                 >
                   <HelpCircle className="h-5 w-5 mr-3" />
@@ -179,8 +179,8 @@ export default function FAQSection() {
                     onClick={() => setActiveCategory(category.id)}
                     className={`w-full flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
                       activeCategory === category.id
-                        ? "bg-sky-500 text-white"
-                        : "bg-gray-100 dark:bg-[#282c3d]/50 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#282c3d]"
+                        ? "bg-gradient-to-br from-sky-500 to-sky-700 text-white"
+                        : "bg-gray-100 :bg-[#282c3d]/50 text-gray-700 :text-gray-300 hover:bg-gray-200 :hover:bg-[#282c3d]"
                     }`}
                   >
                     {category.icon}
@@ -199,7 +199,7 @@ export default function FAQSection() {
                       <div className="p-2 rounded-full bg-sky-500/10 mr-3">
                         {activeCategoryIcon}
                       </div>
-                      <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                      <h3 className="text-xl font-semibold text-gray-900 :text-white">
                         {activeCategory === "all" ? "All Questions" : faqCategories.find(c => c.id === activeCategory)?.name}
                       </h3>
                     </div>
@@ -210,17 +210,17 @@ export default function FAQSection() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="bg-white dark:bg-[#282c3d]/50 shadow-sm dark:shadow-none rounded-2xl border border-gray-100 dark:border-gray-700/50 overflow-hidden"
+                        className="bg-white :bg-[#282c3d]/50 shadow-sm :shadow-none rounded-2xl border border-gray-100 :border-gray-700/50 overflow-hidden"
                       >
                         <button
                           onClick={() => toggleQuestion(faq.id)}
                           className="w-full flex items-center justify-between p-6 text-left"
                         >
-                          <span className="font-medium text-gray-900 dark:text-white">{faq.question}</span>
+                          <span className="font-medium text-gray-900 :text-white">{faq.question}</span>
                           <div className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors ${
                             expandedId === faq.id 
                               ? "bg-sky-500 text-white" 
-                              : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"
+                              : "bg-gray-100 :bg-gray-800 text-gray-500 :text-gray-400"
                           }`}>
                             {expandedId === faq.id ? (
                               <Minus className="h-4 w-4" />
@@ -238,7 +238,7 @@ export default function FAQSection() {
                               transition={{ duration: 0.3 }}
                               className="overflow-hidden"
                             >
-                              <div className="p-6 pt-0 border-t text-sm border-gray-100 dark:border-gray-700/50 text-gray-600 dark:text-gray-300 leading-relaxed">
+                              <div className="p-6 pt-0 border-t text-sm border-gray-100 :border-gray-700/50 text-gray-600 :text-gray-300 leading-relaxed">
                                 {faq.answer}
                               </div>
                             </motion.div>
@@ -248,12 +248,12 @@ export default function FAQSection() {
                     ))}
                   </>
                 ) : (
-                  <div className="text-center py-16 px-6 bg-white dark:bg-[#282c3d]/30 rounded-2xl border border-gray-100 dark:border-gray-700/50">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-[#282c3d] mb-4">
+                  <div className="text-center py-16 px-6 bg-white :bg-[#282c3d]/30 rounded-2xl border border-gray-100 :border-gray-700/50">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 :bg-[#282c3d] mb-4">
                       <MessageSquare className="h-8 w-8 text-sky-600" />
                     </div>
-                    <h3 className="text-xl font-medium text-gray-900 dark:text-white mb-2">No results found</h3>
-                    <p className="text-gray-600 dark:text-gray-400">
+                    <h3 className="text-xl font-medium text-gray-900 :text-white mb-2">No results found</h3>
+                    <p className="text-gray-600 :text-gray-400">
                       We couldn't find any FAQs matching your search. Try different keywords or{" "}
                       <a href="#contact" className="text-sky-600 hover:text-[#f06292]">
                         contact support
@@ -266,7 +266,7 @@ export default function FAQSection() {
 
               {/* Contact support */}
               {/* <div className="mt-12 text-center">
-                <p className="text-gray-600 dark:text-gray-300 mb-4">Still have questions?</p>
+                <p className="text-gray-600 :text-gray-300 mb-4">Still have questions?</p>
                 <a
                   href="#contact"
                   className="inline-flex items-center justify-center px-6 py-3 bg-sky-500 hover:bg-sky-500 text-white rounded-lg font-medium transition-colors"

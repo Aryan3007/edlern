@@ -199,6 +199,12 @@ export default function YouTubeStyleCourseLayout() {
   const course = courseData
   const [activeTab, setActiveTab] = useState("description")
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
 
   // Find the current module for initial accordion state
   const findCurrentModule = () => {

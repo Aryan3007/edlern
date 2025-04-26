@@ -103,11 +103,11 @@ export default function PricingSection() {
   ]
 
   return (
-    <section className="py-12 bg-white dark:bg-[#1a1d29] overflow-hidden relative" id="pricing">
+    <section className="py-12 bg-white :bg-[#1a1d29] overflow-hidden relative" id="pricing">
       {/* Background decorations */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-[10%] left-[5%] w-[300px] h-[300px] rounded-full bg-sky-500/5 dark:bg-sky-500/10 blur-3xl"></div>
-        <div className="absolute bottom-[10%] right-[5%] w-[300px] h-[300px] rounded-full bg-[#6E1FED]/5 dark:bg-[#6E1FED]/10 blur-3xl"></div>
+        <div className="absolute top-[10%] left-[5%] w-[300px] h-[300px] rounded-full bg-sky-500/5 :bg-sky-500/10 blur-3xl"></div>
+        <div className="absolute bottom-[10%] right-[5%] w-[300px] h-[300px] rounded-full bg-[#6E1FED]/5 :bg-[#6E1FED]/10 blur-3xl"></div>
       </div>
 
       <div className="container max-w-7xl mx-auto px-4 relative z-10">
@@ -119,23 +119,23 @@ export default function PricingSection() {
           className="text-center mb-16 max-w-3xl mx-auto"
         >
          
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 :text-white mb-4">
             Simple, Transparent Pricing
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
+          <p className="text-lg text-gray-600 :text-gray-300">
             Choose the perfect plan for your community needs. No hidden fees or surprises.
           </p>
         </motion.div>
 
         {/* Billing toggle */}
         <div className="flex justify-center mb-12">
-          <div className="bg-gray-100 dark:bg-[#282c3d] p-1.5 rounded-full flex items-center">
+          <div className="bg-gray-100 :bg-[#282c3d] p-1.5 rounded-full flex items-center">
             <button
               onClick={() => setBillingCycle("monthly")}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 billingCycle === "monthly"
-                  ? "bg-white dark:bg-[#1e2130] text-gray-900 dark:text-white shadow-sm"
-                  : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                  ? "bg-white :bg-[#1e2130] text-gray-900 :text-white shadow-sm"
+                  : "text-gray-600 :text-gray-300 hover:text-gray-900 :hover:text-white"
               }`}
             >
               Monthly
@@ -144,8 +144,8 @@ export default function PricingSection() {
               onClick={() => setBillingCycle("yearly")}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 billingCycle === "yearly"
-                  ? "bg-white dark:bg-[#1e2130] text-gray-900 dark:text-white shadow-sm"
-                  : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                  ? "bg-white :bg-[#1e2130] text-gray-900 :text-white shadow-sm"
+                  : "text-gray-600 :text-gray-300 hover:text-gray-900 :hover:text-white"
               }`}
             >
               Yearly
@@ -174,15 +174,15 @@ export default function PricingSection() {
               )}
 
               <div
-                className={`h-full bg-white dark:bg-[#282c3d] rounded-2xl shadow-lg dark:shadow-none border ${
-                  plan.popular ? "border-sky-500 dark:border-sky-500" : "border-gray-100 dark:border-gray-700/30"
+                className={`h-full bg-white :bg-[#282c3d] rounded-2xl shadow-lg :shadow-none border ${
+                  plan.popular ? "border-sky-500 :border-sky-500" : "border-gray-100 :border-gray-700/30"
                 } overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-sky-500/50`}
               >
                 <div className="p-8">
                   {/* Header */}
                   <div className="mb-6">
-                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{plan.name}</h3>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm">{plan.description}</p>
+                    <h3 className="text-2xl font-bold text-gray-900 :text-white mb-2">{plan.name}</h3>
+                    <p className="text-gray-600 :text-gray-300 text-sm">{plan.description}</p>
                   </div>
 
                   {/* Price */}
@@ -196,10 +196,10 @@ export default function PricingSection() {
                         transition={{ duration: 0.2 }}
                         className="flex items-baseline"
                       >
-                        <span className="text-4xl font-bold text-gray-900 dark:text-white">
+                        <span className="text-4xl font-bold text-gray-900 :text-white">
                           ${billingCycle === "monthly" ? plan.price.monthly : getYearlyPrice(plan.price.monthly)}
                         </span>
-                        <span className="text-gray-500 dark:text-gray-400 ml-2">
+                        <span className="text-gray-500 :text-gray-400 ml-2">
                           /{billingCycle === "monthly" ? "month" : "year"}
                         </span>
                       </motion.div>
@@ -211,7 +211,7 @@ export default function PricingSection() {
 
                   {/* Features */}
                   <div className="mb-8">
-                    <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-4">What's included:</h4>
+                    <h4 className="text-sm font-medium text-gray-900 :text-white mb-4">What's included:</h4>
                     <ul className="space-y-3">
                       {plan.features.map((feature, i) => (
                         <li key={i} className="flex items-start">
@@ -220,13 +220,13 @@ export default function PricingSection() {
                               <Check className="h-3 w-3 text-sky-600" />
                             </div>
                           ) : (
-                            <div className="flex-shrink-0 w-5 h-5 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mr-3 mt-0.5">
-                              <X className="h-3 w-3 text-gray-400 dark:text-gray-500" />
+                            <div className="flex-shrink-0 w-5 h-5 rounded-full bg-gray-100 :bg-gray-800 flex items-center justify-center mr-3 mt-0.5">
+                              <X className="h-3 w-3 text-gray-400 :text-gray-500" />
                             </div>
                           )}
                           <span
                             className={
-                              feature.included ? "text-gray-700 dark:text-gray-300" : "text-gray-400 dark:text-gray-500"
+                              feature.included ? "text-gray-700 :text-gray-300" : "text-gray-400 :text-gray-500"
                             }
                           >
                             {feature.name}
@@ -241,7 +241,7 @@ export default function PricingSection() {
                     className={`w-full ${
                       plan.popular
                         ? "bg-gradient-to-br from-sky-500 to-sky-700 text-white"
-                        : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
+                        : "bg-gray-100 :bg-gray-800 text-gray-900 :text-white hover:bg-gray-200 :hover:bg-gray-700"
                     } group`}
                   >
                     {plan.cta}
@@ -256,8 +256,8 @@ export default function PricingSection() {
         {/* Features highlight */}
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">All Plans Include</h3>
-            <p className="text-gray-600 dark:text-gray-300">
+            <h3 className="text-2xl font-bold text-gray-900 :text-white mb-4">All Plans Include</h3>
+            <p className="text-gray-600 :text-gray-300">
               Every plan comes with these essential features to ensure your community thrives.
             </p>
           </div>
@@ -270,11 +270,11 @@ export default function PricingSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-white dark:bg-[#282c3d] p-6 rounded-xl shadow-sm dark:shadow-none border border-gray-100 dark:border-gray-700/30"
+                className="bg-white :bg-[#282c3d] p-6 rounded-xl shadow-sm :shadow-none border border-gray-100 :border-gray-700/30"
               >
                 <div className="p-3 rounded-full bg-sky-500/10 w-fit mb-4">{feature.icon}</div>
-                <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{feature.name}</h4>
-                <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
+                <h4 className="text-lg font-semibold text-gray-900 :text-white mb-2">{feature.name}</h4>
+                <p className="text-gray-600 :text-gray-300">{feature.description}</p>
               </motion.div>
             ))}
           </div>

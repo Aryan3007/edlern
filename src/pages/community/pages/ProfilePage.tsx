@@ -7,8 +7,15 @@ import { Separator } from "@/components/ui/separator"
 import { CheckCircle2, MapPin, Calendar, Link2, Edit, Settings, Heart, MessageSquare } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
 import { Link } from "react-router-dom"
+import { useEffect } from "react"
 
 export default function ProfilePage() {
+      useEffect(() => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }, []);
   return (
     <div className="container py-6">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

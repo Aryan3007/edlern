@@ -108,7 +108,7 @@ export default function FeaturesSectionPro() {
   }
 
   return (
-    <section ref={sectionRef} className="py-16 md:py-24 bg-white dark:bg-gray-900 overflow-hidden">
+    <section ref={sectionRef} className="py-16 md:py-24 bg-white :bg-gray-900 overflow-hidden">
       <div className="container mx-auto px-4 md:px-6 max-w-7xl">
         <motion.div
           initial="hidden"
@@ -116,13 +116,13 @@ export default function FeaturesSectionPro() {
           variants={headingVariants}
           className="text-center mb-16 max-w-3xl mx-auto"
         >
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 :text-white mb-4">
             Everything You Need to Build a 
           </h2>
-          <h3 className="text-2xl md:text-4xl font-semibold text-sky-600 dark:text-sky-500 mb-6">
+          <h3 className="text-2xl md:text-4xl font-semibold text-sky-600 :text-sky-500 mb-6">
             Thriving Community
           </h3>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
+          <p className="text-lg text-gray-600 :text-gray-300">
             Our platform provides all the tools you need to create, grow, and monetize your online community.
           </p>
         </motion.div>
@@ -145,19 +145,19 @@ export default function FeaturesSectionPro() {
               onMouseLeave={() => setActiveFeature(null)}
               className="group relative"
             >
-              <div className="h-full rounded-xl bg-white dark:bg-gray-800 border border-sky-700 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
+              <div className="h-full rounded-xl bg-white :bg-gray-800 border border-sky-700 :border-gray-700 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
                 <div className="p-6 md:p-8">
                   <div className="flex items-center mb-5">
                     <div className="h-10 w-10 rounded-lg flex items-center justify-center mr-4" 
                          style={{ backgroundColor: feature.color + "15" }}>
-                      <div className="text-sky-600 dark:text-sky-500">{feature.icon}</div>
+                      <div className="text-sky-600 :text-sky-500">{feature.icon}</div>
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    <h3 className="text-lg font-semibold text-gray-900 :text-white">
                       {feature.title}
                     </h3>
                   </div>
                   
-                  <p className="text-gray-600 dark:text-gray-300 mb-6">
+                  <p className="text-gray-600 :text-gray-300 mb-6">
                     {feature.description}
                   </p>
 
@@ -168,7 +168,7 @@ export default function FeaturesSectionPro() {
                       y: activeFeature === feature.id ? 0 : 10 
                     }}
                     transition={{ duration: 0.3 }}
-                    className="text-sky-600 dark:text-sky-500 font-medium flex items-center text-sm"
+                    className="text-sky-600 :text-sky-500 font-medium flex items-center text-sm"
                   >
                     Learn more
                     <motion.div

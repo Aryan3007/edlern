@@ -1,9 +1,16 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { UserLevelCard } from "../comps/user-level-card"
 import { LeaderboardTable } from "../comps/leaderboard-table"
+import { useEffect } from "react";
 
 
 export default function LeaderboardsPage() {
+      useEffect(() => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }, []);
   return (
     <div className="container lg:py-6 space-y-6">
       <UserLevelCard />

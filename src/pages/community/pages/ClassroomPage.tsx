@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import {
@@ -123,6 +123,12 @@ const ITEMS_PER_PAGE = 6
 export default function ClassroomPage() {
   const [currentFilter, setCurrentFilter] = useState("all")
   const [currentPage, setCurrentPage] = useState(1)
+      useEffect(() => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }, []);
 
   // Apply filters to courses
   const filteredCourses = useMemo(() => {

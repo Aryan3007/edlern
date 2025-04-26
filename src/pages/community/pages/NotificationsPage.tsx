@@ -5,8 +5,15 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Heart, MessageSquare, UserPlus, Settings, AtSign } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
+import { useEffect } from "react"
 
 export default function NotificationsPage() {
+      useEffect(() => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }, []);
   return (
     <div className="container py-6">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

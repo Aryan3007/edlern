@@ -203,7 +203,7 @@ export default function Header() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="relative">
                 <MessageSquare className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-sky-700 text-[10px] text-sky-700-foreground">
+                <span className="absolute -top-1 -right-1 flex h-4 text-white w-4 items-center justify-center rounded-full bg-sky-700 text-[10px] text-sky-700-foreground">
                   3
                 </span>
               </Button>
@@ -239,9 +239,9 @@ export default function Header() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="relative">
                 <Bell className="h-5 w-5" />
-                <Badge className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-sky-700 p-0 text-[10px] text-sky-700-foreground">
+                <span className="absolute -top-1 text-white -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-sky-700 p-0 text-[10px] text-sky-700-foreground">
                   1
-                </Badge>
+                </span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[300px]">

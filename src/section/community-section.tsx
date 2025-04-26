@@ -62,7 +62,7 @@ export default function CommunitySection() {
   }, [])
 
   return (
-    <section className="py-20 overflow-hidden relative">
+    <section className="py-20 overflow-hidden bg-white relative">
       {/* Background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-sky-200  rounded-full blur-3xl opacity-20"></div>
@@ -78,12 +78,12 @@ export default function CommunitySection() {
           className="text-center mb-16 max-w-3xl mx-auto"
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
-            <span className="text-[#0a2540] dark:text-white">Grow a dynamic community</span>
+            <span className="text-[#0a2540] :text-white">Grow a dynamic community</span>
           </h2>
-          <h3 className="text-2xl md:text-4xl font-semibold text-sky-600 dark:text-sky-600 mb-8">
+          <h3 className="text-2xl md:text-4xl font-semibold text-sky-600 :text-sky-600 mb-8">
             That reflects your vision
           </h3>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
+          <p className="text-lg text-gray-600 :text-gray-300">
             Our platform provides all the tools you need to build, grow, and monetize your online community.
           </p>
         </motion.div>
@@ -101,7 +101,7 @@ export default function CommunitySection() {
                         `flex items-center gap-2 px-4 py-3 md:px-6 rounded-full text-sm md:text-base font-medium transition-all duration-300 outline-none ${
                           selected
                             ? `bg-gradient-to-r ${tab.color} text-white shadow-lg shadow-${tab.id}-500/20 ring-2 ring-white/10`
-                            : "bg-white/90 dark:bg-gray-800/90 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/70 border border-gray-200 dark:border-gray-700"
+                            : "bg-white/90 :bg-gray-800/90 text-gray-700 :text-gray-200 hover:bg-gray-50 :hover:bg-gray-700/70 border border-gray-200 :border-gray-700"
                         }`
                       }
                     >
@@ -126,11 +126,11 @@ export default function CommunitySection() {
                           className="space-y-8"
                         >
                           <div>
-                            <h3 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent mb-3">
+                            <h3 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 :from-white :to-gray-300 bg-clip-text text-transparent mb-3">
                               {tab.title}
                             </h3>
                             <div className={`h-1 w-16 bg-gradient-to-r ${tab.color} rounded-full mb-4`}></div>
-                            <p className="text-lg text-gray-600 dark:text-gray-300">{tab.description}</p>
+                            <p className="text-lg text-gray-600 :text-gray-300">{tab.description}</p>
                           </div>
 
                           <div className="space-y-4">
@@ -148,14 +148,14 @@ export default function CommunitySection() {
                                   <div className={`absolute inset-0 rounded-full ${
                                     hoveredFeature === `${tab.id}-${index}` 
                                       ? `bg-gradient-to-r ${tab.color} scale-100` 
-                                      : "bg-gray-100 dark:bg-gray-800 scale-90"
+                                      : "bg-gray-100 :bg-gray-800 scale-90"
                                     } transition-all duration-300`}>
                                   </div>
                                   <CheckCircle
                                     className={`h-5 w-5 relative z-10 transition-colors duration-300 ${
                                       hoveredFeature === `${tab.id}-${index}`
                                         ? "text-white"
-                                        : "text-gray-700 dark:text-gray-300"
+                                        : "text-gray-700 :text-gray-300"
                                     }`}
                                   />
                                   {hoveredFeature === `${tab.id}-${index}` && (
@@ -168,7 +168,7 @@ export default function CommunitySection() {
                                     </motion.div>
                                   )}
                                 </div>
-                                <p className="text-gray-700 dark:text-gray-300 font-medium">{feature}</p>
+                                <p className="text-gray-700 :text-gray-300 font-medium">{feature}</p>
                               </motion.div>
                             ))}
                           </div>
@@ -189,7 +189,7 @@ export default function CommunitySection() {
 
             <div className="lg:w-1/2 order-1 lg:order-2">
               <div className="relative aspect-video">
-                <div className="absolute inset-0 bg-gradient-to-b from-gray-900/10 to-gray-900/30 dark:from-gray-900/30 dark:to-gray-900/60 rounded-xl z-10"></div>
+                <div className="absolute inset-0 bg-gradient-to-b from-gray-900/10 to-gray-900/30 :from-gray-900/30 :to-gray-900/60 rounded-xl z-10"></div>
                 
                 {/* Tab specific images */}
                 <AnimatePresence mode="wait">
@@ -200,7 +200,7 @@ export default function CommunitySection() {
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 1.05 }}
                       transition={{ duration: 0.4 }}
-                      className="relative w-full h-full rounded-xl overflow-hidden shadow-2xl shadow-gray-900/20 border border-gray-200 dark:border-gray-800"
+                      className="relative w-full h-full rounded-xl overflow-hidden shadow-2xl shadow-gray-900/20 border border-gray-200 :border-gray-800"
                     >
                       {selectedIndex === 0 && (
                         <img

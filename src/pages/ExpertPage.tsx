@@ -231,6 +231,13 @@ export default function ExpertPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
+  
+  useEffect(() => {
     if (params.id) {
       const foundExpert = experts.find((e) => e.id === params.id)
       setExpert(foundExpert || null)
@@ -271,10 +278,10 @@ export default function ExpertPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex bg-white text-black min-h-screen flex-col">
       <Header />
       <main className="flex-1 overflow-hidden mt-4 lg:mt-6">
-        <div className={`relative w-full overflow-hidden h-64 md:h-96 rounded-2xl max-w-7xl mx-auto ${expert.bgColor || "bg-gray-900"}`}>
+        <div className={`relative w-full overflow-hidden h-64 md:h-96 rounded-2xl max-w-7xl mx-auto bg-gradient-to-br from-sky-500 to-sky-700`}>
           <div className="absolute inset-0 bg-black/30" />
           <div className="container  max-w-7xl mx-auto overflow-hidden relative h-full flex flex-col justify-end px-4 py-8 md:px-6">
             <Link to="/" className="text-white mb-4 hover:underline flex items-center gap-2">
@@ -399,7 +406,7 @@ export default function ExpertPage() {
                       </Link>
                     )}
                   </div>
-                  <Button className="w-full bg-sky-600 hover:bg-sky-700">Follow</Button>
+                  <Button className="w-full bg-sky-600 text-white hover:bg-sky-700">Follow</Button>
                 </div>
 
                 {expert.communities && expert.communities.length > 0 && (
@@ -419,7 +426,7 @@ export default function ExpertPage() {
                       </div>
                     </div>
                     <Link to={`/community/${expert.communities[0].id}`}>
-                      <Button className="w-full">View Community</Button>
+                      <Button className="w-full bg-sky-600 text-white hover:bg-sky-700">View Community</Button>
                     </Link>
                   </div>
                 )}

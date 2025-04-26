@@ -533,14 +533,15 @@ const Navbar: React.FC = () => {
                         </AnimatePresence>
                       </div>
                     ) : (
-                      <a href="#" className="block py-2 text-lg font-medium">
-                        {item.name}
-                      </a>
+                      <Link to={item.href} className=" block py-2 text-lg font-medium">
+                  {item.name}
+                  </Link>
                     )}
                   </div>
                 ))}
 
                 <div className="pt-4 space-y-4">
+                  
                   <a
                     href="/login"
                     className="block w-full text-center py-3 text-sky-500 border border-[#d8f999] rounded-md hover:bg-[#d8f999] transition"

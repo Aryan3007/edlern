@@ -180,7 +180,7 @@ export function TestimonialsSection(): JSX.Element {
   }
 
   return (
-    <section ref={ref} id="testimonials-section" className="py-12 md:py-24 relative overflow-hidden">
+    <section ref={ref} id="testimonials-section" className="py-12 bg-white md:py-24 relative overflow-hidden">
       <div className="container px-4 md:px-6 mx-auto relative z-10">
         <motion.div
           initial="hidden"
@@ -192,10 +192,10 @@ export function TestimonialsSection(): JSX.Element {
           <h2 className="heading-2 text-[#0a2540] text-3xl md:text-5xl font-bold mb-4 text-secondary-500">
             Loved by learning communities
           </h2>
-          <h3 className="text-2xl md:text-4xl font-semibold text-sky-600 dark:text-sky-600 mb-4 md:mb-8">
+          <h3 className="text-2xl md:text-4xl font-semibold text-sky-600 :text-sky-600 mb-4 md:mb-8">
             worldwide
           </h3>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
+          <p className="text-lg text-gray-600 :text-gray-300">
             See what educators, organizations, and learners are saying about their experience with edLern.
           </p>
         </motion.div>

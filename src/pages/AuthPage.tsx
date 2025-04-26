@@ -41,7 +41,12 @@ const testimonials = [
 export default function AuthPage() {
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login")
   const [showPassword, setShowPassword] = useState(false)
-
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
   // Dynamic data state
   const [statIndex, setStatIndex] = useState(0)
   const [testimonialIndex, setTestimonialIndex] = useState(0)
@@ -364,7 +369,7 @@ export default function AuthPage() {
                     </button>
                   </div>
 
-                  <p className="text-center text-sm text-gray-500 mt-6">
+                  <p className="text-center text-sm text-gray-500 mt-2">
                     {activeTab === "login" ? (
                       <>
                         Don't have an account?{" "}

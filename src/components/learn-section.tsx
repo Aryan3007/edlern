@@ -77,7 +77,7 @@ export default function LearnSection() {
   const displayedExperts = experts.slice(currentIndex, currentIndex + visibleItems)
 
   return (
-    <section className="w-full py-12">
+    <section className="w-full text-black py-12">
       <div className="container px-4 md:px-6">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-3xl font-bold tracking-tight">Learn from the best</h2>

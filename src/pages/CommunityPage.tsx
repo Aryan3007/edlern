@@ -118,6 +118,12 @@ export default function CommunityPage() {
 
   const [community, setCommunity] = useState<Community | null>(null)
   const [loading, setLoading] = useState(true)
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
 
   useEffect(() => {
     if (params.id) {
@@ -162,7 +168,7 @@ export default function CommunityPage() {
   return (
     <>
      <Header />
-     <div className="flex  min-h-screen flex-col">
+     <div className="flex bg-white text-black min-h-screen flex-col">
      
       <main className="flex-1 max-w-7xl mx-auto  overflow-hidden mt-4 lg:mt-6 ">
         <div className={`relative w-full overflow-hidden rounded-2xl h-64 md:h-96 ${community.bgColor || "bg-gray-900"}`}>

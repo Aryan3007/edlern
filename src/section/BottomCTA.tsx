@@ -1,8 +1,8 @@
 
-export default function SubscribeSection() {
+const BottomCTA = () => {
   return (
 <div className="bg-white">
-    <div className="mx-auto max-w-7xl py-20 sm:px-6">
+    <div className="mx-auto max-w-7xl pb-20 sm:px-6">
         <div className="relative isolate overflow-hidden bg-gradient-to-br from-sky-600 to-sky-800 px-6 pt-16 shadow-2xl sm:rounded-3xl sm:px-16 md:pt-24 lg:flex lg:gap-x-20 lg:px-24 lg:pt-0">
             <svg viewBox="0 0 1024 1024" className="absolute top-1/2 left-1/2 -z-10 size-[64rem] -translate-y-1/2 [mask-image:radial-gradient(closest-side,white,transparent)] sm:left-full sm:-ml-80 lg:left-1/2 lg:ml-0 lg:-translate-x-1/2 lg:translate-y-0" aria-hidden="true">
                 <circle cx={512} cy={512} r={512} fill="url(#759c1415-0410-454c-8f7c-9a820de03641)" fillOpacity="0.7" />
@@ -22,10 +22,14 @@ export default function SubscribeSection() {
                 </div>
             </div>
             <div className="relative mt-16 h-80 lg:mt-8">
-                <img className="absolute top-0 left-0 w-[57rem] max-w-none rounded-md bg-white/5 ring-1 ring-white/10" src="/cta2.png" alt="App screenshot" width={1824} height={1080} />
+                <img className="absolute top-0 left-0 w-[57rem] max-w-none rounded-md bg-white/5 ring-1 ring-white/10" src="/cta.png" alt="App screenshot" width={1824} height={1080} />
             </div>
         </div>
     </div>
 </div>
+
+
   )
 }
+
+export default BottomCTA

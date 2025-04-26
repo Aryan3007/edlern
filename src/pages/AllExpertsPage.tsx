@@ -1,6 +1,8 @@
 
 import Header from "@/components/header"
 import Footer from "@/section/footer"
+import { useEffect } from "react";
+
 import { Link } from "react-router-dom"
 
 // Sample data for all experts
@@ -72,19 +74,43 @@ const allExperts = [
 ]
 
 export default function AllExpertsPage() {
+    useEffect(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }, []);
+  
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex bg-white text-black min-h-screen flex-col">
       <Header />
       <main className="flex-1">
-        <div className=" py-12">
-          <div className="container  max-w-7xl mx-auto overflow-hidden px-4 md:px-6">
-            <h1 className="text-4xl font-bold mb-4">Learn from the best</h1>
-            <p className="text-gray-500 max-w-2xl">
-              Discover world-class experts in various fields who can help you transform your life, career, and business
-              through their communities, courses, and content.
-            </p>
-          </div>
-        </div>
+      <main className="flex-1">
+          <section className="w-full py-12 md:py-12">
+            <div className="max-7xl mx-auto px-4 md:px-6">
+              <div className="flex justify-center mb-8">
+                <div className="inline-flex items-center rounded-full bg-sky-100 px-4 py-1">
+                  <span className="text-xs font-medium text-sky-600 mr-2">New</span>
+                  <Link to="#" className="text-xs font-medium text-gray-700 hover:underline">
+                    Read the announcement
+                  </Link>
+                </div>
+              </div>
+              <div className="flex flex-col items-center space-y-4 text-center">
+                <div className="space-y-2 max-w-5xl">
+                  <h1 className="text-3xl font-bold tracking-tighter text-black sm:text-5xl md:text-6xl">
+                    Meet the <span className="text-sky-600">world's top experts</span> in their fields
+                  </h1>
+                  <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl">
+                    Explore insights, guidance, and expertise from renowned professionals across various domains
+                  </p>
+                </div>
+               
+              </div>
+            </div>
+          </section>
+
+        </main>
 
         <div className=" max-w-7xl mx-auto overflow-hidden px-4 py-12 md:px-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

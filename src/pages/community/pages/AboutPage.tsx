@@ -3,8 +3,15 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Link2, Users, Star, Lock } from "lucide-react"
+import { useEffect } from "react"
 
 export default function AboutPage() {
+      useEffect(() => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }, []);
   return (
     <div className="container lg:py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2">
