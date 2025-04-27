@@ -14,6 +14,7 @@ export default function CommunityPageFeed() {
       <div className="lg:col-span-3">
         <CommunityFeed />
       </div>
+      
     </div>
   )
 }

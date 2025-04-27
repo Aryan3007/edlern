@@ -195,10 +195,12 @@ export default function Header() {
 
         <div className="flex items-center gap-2">
           <Link to="/community/admin/dashboard" className="hidden lg:flex">
-          <Button variant="outline">Admin</Button>
+            <Button variant="outline">Admin</Button>
           </Link>
           <ThemeToggle />
-
+          <Link to="/" className="hidden lg:flex">
+            <Button variant="outline" size="icon"><LogOut className="text-red-500 h-5 w-5" /></Button>
+          </Link>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="relative">
