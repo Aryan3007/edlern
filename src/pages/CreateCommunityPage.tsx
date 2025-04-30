@@ -181,7 +181,8 @@ export default function CreateCommunityPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4 lg:bg-center lg:bg-no-repeat lg:bg-cover lg:bg-[url('/ttten.svg')]">
+     
       <div className="w-full max-w-5xl h-full lg:h-[90vh] overflow-y-auto flex flex-col md:flex-row rounded-xl overflow-hidden shadow-xl bg-white">
         {/* Left Sidebar */}
         <div className="w-full md:w-72 bg-gradient-to-br from-sky-600 to-sky-700 text-white p-6 md:p-8 relative">
@@ -787,7 +788,7 @@ export default function CreateCommunityPage() {
             ) : (
               <Button
                 variant="outline"
-                onClick={() => navigate("/admin/communities")}
+                onClick={() => navigate("/")}
                 className="hover:bg-sky-50 hover:text-sky-600 transition-colors"
               >
                 Cancel
