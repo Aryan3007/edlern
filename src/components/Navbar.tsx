@@ -25,6 +25,7 @@ import {
 import { Link } from 'react-router-dom';
 
 const navItems = [
+  // { name: "Home", href:"/", hasDropdown: false },
   { name: "Product", href:"", hasDropdown: true },
   { name: "Resources", href:"", hasDropdown: true },
   { name: "Discover", href:"/discover", hasDropdown: false },
@@ -443,7 +444,7 @@ const Navbar: React.FC = () => {
                 </button>
               </div>
 
-              <div className="p-4 space-y-4 pt-1">
+              <div className="p-4 space-y-4 bg-white mx-auto text-gray-800 pt-1">
                 {navItems.map((item) => (
                   <div key={item.name} className="border-b border-gray-100 pb-4">
                     {item.hasDropdown ? (
@@ -486,7 +487,7 @@ const Navbar: React.FC = () => {
                                           <div className="flex items-center gap-2">
                                             <h4 className="font-medium">{feature.title}</h4>
                                             {feature.isNew && (
-                                              <span className="text-xs bg-[#d8f999] text-sky-500 px-2 py-0.5 rounded-full">
+                                              <span className="text-xs bg-sky-100 text-sky-500 px-2 py-0.5 rounded-full">
                                                 New
                                               </span>
                                             )}
@@ -516,7 +517,7 @@ const Navbar: React.FC = () => {
                                           <div className="flex items-center gap-2">
                                             <h4 className="font-medium">{item.title}</h4>
                                             {item.isNew && (
-                                              <span className="text-xs bg-[#d8f999] text-sky-500 px-2 py-0.5 rounded-full">
+                                              <span className="text-xs bg-sky-100 text-sky-500 px-2 py-0.5 rounded-full">
                                                 New
                                               </span>
                                             )}
@@ -542,18 +543,18 @@ const Navbar: React.FC = () => {
 
                 <div className="pt-4 space-y-4">
                   
-                  <a
-                    href="/login"
-                    className="block w-full text-center py-3 text-sky-500 border border-[#d8f999] rounded-md hover:bg-[#d8f999] transition"
+                  <Link
+                    to="/login"
+                    className="block w-full text-center py-3 text-sky-500 border border-sky-700 rounded-md hover:bg-[#d8f999] transition"
                   >
                     Log in
-                  </a>
-                  <a
-                    href="#"
+                  </Link>
+                  <Link
+                    to="/community/feed"
                     className="block w-full text-center py-3 text-white bg-sky-500 rounded-md hover:bg-[#c2185b] transition"
                   >
-                    Book a Call
-                  </a>
+                    Get Started
+                  </Link>
                 </div>
               </div>
             </motion.div>

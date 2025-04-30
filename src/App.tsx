@@ -28,6 +28,11 @@ import AdminReportsPage from "./pages/communityAdmin/pages/AdminReportsPage"
 import AdminNotificationsPage from "./pages/communityAdmin/pages/AdminNotificationsPage"
 import AdminModerationPage from "./pages/communityAdmin/pages/AdminModerationPage"
 import AdminSettingsPage from "./pages/communityAdmin/pages/AdminSettingsPage"
+import CompanyAboutPage from "./pages/CompanyAboutPage"
+import FeaturesPage from "./pages/FeaturesPage"
+import CommunityGuidelinesPage from "./pages/CommunityGuidelinesPage"
+import HelpCenterPage from "./pages/HelpCenterPage"
+import CareersPage from "./pages/CareersPage"
 
 const App = () => {
   return (
@@ -36,6 +41,12 @@ const App = () => {
         {/* Normal routes */}
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<AuthPage />} />
+        <Route path="/about" element={<CompanyAboutPage />} />
+        <Route path="/features" element={<FeaturesPage />} />
+        <Route path="/careers" element={<CareersPage />} />
+        <Route path="/community-guidelines" element={<CommunityGuidelinesPage />} />
+        <Route path="/help-center" element={<HelpCenterPage />} />
+        <Route path="/community-guidlines" element={<FeaturesPage />} />
         <Route path="/discover" element={<DiscoverPage />} />
         <Route path="/expert/:id" element={<ExpertPage />} />
         <Route path="/experts" element={<AllExpertsPage />} />

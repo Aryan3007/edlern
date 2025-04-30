@@ -274,16 +274,12 @@ const Footer = () => {
                   Pricing
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link to="/blog" className="text-gray-700 hover:text-gray-900 transition-colors">
                   Blog
                 </Link>
-              </li>
-              <li>
-                <Link to="/careers" className="text-gray-700 hover:text-gray-900 transition-colors">
-                  Careers
-                </Link>
-              </li>
+              </li> */}
+             
               <li>
                 <Link to="/contact" className="text-gray-700 hover:text-gray-900 transition-colors">
                   Contact
@@ -307,11 +303,16 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/careers" className="text-gray-700 hover:text-gray-900 transition-colors">
+                  Careers
+                </Link>
+              </li>
+              {/* <li>
                 <Link to="/tutorials" className="text-gray-700 hover:text-gray-900 transition-colors">
                   Tutorials
                 </Link>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <Link to="/webinars" className="text-gray-700 hover:text-gray-900 transition-colors">
                   Webinars
                 </Link>
@@ -325,7 +326,7 @@ const Footer = () => {
                 <Link to="/status" className="text-gray-700 hover:text-gray-900 transition-colors">
                   System Status
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
 

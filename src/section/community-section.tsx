@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Tab } from "@headlessui/react"
-import { Users, CreditCard, Video, Trophy, ArrowRight, CheckCircle, Sparkles } from "lucide-react"
+import { Users, CreditCard, Video, Trophy, ArrowRight, CheckCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
-const tabs = [
+const features = [
   {
     id: "create",
     label: "Create",
@@ -14,9 +14,12 @@ const tabs = [
     title: "Build Your Community",
     description:
       "Create your own community in just a few easy steps and start engaging with learners by sharing your content.",
-    features: ["Customizable community pages", "Content management tools", "Member management", "Discussion forums"],
-    image: "https://images.unsplash.com/photo-1488415032361-b7e238421f1b?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", 
-    color: "from-sky-500 to-sky-600"
+    benefits: ["Customizable community pages", "Content management tools", "Member management", "Discussion forums"],
+    image:
+      "https://images.unsplash.com/photo-1488415032361-b7e238421f1b?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    gradient: "from-sky-500 to-sky-600",
+    bgGradient: "from-sky-50 to-white",
+    accentColor: "bg-sky-500",
   },
   {
     id: "monetize",
@@ -25,9 +28,12 @@ const tabs = [
     title: "Monetize Your Community",
     description:
       "Generate revenue through memberships, digital products, and exclusive content for your community members.",
-    features: ["Multiple payment options", "Subscription management", "Digital product sales", "Automated billing"],
-    image: "https://images.unsplash.com/photo-1488415032361-b7e238421f1b?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", 
-    color: "from-sky-500 to-sky-600"
+    benefits: ["Multiple payment options", "Subscription management", "Digital product sales", "Automated billing"],
+    image:
+      "https://images.unsplash.com/photo-1488415032361-b7e238421f1b?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    gradient: "from-sky-500 to-sky-600",
+    bgGradient: "from-sky-50 to-white",
+    accentColor: "bg-sky-500",
   },
   {
     id: "livestream",
@@ -36,9 +42,12 @@ const tabs = [
     title: "Engage with Live Streaming",
     description:
       "Connect with your audience in real-time through high-quality live streaming and interactive sessions.",
-    features: ["HD video streaming", "Live chat integration", "Recording capabilities", "Stream scheduling"],
-    image: "https://images.unsplash.com/photo-1488415032361-b7e238421f1b?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", 
-    color: "from-sky-500 to-sky-600"
+    benefits: ["HD video streaming", "Live chat integration", "Recording capabilities", "Stream scheduling"],
+    image:
+      "https://images.unsplash.com/photo-1488415032361-b7e238421f1b?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    gradient: "from-sky-500 to-sky-600",
+    bgGradient: "from-sky-50 to-white",
+    accentColor: "bg-sky-500",
   },
   {
     id: "gamification",
@@ -46,30 +55,28 @@ const tabs = [
     icon: <Trophy className="h-5 w-5" />,
     title: "Gamify the Experience",
     description: "Increase engagement with gamification elements like badges, points, leaderboards, and challenges.",
-    features: ["Custom achievement badges", "Point systems", "Leaderboards", "Challenges and rewards"],
-    image: "https://images.unsplash.com/photo-1488415032361-b7e238421f1b?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", 
-    color: "from-sky-500 to-sky-600"
+    benefits: ["Custom achievement badges", "Point systems", "Leaderboards", "Challenges and rewards"],
+    image:
+      "https://images.unsplash.com/photo-1488415032361-b7e238421f1b?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    gradient: "from-sky-500 to-sky-600",
+    bgGradient: "from-sky-50 to-white",
+    accentColor: "bg-sky-500",
   },
 ]
 
 export default function CommunitySection() {
-  const [hoveredFeature, setHoveredFeature] = useState<string | null>(null)
-  const [selectedIndex, setSelectedIndex] = useState(0)
+  const [activeFeature, setActiveFeature] = useState(features[0].id)
   const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
     setIsClient(true)
   }, [])
 
+  const selectedFeature = features.find((feature) => feature.id === activeFeature) || features[0]
+
   return (
-    <section className="py-20 overflow-hidden bg-white relative">
-      {/* Background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-sky-200  rounded-full blur-3xl opacity-20"></div>
-        <div className="absolute top-1/2 -left-40 w-80 h-80 bg-blue-200  rounded-full blur-3xl opacity-20"></div>
-      </div>
-      
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+    <section className="py-16 bg-white  text-black md:py-24 overflow-hidden">
+      <div className="container px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl">
       <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -78,7 +85,7 @@ export default function CommunitySection() {
           className="text-center mb-16 max-w-3xl mx-auto"
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
-            <span className="text-[#0a2540] :text-white">Grow a dynamic community</span>
+            <span className="text-[#0a2540]">Grow a dynamic community</span>
           </h2>
           <h3 className="text-2xl md:text-4xl font-semibold text-sky-600 :text-sky-600 mb-8">
             That reflects your vision
@@ -88,174 +95,112 @@ export default function CommunitySection() {
           </p>
         </motion.div>
 
-        <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
-          <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
-            <div className="lg:w-1/2 order-2 lg:order-1">
-              {/* Tab navigation - horizontal scrollable on mobile */}
-              <div className="overflow-x-auto pb-4 mb-8 -mx-4 px-4 md:overflow-visible md:-mx-0 md:px-0">
-                <Tab.List className="flex gap-2 min-w-max md:flex-wrap md:gap-3">
-                  {tabs.map((tab) => (
-                    <Tab
-                      key={tab.id}
-                      className={({ selected }) =>
-                        `flex items-center gap-2 px-4 py-3 md:px-6 rounded-full text-sm md:text-base font-medium transition-all duration-300 outline-none ${
-                          selected
-                            ? `bg-gradient-to-r ${tab.color} text-white shadow-lg shadow-${tab.id}-500/20 ring-2 ring-white/10`
-                            : "bg-white/90 :bg-gray-800/90 text-gray-700 :text-gray-200 hover:bg-gray-50 :hover:bg-gray-700/70 border border-gray-200 :border-gray-700"
-                        }`
-                      }
-                    >
-                      {tab.icon}
-                      {tab.label}
-                    </Tab>
-                  ))}
-                </Tab.List>
-              </div>
 
-              {/* Tab content */}
-              <Tab.Panels className="min-h-[320px]">
-                <AnimatePresence mode="wait">
-                  {tabs.map((tab, idx) => (
-                    <Tab.Panel key={tab.id} className="outline-none" static={idx === selectedIndex}>
-                      {idx === selectedIndex && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -20 }}
-                          transition={{ duration: 0.5 }}
-                          className="space-y-8"
-                        >
-                          <div>
-                            <h3 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 :from-white :to-gray-300 bg-clip-text text-transparent mb-3">
-                              {tab.title}
-                            </h3>
-                            <div className={`h-1 w-16 bg-gradient-to-r ${tab.color} rounded-full mb-4`}></div>
-                            <p className="text-lg text-gray-600 :text-gray-300">{tab.description}</p>
-                          </div>
-
-                          <div className="space-y-4">
-                            {tab.features.map((feature, index) => (
-                              <motion.div
-                                key={index}
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: index * 0.1, duration: 0.4 }}
-                                className="flex items-center gap-3 group"
-                                onMouseEnter={() => setHoveredFeature(`${tab.id}-${index}`)}
-                                onMouseLeave={() => setHoveredFeature(null)}
-                              >
-                                <div className="relative flex items-center justify-center w-8 h-8">
-                                  <div className={`absolute inset-0 rounded-full ${
-                                    hoveredFeature === `${tab.id}-${index}` 
-                                      ? `bg-gradient-to-r ${tab.color} scale-100` 
-                                      : "bg-gray-100 :bg-gray-800 scale-90"
-                                    } transition-all duration-300`}>
-                                  </div>
-                                  <CheckCircle
-                                    className={`h-5 w-5 relative z-10 transition-colors duration-300 ${
-                                      hoveredFeature === `${tab.id}-${index}`
-                                        ? "text-white"
-                                        : "text-gray-700 :text-gray-300"
-                                    }`}
-                                  />
-                                  {hoveredFeature === `${tab.id}-${index}` && (
-                                    <motion.div
-                                      initial={{ scale: 0 }}
-                                      animate={{ scale: 1 }}
-                                      className="absolute -top-1 -right-1 z-20"
-                                    >
-                                      <Sparkles className="h-3 w-3 text-yellow-400" />
-                                    </motion.div>
-                                  )}
-                                </div>
-                                <p className="text-gray-700 :text-gray-300 font-medium">{feature}</p>
-                              </motion.div>
-                            ))}
-                          </div>
-
-                          <div className="pt-4">
-                            <Button className={`bg-gradient-to-r ${tab.color} rounded-full text-white hover:opacity-90 transition-opacity group px-6 py-2.5`}>
-                              Get started
-                              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                            </Button>
-                          </div>
-                        </motion.div>
-                      )}
-                    </Tab.Panel>
-                  ))}
-                </AnimatePresence>
-              </Tab.Panels>
-            </div>
-
-            <div className="lg:w-1/2 order-1 lg:order-2">
-              <div className="relative aspect-video">
-                <div className="absolute inset-0 bg-gradient-to-b from-gray-900/10 to-gray-900/30 :from-gray-900/30 :to-gray-900/60 rounded-xl z-10"></div>
-                
-                {/* Tab specific images */}
-                <AnimatePresence mode="wait">
-                  {isClient && (
-                    <motion.div
-                      key={selectedIndex}
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 1.05 }}
-                      transition={{ duration: 0.4 }}
-                      className="relative w-full h-full rounded-xl overflow-hidden shadow-2xl shadow-gray-900/20 border border-gray-200 :border-gray-800"
-                    >
-                      {selectedIndex === 0 && (
-                        <img
-                          src="https://images.unsplash.com/photo-1488415032361-b7e238421f1b?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                          alt="Community Building Dashboard"
-                          className="w-full h-full object-cover"
-                        />
-                      )}
-                      {selectedIndex === 1 && (
-                        <img
-                          src="https://images.unsplash.com/photo-1488415032361-b7e238421f1b?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                          alt="Monetization Dashboard"
-                          className="w-full h-full object-cover"
-                        />
-                      )}
-                      {selectedIndex === 2 && (
-                        <img
-                          src="https://images.unsplash.com/photo-1488415032361-b7e238421f1b?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                          alt="Live Streaming Dashboard"
-                          className="w-full h-full object-cover"
-                        />
-                      )}
-                      {selectedIndex === 3 && (
-                        <img
-                       src="https://images.unsplash.com/photo-1488415032361-b7e238421f1b?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                          alt="Gamification Dashboard"
-                          className="w-full h-full object-cover"
-                        />
-                      )}
-                      
-                      {/* Play button overlay for livestream tab */}
-                      {/* {selectedIndex === 2 && (
-                        <motion.div 
-                          initial={{ opacity: 0, scale: 0.5 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          className="absolute inset-0 flex items-center justify-center"
-                        >
-                          <div className="bg-white/20 backdrop-blur-sm p-4 rounded-full cursor-pointer group hover:bg-white/30 transition-all duration-300">
-                            <Play className="h-12 w-12 text-white fill-white" />
-                          </div>
-                        </motion.div>
-                      )} */}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-                
-                {/* Decorative elements */}
-                <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-gradient-to-r from-sky-500/20 to-emerald-500/20 rounded-full blur-2xl"></div>
-              </div>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+          {/* Feature navigation */}
+          <div className="md:col-span-12 flex flex-wrap justify-center gap-3 mb-2 lg:mb-8">
+            {features.map((feature) => (
+              <button
+                key={feature.id}
+                onClick={() => setActiveFeature(feature.id)}
+                className={cn(
+                  "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300",
+                  activeFeature === feature.id
+                    ? `bg-gradient-to-r ${feature.gradient} text-white shadow-md`
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200",
+                )}
+              >
+                {feature.icon}
+                {feature.label}
+              </button>
+            ))}
           </div>
-        </Tab.Group>
 
-        {/* Bottom CTA */}
-       
+          {/* Feature content */}
+          <div className="md:col-span-12">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeFeature}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4 }}
+                className={cn("rounded-3xl overflow-hidden bg-gradient-to-br")}
+              >
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div className="space-y-8">
+                    <div>
+                      <div
+                        className={cn(
+                          "inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium mb-4 bg-white shadow-sm",
+                          `text-${selectedFeature.id}-600`,
+                        )}
+                      >
+                        {selectedFeature.icon}
+                        {selectedFeature.label}
+                      </div>
+                      <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">{selectedFeature.title}</h3>
+                      <p className="text-gray-600">{selectedFeature.description}</p>
+                    </div>
+
+                    <div className="space-y-4">
+                      <h4 className="font-semibold text-gray-900">Key Benefits:</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {selectedFeature.benefits.map((benefit, idx) => (
+                          <motion.div
+                            key={idx}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: idx * 0.1 }}
+                            className="flex items-start gap-3 bg-white p-3 rounded-lg shadow-sm"
+                          >
+                            <div className={cn("flex-shrink-0 p-1 rounded-full", selectedFeature.accentColor)}>
+                              <CheckCircle className="h-4 w-4 text-white" />
+                            </div>
+                            <span className="text-gray-700 text-sm">{benefit}</span>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <Button
+                        className={cn(
+                          "bg-gradient-to-r text-white hover:opacity-90 transition-opacity group px-6 py-2.5 rounded-full",
+                          selectedFeature.gradient,
+                        )}
+                      >
+                        Get started with {selectedFeature.label}
+                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="relative">
+                    <div className="aspect-square md:aspect-auto md:h-full rounded-2xl overflow-hidden shadow-lg">
+                      {isClient && (
+                        <img
+                          src={selectedFeature.image || "/placeholder.svg"}
+                          alt={selectedFeature.title}
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-2xl"></div>
+                    </div>
+
+                    {/* Decorative elements */}
+                    <div
+                      className={cn(
+                        "absolute -bottom-6 -right-6 w-32 h-32 rounded-full blur-2xl opacity-30",
+                        selectedFeature.accentColor,
+                      )}
+                    ></div>
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
       </div>
     </section>
   )

@@ -240,7 +240,7 @@ export function TestimonialsSection(): JSX.Element {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.2, duration: 0.5 }}
-                      className="bg-white rounded-2xl p-6 md:p-8 shadow-lg relative"
+                      className="bg-white text-black rounded-2xl p-6 md:p-8 shadow-lg relative"
                     >
                       <div className="flex mb-4">{renderStars(testimonials[activeIndex].rating)}</div>
                       <motion.blockquote

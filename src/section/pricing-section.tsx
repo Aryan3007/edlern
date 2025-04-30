@@ -241,7 +241,7 @@ export default function PricingSection() {
                     className={`w-full ${
                       plan.popular
                         ? "bg-gradient-to-br from-sky-500 to-sky-700 text-white"
-                        : "bg-gray-100 :bg-gray-800 text-gray-900 :text-white hover:bg-gray-200 :hover:bg-gray-700"
+                        : "bg-gray-100  text-gray-900"
                     } group`}
                   >
                     {plan.cta}
