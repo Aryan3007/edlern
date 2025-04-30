@@ -33,6 +33,8 @@ import FeaturesPage from "./pages/FeaturesPage"
 import CommunityGuidelinesPage from "./pages/CommunityGuidelinesPage"
 import HelpCenterPage from "./pages/HelpCenterPage"
 import CareersPage from "./pages/CareersPage"
+import CreateCommunityPage from "./pages/CreateCommunityPage"
+import CommunitySuccessPage from "./pages/CommunitySuccessPage"
 
 const App = () => {
   return (
@@ -52,6 +54,8 @@ const App = () => {
         <Route path="/experts" element={<AllExpertsPage />} />
         <Route path="/community-details/:id" element={<CommunityPage />} />
         <Route path="/category/:id" element={<CategoryPage />} />
+        <Route path="/create-community" element={<CreateCommunityPage />} />
+        <Route path="/community-creation/successfull" element={<CommunitySuccessPage />} />
 
 
         {/* Community routes */} 
