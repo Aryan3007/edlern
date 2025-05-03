@@ -21,16 +21,20 @@ import {
   HelpCircle,
   Download,
   TrendingUp,
+  LogOut,
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { persistor, RootState } from '@/store/store';
+import { logout } from '@/store/authSlice';
 
 const navItems = [
   // { name: "Home", href:"/", hasDropdown: false },
-  { name: "Product", href:"", hasDropdown: true },
-  { name: "Resources", href:"", hasDropdown: true },
-  { name: "Discover", href:"/discover", hasDropdown: false },
-  { name: "Pricing", href:"", hasDropdown: false },
-  { name: "About", href:"/about", hasDropdown: false },
+  { name: "Product", href: "", hasDropdown: true },
+  { name: "Resources", href: "", hasDropdown: true },
+  { name: "Discover", href: "/discover", hasDropdown: false },
+  { name: "Pricing", href: "", hasDropdown: false },
+  { name: "About", href: "/about", hasDropdown: false },
 ];
 
 const features = [
@@ -158,7 +162,9 @@ const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSubmenuOpen, setMobileSubmenuOpen] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
-
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated)
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
   useEffect(() => {
     const handleScroll = () => {
       const isScrolled = window.scrollY > 10;
@@ -195,6 +201,12 @@ const Navbar: React.FC = () => {
     }
   };
 
+
+  const handleLogout = () => {
+    dispatch(logout())
+    persistor.purge() // clear persisted state (optional but clean)
+    navigate("/login") // redirect to login
+  }
   const cn = (...classes: (string | boolean | undefined)[]) => {
     return classes.filter(Boolean).join(' ');
   };
@@ -225,7 +237,7 @@ const Navbar: React.FC = () => {
                   )}
                 >
                   <Link to={item.href} className="flex items-center gap-1">
-                  {item.name}
+                    {item.name}
                   </Link>
                   {item.hasDropdown &&
                     (activeDropdown === item.name ? (
@@ -239,14 +251,33 @@ const Navbar: React.FC = () => {
           </div>
 
           <div className="hidden lg:flex items-center gap-4">
-            <Link to="/login" className="text-gray-600 hover:text-sky-500">
-              Log in
-            </Link>
-            <Link to={"/community/feed"}>
-            <button className="bg-gradient-to-br from-sky-500 to-sky-600 text-white rounded-full px-6 py-2 font-medium transition hover:bg-sky-500">
-              Get Started
-            </button>
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <button
+                  onClick={handleLogout}
+                  className="text-red-600 flex justify-between items-center gap-2 hover:text-red-500"
+                >
+                  SignOut
+                  <LogOut className='text-xs h-4 w-4'/>
+                </button>
+                <Link to={"/community/feed"}>
+                  <button className="bg-gradient-to-br from-sky-500 to-sky-600 text-white rounded-full px-6 py-2 font-medium transition hover:bg-sky-500">
+                    My Communities
+                  </button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="text-gray-600 hover:text-sky-500">
+                  Log in
+                </Link>
+                <Link to={"/community/feed"}>
+                  <button className="bg-gradient-to-br from-sky-500 to-sky-600 text-white rounded-full px-6 py-2 font-medium transition hover:bg-sky-500">
+                    Get Started
+                  </button>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -535,14 +566,14 @@ const Navbar: React.FC = () => {
                       </div>
                     ) : (
                       <Link to={item.href} className=" block py-2 text-lg font-medium">
-                  {item.name}
-                  </Link>
+                        {item.name}
+                      </Link>
                     )}
                   </div>
                 ))}
 
                 <div className="pt-4 space-y-4">
-                  
+
                   <Link
                     to="/login"
                     className="block w-full text-center py-3 text-sky-500 border border-sky-700 rounded-md hover:bg-[#d8f999] transition"

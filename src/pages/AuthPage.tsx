@@ -6,6 +6,11 @@ import { ArrowLeft, Mail, Lock, User, Eye, EyeOff, Activity, Users, MessageSquar
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
+import { toast } from "react-hot-toast"
+import { useDispatch, useSelector } from "react-redux"
+import { loginSuccess } from "@/store/authSlice"
+import { RootState } from "@/store/store"
 
 // Community statistics data
 const communityStats = [
@@ -38,15 +43,50 @@ const testimonials = [
   },
 ]
 
+// API URLs
+const API_BASE_URL = "http://127.0.0.1:8000/api/v1/auth"
+const SIGNUP_URL = `${API_BASE_URL}/signup/`
+const LOGIN_URL = `${API_BASE_URL}/login/`
+
 export default function AuthPage() {
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login")
   const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const dispatch = useDispatch()
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated)
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+
+    return () => {
+      // Cleanup logic if needed
+    };
+  }, [isAuthenticated, navigate]);
+
+  const [formData, setFormData] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    password: "",
+    confirmPassword: ""
+  })
+  const [errors, setErrors] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    password: "",
+    confirmPassword: ""
+  })
+
   useEffect(() => {
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
-  }, []);
+  }, [activeTab]);
+
   // Dynamic data state
   const [statIndex, setStatIndex] = useState(0)
   const [testimonialIndex, setTestimonialIndex] = useState(0)
@@ -67,15 +107,172 @@ export default function AuthPage() {
     }
   }, [])
 
+  // Handle form input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target
+    if (id in errors) {
+      setFormData({
+        ...formData,
+        [id]: value
+      })
+
+      // Clear error when user starts typing
+      setErrors({
+        ...errors,
+        [id]: ""
+      })
+    }
+  }
+
+  // Validate form data
+  const validateForm = () => {
+    const newErrors = { ...errors }
+    let isValid = true
+
+    // Reset errors
+    Object.keys(newErrors).forEach(key => {
+      newErrors[key as keyof typeof errors] = ""
+    })
+
+    // Email validation
+    if (!formData.email) {
+      newErrors.email = "Email is required"
+      isValid = false
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email is invalid"
+      isValid = false
+    }
+
+    // Password validation
+    if (!formData.password) {
+      newErrors.password = "Password is required"
+      isValid = false
+    } else if (formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters"
+      isValid = false
+    }
+
+    // Additional signup validations
+    if (activeTab === "signup") {
+      if (!formData.first_name.trim()) {
+        newErrors.first_name = "First name is required"
+        isValid = false
+      }
+
+      if (!formData.last_name.trim()) {
+        newErrors.last_name = "Last name is required"
+        isValid = false
+      }
+
+      if (formData.password !== formData.confirmPassword) {
+        newErrors.confirmPassword = "Passwords do not match"
+        isValid = false
+      }
+    }
+
+    setErrors(newErrors)
+    return isValid
+  }
+
+  // Handle login
+
+  const handleLogin = async () => {
+    if (!validateForm()) return
+
+    setIsLoading(true)
+    try {
+      const response = await fetch(LOGIN_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        // ✅ Dispatch to Redux store
+        dispatch(loginSuccess(data.data))
+
+        toast.success("Login successful!")
+        navigate("/")
+      } else {
+        toast.error(data.message || "Login failed. Please check your credentials.")
+      }
+    } catch (error) {
+      toast.error("An error occurred. Please try again.")
+      console.error("Login error:", error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Handle signup
+  const handleSignup = async () => {
+    if (!validateForm()) return
+
+    setIsLoading(true)
+    try {
+      const response = await fetch(SIGNUP_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          first_name: formData.first_name,
+          last_name: formData.last_name,
+          email: formData.email,
+          password: formData.password,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        toast.success(data.message || "Signup successful! Please check your email for verification.")
+        // Switch to login tab after successful signup
+        setActiveTab("login")
+        // Reset form
+        setFormData({
+          ...formData,
+          first_name: "",
+          last_name: "",
+          password: "",
+          confirmPassword: ""
+        })
+      } else {
+        toast.error(data.message || "Signup failed. Please try again.")
+      }
+    } catch (error) {
+      toast.error("An error occurred. Please try again.")
+      console.error("Signup error:", error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Handle form submission
+  interface FormSubmitEvent extends React.FormEvent<HTMLFormElement> {
+    preventDefault: () => void;
+  }
+
+  const handleSubmit = (e: FormSubmitEvent) => {
+    e.preventDefault();
+    if (activeTab === "login") {
+      handleLogin();
+    } else {
+      handleSignup();
+    }
+  };
+
   return (
     <div className="min-h-screen w-full bg-gray-50 flex flex-col md:flex-row">
       {/* Left side - Dynamic Community Data */}
       <div className="w-full md:w-1/2 bg-white relative overflow-hidden hidden lg:flex flex-col items-center justify-center p-6 md:p-12 shadow-md">
-        {/* Grid background */}
-        <div className="absolute inset-0 opacity-50">
-        <svg xmlns="http://www.w3.org/2000/svg" version="1.1"  viewBox="0 0 1422 800"><g stroke-width="3.5" stroke="#0084d1" fill="none" stroke-linecap="butt"><line x1="0" y1="0" x2="54" y2="54" opacity="1.00"></line><line x1="54" y1="0" x2="108" y2="54" opacity="1.00"></line><line x1="162" y1="0" x2="108" y2="54" opacity="1.00"></line><line x1="162" y1="0" x2="216" y2="54" opacity="1.00"></line><line x1="216" y1="0" x2="270" y2="54" opacity="1.00"></line><line x1="270" y1="0" x2="324" y2="54" opacity="1.00"></line><line x1="324" y1="0" x2="378" y2="54" opacity="1.00"></line><line x1="378" y1="0" x2="432" y2="54" opacity="1.00"></line><line x1="432" y1="0" x2="486" y2="54" opacity="1.00"></line><line x1="486" y1="0" x2="540" y2="54" opacity="1.00"></line><line x1="594" y1="0" x2="540" y2="54" opacity="1.00"></line><line x1="648" y1="0" x2="594" y2="54" opacity="1.00"></line><line x1="648" y1="0" x2="702" y2="54" opacity="1.00"></line><line x1="702" y1="0" x2="756" y2="54" opacity="1.00"></line><line x1="810" y1="0" x2="756" y2="54" opacity="1.00"></line><line x1="810" y1="0" x2="864" y2="54" opacity="1.00"></line><line x1="918" y1="0" x2="864" y2="54" opacity="1.00"></line><line x1="972" y1="0" x2="918" y2="54" opacity="1.00"></line><line x1="972" y1="0" x2="1026" y2="54" opacity="1.00"></line><line x1="1080" y1="0" x2="1026" y2="54" opacity="1.00"></line><line x1="1080" y1="0" x2="1134" y2="54" opacity="1.00"></line><line x1="1188" y1="0" x2="1134" y2="54" opacity="1.00"></line><line x1="1242" y1="0" x2="1188" y2="54" opacity="1.00"></line><line x1="1242" y1="0" x2="1296" y2="54" opacity="1.00"></line><line x1="1296" y1="0" x2="1350" y2="54" opacity="1.00"></line><line x1="1404" y1="0" x2="1350" y2="54" opacity="1.00"></line><line x1="1458" y1="0" x2="1404" y2="54" opacity="1.00"></line><line x1="54" y1="54" x2="0" y2="108" opacity="0.94"></line><line x1="108" y1="54" x2="54" y2="108" opacity="0.94"></line><line x1="108" y1="54" x2="162" y2="108" opacity="0.94"></line><line x1="162" y1="54" x2="216" y2="108" opacity="0.94"></line><line x1="270" y1="54" x2="216" y2="108" opacity="0.94"></line><line x1="270" y1="54" x2="324" y2="108" opacity="0.94"></line><line x1="324" y1="54" x2="378" y2="108" opacity="0.94"></line><line x1="432" y1="54" x2="378" y2="108" opacity="0.94"></line><line x1="432" y1="54" x2="486" y2="108" opacity="0.94"></line><line x1="540" y1="54" x2="486" y2="108" opacity="0.94"></line><line x1="594" y1="54" x2="540" y2="108" opacity="0.94"></line><line x1="594" y1="54" x2="648" y2="108" opacity="0.94"></line><line x1="702" y1="54" x2="648" y2="108" opacity="0.94"></line><line x1="756" y1="54" x2="702" y2="108" opacity="0.94"></line><line x1="756" y1="54" x2="810" y2="108" opacity="0.94"></line><line x1="810" y1="54" x2="864" y2="108" opacity="0.94"></line><line x1="864" y1="54" x2="918" y2="108" opacity="0.94"></line><line x1="918" y1="54" x2="972" y2="108" opacity="0.94"></line><line x1="1026" y1="54" x2="972" y2="108" opacity="0.94"></line><line x1="1026" y1="54" x2="1080" y2="108" opacity="0.94"></line><line x1="1080" y1="54" x2="1134" y2="108" opacity="0.94"></line><line x1="1134" y1="54" x2="1188" y2="108" opacity="0.94"></line><line x1="1188" y1="54" x2="1242" y2="108" opacity="0.94"></line><line x1="1242" y1="54" x2="1296" y2="108" opacity="0.94"></line><line x1="1296" y1="54" x2="1350" y2="108" opacity="0.94"></line><line x1="1404" y1="54" x2="1350" y2="108" opacity="0.94"></line><line x1="1458" y1="54" x2="1404" y2="108" opacity="0.94"></line><line x1="0" y1="108" x2="54" y2="162" opacity="0.87"></line><line x1="108" y1="108" x2="54" y2="162" opacity="0.87"></line><line x1="162" y1="108" x2="108" y2="162" opacity="0.87"></line><line x1="162" y1="108" x2="216" y2="162" opacity="0.87"></line><line x1="270" y1="108" x2="216" y2="162" opacity="0.87"></line><line x1="270" y1="108" x2="324" y2="162" opacity="0.87"></line><line x1="378" y1="108" x2="324" y2="162" opacity="0.87"></line><line x1="378" y1="108" x2="432" y2="162" opacity="0.87"></line><line x1="432" y1="108" x2="486" y2="162" opacity="0.87"></line><line x1="486" y1="108" x2="540" y2="162" opacity="0.87"></line><line x1="594" y1="108" x2="540" y2="162" opacity="0.87"></line><line x1="594" y1="108" x2="648" y2="162" opacity="0.87"></line><line x1="648" y1="108" x2="702" y2="162" opacity="0.87"></line><line x1="702" y1="108" x2="756" y2="162" opacity="0.87"></line><line x1="756" y1="108" x2="810" y2="162" opacity="0.87"></line><line x1="810" y1="108" x2="864" y2="162" opacity="0.87"></line><line x1="918" y1="108" x2="864" y2="162" opacity="0.87"></line><line x1="918" y1="108" x2="972" y2="162" opacity="0.87"></line><line x1="972" y1="108" x2="1026" y2="162" opacity="0.87"></line><line x1="1080" y1="108" x2="1026" y2="162" opacity="0.87"></line><line x1="1134" y1="108" x2="1080" y2="162" opacity="0.87"></line><line x1="1134" y1="108" x2="1188" y2="162" opacity="0.87"></line><line x1="1188" y1="108" x2="1242" y2="162" opacity="0.87"></line><line x1="1296" y1="108" x2="1242" y2="162" opacity="0.87"></line><line x1="1296" y1="108" x2="1350" y2="162" opacity="0.87"></line><line x1="1404" y1="108" x2="1350" y2="162" opacity="0.87"></line><line x1="1458" y1="108" x2="1404" y2="162" opacity="0.87"></line><line x1="0" y1="162" x2="54" y2="216" opacity="0.81"></line><line x1="54" y1="162" x2="108" y2="216" opacity="0.81"></line><line x1="108" y1="162" x2="162" y2="216" opacity="0.81"></line><line x1="162" y1="162" x2="216" y2="216" opacity="0.81"></line><line x1="270" y1="162" x2="216" y2="216" opacity="0.81"></line><line x1="324" y1="162" x2="270" y2="216" opacity="0.81"></line><line x1="324" y1="162" x2="378" y2="216" opacity="0.81"></line><line x1="432" y1="162" x2="378" y2="216" opacity="0.81"></line><line x1="486" y1="162" x2="432" y2="216" opacity="0.81"></line><line x1="486" y1="162" x2="540" y2="216" opacity="0.81"></line><line x1="594" y1="162" x2="540" y2="216" opacity="0.81"></line><line x1="648" y1="162" x2="594" y2="216" opacity="0.81"></line><line x1="648" y1="162" x2="702" y2="216" opacity="0.81"></line><line x1="756" y1="162" x2="702" y2="216" opacity="0.81"></line><line x1="756" y1="162" x2="810" y2="216" opacity="0.81"></line><line x1="864" y1="162" x2="810" y2="216" opacity="0.81"></line><line x1="864" y1="162" x2="918" y2="216" opacity="0.81"></line><line x1="972" y1="162" x2="918" y2="216" opacity="0.81"></line><line x1="972" y1="162" x2="1026" y2="216" opacity="0.81"></line><line x1="1080" y1="162" x2="1026" y2="216" opacity="0.81"></line><line x1="1080" y1="162" x2="1134" y2="216" opacity="0.81"></line><line x1="1188" y1="162" x2="1134" y2="216" opacity="0.81"></line><line x1="1188" y1="162" x2="1242" y2="216" opacity="0.81"></line><line x1="1242" y1="162" x2="1296" y2="216" opacity="0.81"></line><line x1="1296" y1="162" x2="1350" y2="216" opacity="0.81"></line><line x1="1404" y1="162" x2="1350" y2="216" opacity="0.81"></line><line x1="1458" y1="162" x2="1404" y2="216" opacity="0.81"></line><line x1="54" y1="216" x2="0" y2="270" opacity="0.74"></line><line x1="54" y1="216" x2="108" y2="270" opacity="0.74"></line><line x1="108" y1="216" x2="162" y2="270" opacity="0.74"></line><line x1="162" y1="216" x2="216" y2="270" opacity="0.74"></line><line x1="270" y1="216" x2="216" y2="270" opacity="0.74"></line><line x1="324" y1="216" x2="270" y2="270" opacity="0.74"></line><line x1="324" y1="216" x2="378" y2="270" opacity="0.74"></line><line x1="432" y1="216" x2="378" y2="270" opacity="0.74"></line><line x1="432" y1="216" x2="486" y2="270" opacity="0.74"></line><line x1="540" y1="216" x2="486" y2="270" opacity="0.74"></line><line x1="594" y1="216" x2="540" y2="270" opacity="0.74"></line><line x1="648" y1="216" x2="594" y2="270" opacity="0.74"></line><line x1="702" y1="216" x2="648" y2="270" opacity="0.74"></line><line x1="756" y1="216" x2="702" y2="270" opacity="0.74"></line><line x1="810" y1="216" x2="756" y2="270" opacity="0.74"></line><line x1="810" y1="216" x2="864" y2="270" opacity="0.74"></line><line x1="918" y1="216" x2="864" y2="270" opacity="0.74"></line><line x1="972" y1="216" x2="918" y2="270" opacity="0.74"></line><line x1="972" y1="216" x2="1026" y2="270" opacity="0.74"></line><line x1="1026" y1="216" x2="1080" y2="270" opacity="0.74"></line><line x1="1134" y1="216" x2="1080" y2="270" opacity="0.74"></line><line x1="1188" y1="216" x2="1134" y2="270" opacity="0.74"></line><line x1="1188" y1="216" x2="1242" y2="270" opacity="0.74"></line><line x1="1242" y1="216" x2="1296" y2="270" opacity="0.74"></line><line x1="1350" y1="216" x2="1296" y2="270" opacity="0.74"></line><line x1="1350" y1="216" x2="1404" y2="270" opacity="0.74"></line><line x1="1404" y1="216" x2="1458" y2="270" opacity="0.74"></line><line x1="54" y1="270" x2="0" y2="324" opacity="0.68"></line><line x1="54" y1="270" x2="108" y2="324" opacity="0.68"></line><line x1="162" y1="270" x2="108" y2="324" opacity="0.68"></line><line x1="216" y1="270" x2="162" y2="324" opacity="0.68"></line><line x1="270" y1="270" x2="216" y2="324" opacity="0.68"></line><line x1="270" y1="270" x2="324" y2="324" opacity="0.68"></line><line x1="324" y1="270" x2="378" y2="324" opacity="0.68"></line><line x1="432" y1="270" x2="378" y2="324" opacity="0.68"></line><line x1="486" y1="270" x2="432" y2="324" opacity="0.68"></line><line x1="486" y1="270" x2="540" y2="324" opacity="0.68"></line><line x1="594" y1="270" x2="540" y2="324" opacity="0.68"></line><line x1="648" y1="270" x2="594" y2="324" opacity="0.68"></line><line x1="702" y1="270" x2="648" y2="324" opacity="0.68"></line><line x1="702" y1="270" x2="756" y2="324" opacity="0.68"></line><line x1="756" y1="270" x2="810" y2="324" opacity="0.68"></line><line x1="864" y1="270" x2="810" y2="324" opacity="0.68"></line><line x1="864" y1="270" x2="918" y2="324" opacity="0.68"></line><line x1="972" y1="270" x2="918" y2="324" opacity="0.68"></line><line x1="1026" y1="270" x2="972" y2="324" opacity="0.68"></line><line x1="1026" y1="270" x2="1080" y2="324" opacity="0.68"></line><line x1="1134" y1="270" x2="1080" y2="324" opacity="0.68"></line><line x1="1134" y1="270" x2="1188" y2="324" opacity="0.68"></line><line x1="1188" y1="270" x2="1242" y2="324" opacity="0.68"></line><line x1="1242" y1="270" x2="1296" y2="324" opacity="0.68"></line><line x1="1350" y1="270" x2="1296" y2="324" opacity="0.68"></line><line x1="1404" y1="270" x2="1350" y2="324" opacity="0.68"></line><line x1="1404" y1="270" x2="1458" y2="324" opacity="0.68"></line><line x1="54" y1="324" x2="0" y2="378" opacity="0.62"></line><line x1="108" y1="324" x2="54" y2="378" opacity="0.62"></line><line x1="162" y1="324" x2="108" y2="378" opacity="0.62"></line><line x1="162" y1="324" x2="216" y2="378" opacity="0.62"></line><line x1="216" y1="324" x2="270" y2="378" opacity="0.62"></line><line x1="270" y1="324" x2="324" y2="378" opacity="0.62"></line><line x1="324" y1="324" x2="378" y2="378" opacity="0.62"></line><line x1="432" y1="324" x2="378" y2="378" opacity="0.62"></line><line x1="486" y1="324" x2="432" y2="378" opacity="0.62"></line><line x1="486" y1="324" x2="540" y2="378" opacity="0.62"></line><line x1="540" y1="324" x2="594" y2="378" opacity="0.62"></line><line x1="594" y1="324" x2="648" y2="378" opacity="0.62"></line><line x1="702" y1="324" x2="648" y2="378" opacity="0.62"></line><line x1="756" y1="324" x2="702" y2="378" opacity="0.62"></line><line x1="756" y1="324" x2="810" y2="378" opacity="0.62"></line><line x1="810" y1="324" x2="864" y2="378" opacity="0.62"></line><line x1="918" y1="324" x2="864" y2="378" opacity="0.62"></line><line x1="918" y1="324" x2="972" y2="378" opacity="0.62"></line><line x1="1026" y1="324" x2="972" y2="378" opacity="0.62"></line><line x1="1026" y1="324" x2="1080" y2="378" opacity="0.62"></line><line x1="1080" y1="324" x2="1134" y2="378" opacity="0.62"></line><line x1="1134" y1="324" x2="1188" y2="378" opacity="0.62"></line><line x1="1188" y1="324" x2="1242" y2="378" opacity="0.62"></line><line x1="1242" y1="324" x2="1296" y2="378" opacity="0.62"></line><line x1="1350" y1="324" x2="1296" y2="378" opacity="0.62"></line><line x1="1404" y1="324" x2="1350" y2="378" opacity="0.62"></line><line x1="1404" y1="324" x2="1458" y2="378" opacity="0.62"></line><line x1="54" y1="378" x2="0" y2="432" opacity="0.55"></line><line x1="54" y1="378" x2="108" y2="432" opacity="0.55"></line><line x1="108" y1="378" x2="162" y2="432" opacity="0.55"></line><line x1="162" y1="378" x2="216" y2="432" opacity="0.55"></line><line x1="270" y1="378" x2="216" y2="432" opacity="0.55"></line><line x1="270" y1="378" x2="324" y2="432" opacity="0.55"></line><line x1="378" y1="378" x2="324" y2="432" opacity="0.55"></line><line x1="432" y1="378" x2="378" y2="432" opacity="0.55"></line><line x1="486" y1="378" x2="432" y2="432" opacity="0.55"></line><line x1="540" y1="378" x2="486" y2="432" opacity="0.55"></line><line x1="594" y1="378" x2="540" y2="432" opacity="0.55"></line><line x1="594" y1="378" x2="648" y2="432" opacity="0.55"></line><line x1="648" y1="378" x2="702" y2="432" opacity="0.55"></line><line x1="702" y1="378" x2="756" y2="432" opacity="0.55"></line><line x1="810" y1="378" x2="756" y2="432" opacity="0.55"></line><line x1="864" y1="378" x2="810" y2="432" opacity="0.55"></line><line x1="918" y1="378" x2="864" y2="432" opacity="0.55"></line><line x1="972" y1="378" x2="918" y2="432" opacity="0.55"></line><line x1="1026" y1="378" x2="972" y2="432" opacity="0.55"></line><line x1="1080" y1="378" x2="1026" y2="432" opacity="0.55"></line><line x1="1134" y1="378" x2="1080" y2="432" opacity="0.55"></line><line x1="1188" y1="378" x2="1134" y2="432" opacity="0.55"></line><line x1="1242" y1="378" x2="1188" y2="432" opacity="0.55"></line><line x1="1242" y1="378" x2="1296" y2="432" opacity="0.55"></line><line x1="1350" y1="378" x2="1296" y2="432" opacity="0.55"></line><line x1="1350" y1="378" x2="1404" y2="432" opacity="0.55"></line><line x1="1404" y1="378" x2="1458" y2="432" opacity="0.55"></line><line x1="0" y1="432" x2="54" y2="486" opacity="0.49"></line><line x1="108" y1="432" x2="54" y2="486" opacity="0.49"></line><line x1="162" y1="432" x2="108" y2="486" opacity="0.49"></line><line x1="162" y1="432" x2="216" y2="486" opacity="0.49"></line><line x1="270" y1="432" x2="216" y2="486" opacity="0.49"></line><line x1="270" y1="432" x2="324" y2="486" opacity="0.49"></line><line x1="378" y1="432" x2="324" y2="486" opacity="0.49"></line><line x1="378" y1="432" x2="432" y2="486" opacity="0.49"></line><line x1="432" y1="432" x2="486" y2="486" opacity="0.49"></line><line x1="486" y1="432" x2="540" y2="486" opacity="0.49"></line><line x1="540" y1="432" x2="594" y2="486" opacity="0.49"></line><line x1="648" y1="432" x2="594" y2="486" opacity="0.49"></line><line x1="648" y1="432" x2="702" y2="486" opacity="0.49"></line><line x1="756" y1="432" x2="702" y2="486" opacity="0.49"></line><line x1="756" y1="432" x2="810" y2="486" opacity="0.49"></line><line x1="864" y1="432" x2="810" y2="486" opacity="0.49"></line><line x1="864" y1="432" x2="918" y2="486" opacity="0.49"></line><line x1="918" y1="432" x2="972" y2="486" opacity="0.49"></line><line x1="972" y1="432" x2="1026" y2="486" opacity="0.49"></line><line x1="1026" y1="432" x2="1080" y2="486" opacity="0.49"></line><line x1="1080" y1="432" x2="1134" y2="486" opacity="0.49"></line><line x1="1188" y1="432" x2="1134" y2="486" opacity="0.49"></line><line x1="1242" y1="432" x2="1188" y2="486" opacity="0.49"></line><line x1="1296" y1="432" x2="1242" y2="486" opacity="0.49"></line><line x1="1296" y1="432" x2="1350" y2="486" opacity="0.49"></line><line x1="1404" y1="432" x2="1350" y2="486" opacity="0.49"></line><line x1="1404" y1="432" x2="1458" y2="486" opacity="0.49"></line><line x1="54" y1="486" x2="0" y2="540" opacity="0.42"></line><line x1="108" y1="486" x2="54" y2="540" opacity="0.42"></line><line x1="162" y1="486" x2="108" y2="540" opacity="0.42"></line><line x1="162" y1="486" x2="216" y2="540" opacity="0.42"></line><line x1="270" y1="486" x2="216" y2="540" opacity="0.42"></line><line x1="324" y1="486" x2="270" y2="540" opacity="0.42"></line><line x1="324" y1="486" x2="378" y2="540" opacity="0.42"></line><line x1="378" y1="486" x2="432" y2="540" opacity="0.42"></line><line x1="432" y1="486" x2="486" y2="540" opacity="0.42"></line><line x1="540" y1="486" x2="486" y2="540" opacity="0.42"></line><line x1="594" y1="486" x2="540" y2="540" opacity="0.42"></line><line x1="648" y1="486" x2="594" y2="540" opacity="0.42"></line><line x1="702" y1="486" x2="648" y2="540" opacity="0.42"></line><line x1="702" y1="486" x2="756" y2="540" opacity="0.42"></line><line x1="810" y1="486" x2="756" y2="540" opacity="0.42"></line><line x1="864" y1="486" x2="810" y2="540" opacity="0.42"></line><line x1="918" y1="486" x2="864" y2="540" opacity="0.42"></line><line x1="918" y1="486" x2="972" y2="540" opacity="0.42"></line><line x1="972" y1="486" x2="1026" y2="540" opacity="0.42"></line><line x1="1026" y1="486" x2="1080" y2="540" opacity="0.42"></line><line x1="1134" y1="486" x2="1080" y2="540" opacity="0.42"></line><line x1="1188" y1="486" x2="1134" y2="540" opacity="0.42"></line><line x1="1188" y1="486" x2="1242" y2="540" opacity="0.42"></line><line x1="1296" y1="486" x2="1242" y2="540" opacity="0.42"></line><line x1="1350" y1="486" x2="1296" y2="540" opacity="0.42"></line><line x1="1404" y1="486" x2="1350" y2="540" opacity="0.42"></line><line x1="1458" y1="486" x2="1404" y2="540" opacity="0.42"></line><line x1="54" y1="540" x2="0" y2="594" opacity="0.36"></line><line x1="108" y1="540" x2="54" y2="594" opacity="0.36"></line><line x1="108" y1="540" x2="162" y2="594" opacity="0.36"></line><line x1="162" y1="540" x2="216" y2="594" opacity="0.36"></line><line x1="270" y1="540" x2="216" y2="594" opacity="0.36"></line><line x1="270" y1="540" x2="324" y2="594" opacity="0.36"></line><line x1="378" y1="540" x2="324" y2="594" opacity="0.36"></line><line x1="432" y1="540" x2="378" y2="594" opacity="0.36"></line><line x1="432" y1="540" x2="486" y2="594" opacity="0.36"></line><line x1="486" y1="540" x2="540" y2="594" opacity="0.36"></line><line x1="594" y1="540" x2="540" y2="594" opacity="0.36"></line><line x1="648" y1="540" x2="594" y2="594" opacity="0.36"></line><line x1="702" y1="540" x2="648" y2="594" opacity="0.36"></line><line x1="702" y1="540" x2="756" y2="594" opacity="0.36"></line><line x1="756" y1="540" x2="810" y2="594" opacity="0.36"></line><line x1="864" y1="540" x2="810" y2="594" opacity="0.36"></line><line x1="918" y1="540" x2="864" y2="594" opacity="0.36"></line><line x1="972" y1="540" x2="918" y2="594" opacity="0.36"></line><line x1="1026" y1="540" x2="972" y2="594" opacity="0.36"></line><line x1="1026" y1="540" x2="1080" y2="594" opacity="0.36"></line><line x1="1134" y1="540" x2="1080" y2="594" opacity="0.36"></line><line x1="1188" y1="540" x2="1134" y2="594" opacity="0.36"></line><line x1="1188" y1="540" x2="1242" y2="594" opacity="0.36"></line><line x1="1296" y1="540" x2="1242" y2="594" opacity="0.36"></line><line x1="1350" y1="540" x2="1296" y2="594" opacity="0.36"></line><line x1="1350" y1="540" x2="1404" y2="594" opacity="0.36"></line><line x1="1404" y1="540" x2="1458" y2="594" opacity="0.36"></line><line x1="54" y1="594" x2="0" y2="648" opacity="0.29"></line><line x1="108" y1="594" x2="54" y2="648" opacity="0.29"></line><line x1="162" y1="594" x2="108" y2="648" opacity="0.29"></line><line x1="216" y1="594" x2="162" y2="648" opacity="0.29"></line><line x1="270" y1="594" x2="216" y2="648" opacity="0.29"></line><line x1="324" y1="594" x2="270" y2="648" opacity="0.29"></line><line x1="378" y1="594" x2="324" y2="648" opacity="0.29"></line><line x1="432" y1="594" x2="378" y2="648" opacity="0.29"></line><line x1="432" y1="594" x2="486" y2="648" opacity="0.29"></line><line x1="486" y1="594" x2="540" y2="648" opacity="0.29"></line><line x1="540" y1="594" x2="594" y2="648" opacity="0.29"></line><line x1="648" y1="594" x2="594" y2="648" opacity="0.29"></line><line x1="648" y1="594" x2="702" y2="648" opacity="0.29"></line><line x1="756" y1="594" x2="702" y2="648" opacity="0.29"></line><line x1="756" y1="594" x2="810" y2="648" opacity="0.29"></line><line x1="810" y1="594" x2="864" y2="648" opacity="0.29"></line><line x1="864" y1="594" x2="918" y2="648" opacity="0.29"></line><line x1="918" y1="594" x2="972" y2="648" opacity="0.29"></line><line x1="972" y1="594" x2="1026" y2="648" opacity="0.29"></line><line x1="1080" y1="594" x2="1026" y2="648" opacity="0.29"></line><line x1="1080" y1="594" x2="1134" y2="648" opacity="0.29"></line><line x1="1188" y1="594" x2="1134" y2="648" opacity="0.29"></line><line x1="1188" y1="594" x2="1242" y2="648" opacity="0.29"></line><line x1="1296" y1="594" x2="1242" y2="648" opacity="0.29"></line><line x1="1296" y1="594" x2="1350" y2="648" opacity="0.29"></line><line x1="1404" y1="594" x2="1350" y2="648" opacity="0.29"></line><line x1="1458" y1="594" x2="1404" y2="648" opacity="0.29"></line><line x1="54" y1="648" x2="0" y2="702" opacity="0.23"></line><line x1="54" y1="648" x2="108" y2="702" opacity="0.23"></line><line x1="108" y1="648" x2="162" y2="702" opacity="0.23"></line><line x1="216" y1="648" x2="162" y2="702" opacity="0.23"></line><line x1="216" y1="648" x2="270" y2="702" opacity="0.23"></line><line x1="270" y1="648" x2="324" y2="702" opacity="0.23"></line><line x1="324" y1="648" x2="378" y2="702" opacity="0.23"></line><line x1="432" y1="648" x2="378" y2="702" opacity="0.23"></line><line x1="486" y1="648" x2="432" y2="702" opacity="0.23"></line><line x1="540" y1="648" x2="486" y2="702" opacity="0.23"></line><line x1="540" y1="648" x2="594" y2="702" opacity="0.23"></line><line x1="594" y1="648" x2="648" y2="702" opacity="0.23"></line><line x1="648" y1="648" x2="702" y2="702" opacity="0.23"></line><line x1="756" y1="648" x2="702" y2="702" opacity="0.23"></line><line x1="810" y1="648" x2="756" y2="702" opacity="0.23"></line><line x1="864" y1="648" x2="810" y2="702" opacity="0.23"></line><line x1="864" y1="648" x2="918" y2="702" opacity="0.23"></line><line x1="972" y1="648" x2="918" y2="702" opacity="0.23"></line><line x1="1026" y1="648" x2="972" y2="702" opacity="0.23"></line><line x1="1026" y1="648" x2="1080" y2="702" opacity="0.23"></line><line x1="1080" y1="648" x2="1134" y2="702" opacity="0.23"></line><line x1="1134" y1="648" x2="1188" y2="702" opacity="0.23"></line><line x1="1242" y1="648" x2="1188" y2="702" opacity="0.23"></line><line x1="1296" y1="648" x2="1242" y2="702" opacity="0.23"></line><line x1="1296" y1="648" x2="1350" y2="702" opacity="0.23"></line><line x1="1350" y1="648" x2="1404" y2="702" opacity="0.23"></line><line x1="1404" y1="648" x2="1458" y2="702" opacity="0.23"></line><line x1="0" y1="702" x2="54" y2="756" opacity="0.17"></line><line x1="108" y1="702" x2="54" y2="756" opacity="0.17"></line><line x1="162" y1="702" x2="108" y2="756" opacity="0.17"></line><line x1="216" y1="702" x2="162" y2="756" opacity="0.17"></line><line x1="216" y1="702" x2="270" y2="756" opacity="0.17"></line><line x1="270" y1="702" x2="324" y2="756" opacity="0.17"></line><line x1="324" y1="702" x2="378" y2="756" opacity="0.17"></line><line x1="432" y1="702" x2="378" y2="756" opacity="0.17"></line><line x1="486" y1="702" x2="432" y2="756" opacity="0.17"></line><line x1="486" y1="702" x2="540" y2="756" opacity="0.17"></line><line x1="594" y1="702" x2="540" y2="756" opacity="0.17"></line><line x1="594" y1="702" x2="648" y2="756" opacity="0.17"></line><line x1="702" y1="702" x2="648" y2="756" opacity="0.17"></line><line x1="756" y1="702" x2="702" y2="756" opacity="0.17"></line><line x1="810" y1="702" x2="756" y2="756" opacity="0.17"></line><line x1="864" y1="702" x2="810" y2="756" opacity="0.17"></line><line x1="918" y1="702" x2="864" y2="756" opacity="0.17"></line><line x1="918" y1="702" x2="972" y2="756" opacity="0.17"></line><line x1="1026" y1="702" x2="972" y2="756" opacity="0.17"></line><line x1="1080" y1="702" x2="1026" y2="756" opacity="0.17"></line><line x1="1080" y1="702" x2="1134" y2="756" opacity="0.17"></line><line x1="1134" y1="702" x2="1188" y2="756" opacity="0.17"></line><line x1="1188" y1="702" x2="1242" y2="756" opacity="0.17"></line><line x1="1242" y1="702" x2="1296" y2="756" opacity="0.17"></line><line x1="1296" y1="702" x2="1350" y2="756" opacity="0.17"></line><line x1="1404" y1="702" x2="1350" y2="756" opacity="0.17"></line><line x1="1458" y1="702" x2="1404" y2="756" opacity="0.17"></line><line x1="0" y1="756" x2="54" y2="810" opacity="0.10"></line><line x1="54" y1="756" x2="108" y2="810" opacity="0.10"></line><line x1="108" y1="756" x2="162" y2="810" opacity="0.10"></line><line x1="162" y1="756" x2="216" y2="810" opacity="0.10"></line><line x1="270" y1="756" x2="216" y2="810" opacity="0.10"></line><line x1="270" y1="756" x2="324" y2="810" opacity="0.10"></line><line x1="324" y1="756" x2="378" y2="810" opacity="0.10"></line><line x1="378" y1="756" x2="432" y2="810" opacity="0.10"></line><line x1="486" y1="756" x2="432" y2="810" opacity="0.10"></line><line x1="540" y1="756" x2="486" y2="810" opacity="0.10"></line><line x1="594" y1="756" x2="540" y2="810" opacity="0.10"></line><line x1="594" y1="756" x2="648" y2="810" opacity="0.10"></line><line x1="702" y1="756" x2="648" y2="810" opacity="0.10"></line><line x1="702" y1="756" x2="756" y2="810" opacity="0.10"></line><line x1="810" y1="756" x2="756" y2="810" opacity="0.10"></line><line x1="810" y1="756" x2="864" y2="810" opacity="0.10"></line><line x1="918" y1="756" x2="864" y2="810" opacity="0.10"></line><line x1="972" y1="756" x2="918" y2="810" opacity="0.10"></line><line x1="1026" y1="756" x2="972" y2="810" opacity="0.10"></line><line x1="1026" y1="756" x2="1080" y2="810" opacity="0.10"></line><line x1="1080" y1="756" x2="1134" y2="810" opacity="0.10"></line><line x1="1188" y1="756" x2="1134" y2="810" opacity="0.10"></line><line x1="1242" y1="756" x2="1188" y2="810" opacity="0.10"></line><line x1="1242" y1="756" x2="1296" y2="810" opacity="0.10"></line><line x1="1350" y1="756" x2="1296" y2="810" opacity="0.10"></line><line x1="1350" y1="756" x2="1404" y2="810" opacity="0.10"></line><line x1="1458" y1="756" x2="1404" y2="810" opacity="0.10"></line></g></svg>
-        </div>
-
         <div className="relative z-10 w-full max-w-lg">
           <div className="mb-12 text-center">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
@@ -169,21 +366,21 @@ export default function AuthPage() {
             <div className="flex mb-8 border-b border-gray-200">
               <button
                 onClick={() => setActiveTab("login")}
-                className={`pb-3 px-4 font-medium text-sm transition-colors ${
-                  activeTab === "login"
+                className={`pb-3 px-4 font-medium text-sm transition-colors ${activeTab === "login"
                     ? "text-gray-900 border-b-2 border-sky-500"
                     : "text-gray-500 hover:text-gray-700"
-                }`}
+                  }`}
+                disabled={isLoading}
               >
                 Login
               </button>
               <button
                 onClick={() => setActiveTab("signup")}
-                className={`pb-3 px-4 font-medium text-sm transition-colors ${
-                  activeTab === "signup"
+                className={`pb-3 px-4 font-medium text-sm transition-colors ${activeTab === "signup"
                     ? "text-gray-900 border-b-2 border-sky-500"
                     : "text-gray-500 hover:text-gray-700"
-                }`}
+                  }`}
+                disabled={isLoading}
               >
                 Sign up
               </button>
@@ -198,24 +395,53 @@ export default function AuthPage() {
                 exit={{ opacity: 0, x: activeTab === "login" ? 20 : -20 }}
                 transition={{ duration: 0.3 }}
               >
-                <form className="space-y-5">
+                <form className="space-y-5" onSubmit={handleSubmit}>
                   {activeTab === "signup" && (
-                    <div className="space-y-2">
-                      <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                        Full Name
-                      </label>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <User className="h-5 w-5 text-gray-400" />
+                    <>
+                      <div className="space-y-2">
+                        <label htmlFor="first_name" className="block text-sm font-medium text-gray-700">
+                          First Name
+                        </label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <User className="h-5 w-5 text-gray-400" />
+                          </div>
+                          <Input
+                            id="first_name"
+                            type="text"
+                            placeholder="John"
+                            value={formData.first_name}
+                            onChange={handleInputChange}
+                            className={`pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-sky-500 focus:ring-sky-500 focus:ring-opacity-50 ${errors.first_name ? "border-red-500" : ""
+                              }`}
+                            disabled={isLoading}
+                          />
                         </div>
-                        <Input
-                          id="name"
-                          type="text"
-                          placeholder="John Doe"
-                          className="pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-sky-500 focus:ring-sky-500 focus:ring-opacity-50"
-                        />
+                        {errors.first_name && <p className="mt-1 text-xs text-red-500">{errors.first_name}</p>}
                       </div>
-                    </div>
+
+                      <div className="space-y-2">
+                        <label htmlFor="last_name" className="block text-sm font-medium text-gray-700">
+                          Last Name
+                        </label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <User className="h-5 w-5 text-gray-400" />
+                          </div>
+                          <Input
+                            id="last_name"
+                            type="text"
+                            placeholder="Doe"
+                            value={formData.last_name}
+                            onChange={handleInputChange}
+                            className={`pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-sky-500 focus:ring-sky-500 focus:ring-opacity-50 ${errors.last_name ? "border-red-500" : ""
+                              }`}
+                            disabled={isLoading}
+                          />
+                        </div>
+                        {errors.last_name && <p className="mt-1 text-xs text-red-500">{errors.last_name}</p>}
+                      </div>
+                    </>
                   )}
 
                   <div className="space-y-2">
@@ -230,9 +456,14 @@ export default function AuthPage() {
                         id="email"
                         type="email"
                         placeholder="name@example.com"
-                        className="pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-sky-500 focus:ring-sky-500 focus:ring-opacity-50"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className={`pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-sky-500 focus:ring-sky-500 focus:ring-opacity-50 ${errors.email ? "border-red-500" : ""
+                          }`}
+                        disabled={isLoading}
                       />
                     </div>
+                    {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
                   </div>
 
                   <div className="space-y-2">
@@ -254,12 +485,17 @@ export default function AuthPage() {
                         id="password"
                         type={showPassword ? "text" : "password"}
                         placeholder="••••••••"
-                        className="pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-sky-500 focus:ring-sky-500 focus:ring-opacity-50"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        className={`pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-sky-500 focus:ring-sky-500 focus:ring-opacity-50 ${errors.password ? "border-red-500" : ""
+                          }`}
+                        disabled={isLoading}
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                        disabled={isLoading}
                       >
                         {showPassword ? (
                           <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
@@ -268,6 +504,7 @@ export default function AuthPage() {
                         )}
                       </button>
                     </div>
+                    {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
                   </div>
 
                   {activeTab === "signup" && (
@@ -283,9 +520,14 @@ export default function AuthPage() {
                           id="confirmPassword"
                           type={showPassword ? "text" : "password"}
                           placeholder="••••••••"
-                          className="pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-sky-500 focus:ring-sky-500 focus:ring-opacity-50"
+                          value={formData.confirmPassword}
+                          onChange={handleInputChange}
+                          className={`pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-sky-500 focus:ring-sky-500 focus:ring-opacity-50 ${errors.confirmPassword ? "border-red-500" : ""
+                            }`}
+                          disabled={isLoading}
                         />
                       </div>
+                      {errors.confirmPassword && <p className="mt-1 text-xs text-red-500">{errors.confirmPassword}</p>}
                     </div>
                   )}
 
@@ -296,6 +538,7 @@ export default function AuthPage() {
                         name="remember-me"
                         type="checkbox"
                         className="h-4 w-4 rounded border-gray-300 bg-white text-sky-600 focus:ring-sky-500 focus:ring-opacity-50"
+                        disabled={isLoading}
                       />
                       <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-600">
                         Remember me
@@ -303,8 +546,16 @@ export default function AuthPage() {
                     </div>
                   )}
 
-                  <Button className="w-full bg-gradient-to-br from-sky-500 to-sky-600  text-white py-6 rounded-md text-base font-medium">
-                    {activeTab === "login" ? "Sign in" : "Create account"}
+                  <Button
+                    type="submit"
+                    className="w-full bg-gradient-to-br from-sky-500 to-sky-600 text-white py-6 rounded-md text-base font-medium"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      "Processing..."
+                    ) : (
+                      activeTab === "login" ? "Sign in" : "Create account"
+                    )}
                   </Button>
 
                   <div className="relative my-6">
@@ -316,28 +567,14 @@ export default function AuthPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 gap-3">
+
                     <button
                       type="button"
-                      className="bg-white hover:bg-gray-50 py-2 px-4 rounded-md border border-gray-300 flex justify-center shadow-sm"
+                      className="bg-white gap-2 hover:bg-gray-50 py-2 px-4 rounded-md border border-gray-300 flex justify-center shadow-sm"
+                      disabled={isLoading}
                     >
-                      <svg
-                        className="h-5 w-5 text-[#1877F2]"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                      >
-                        <path
-                          d="M12.0003 2C6.47731 2 2.00031 6.477 2.00031 12C2.00031 16.991 5.65731 21.128 10.4383 21.879V14.89H7.89831V12H10.4383V9.797C10.4383 7.291 11.9323 5.907 14.2153 5.907C15.3103 5.907 16.4543 6.102 16.4543 6.102V8.562H15.1923C13.9503 8.562 13.5623 9.333 13.5623 10.124V12H16.3363L15.8933 14.89H13.5623V21.879C18.3433 21.129 22.0003 16.99 22.0003 12C22.0003 6.477 17.5233 2 12.0003 2Z"
-                          fill="currentColor"
-                        />
-                      </svg>
-                    </button>
-                    <button
-                      type="button"
-                      className="bg-white hover:bg-gray-50 py-2 px-4 rounded-md border border-gray-300 flex justify-center shadow-sm"
-                    >
-                      <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <svg className="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path
                           d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                           fill="#4285F4"
@@ -355,18 +592,9 @@ export default function AuthPage() {
                           fill="#EA4335"
                         />
                       </svg>
+                      Continue with Google
                     </button>
-                    <button
-                      type="button"
-                      className="bg-white hover:bg-gray-50 py-2 px-4 rounded-md border border-gray-300 flex justify-center shadow-sm"
-                    >
-                      <svg className="h-5 w-5 text-black" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path
-                          d="M16.365 1.43c0 1.14-.493 2.27-1.177 3.08-.744.9-1.99 1.57-2.987 1.57-.12 0-.23-.02-.3-.03-.01-.06-.04-.22-.04-.39 0-1.15.572-2.27 1.206-2.98.804-.94 2.142-1.64 3.248-1.68.03.13.05.28.05.43zm4.565 15.71c-.03.07-.463 1.58-1.518 3.12-.945 1.34-1.94 2.71-3.43 2.71-1.517 0-1.9-.88-3.63-.88-1.698 0-2.302.91-3.67.91-1.377 0-2.332-1.26-3.428-2.8-1.287-1.82-2.323-4.63-2.323-7.28 0-4.28 2.797-6.55 5.552-6.55 1.448 0 2.675.95 3.6.95.865 0 2.222-1.01 3.902-1.01.613 0 2.886.06 4.374 2.19-.13.09-2.383 1.37-2.383 4.19 0 3.26 2.854 4.42 2.955 4.45z"
-                          fill="currentColor"
-                        />
-                      </svg>
-                    </button>
+
                   </div>
 
                   <p className="text-center text-sm text-gray-500 mt-2">
@@ -377,6 +605,7 @@ export default function AuthPage() {
                           type="button"
                           onClick={() => setActiveTab("signup")}
                           className="text-sky-600 hover:text-sky-500 font-medium"
+                          disabled={isLoading}
                         >
                           Sign up
                         </button>
@@ -388,6 +617,7 @@ export default function AuthPage() {
                           type="button"
                           onClick={() => setActiveTab("login")}
                           className="text-sky-600 hover:text-sky-500 font-medium"
+                          disabled={isLoading}
                         >
                           Sign in
                         </button>

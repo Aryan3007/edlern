@@ -35,10 +35,13 @@ import HelpCenterPage from "./pages/HelpCenterPage"
 import CareersPage from "./pages/CareersPage"
 import CreateCommunityPage from "./pages/CreateCommunityPage"
 import CommunitySuccessPage from "./pages/CommunitySuccessPage"
+import { Toaster } from "react-hot-toast"
 
 const App = () => {
   return (
     <div>
+            <Toaster position="bottom-right" reverseOrder={false} />
+
       <Routes>
         {/* Normal routes */}
         <Route path="/" element={<HomePage />} />
