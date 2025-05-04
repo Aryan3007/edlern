@@ -12,6 +12,8 @@ import { Link } from "react-router-dom"
 
 export default function HeroSection() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated)
+  const user = useSelector((state: RootState) => state.auth.user as { first_name: string } | null)
+
   console.log(isAuthenticated);
 
   return (
@@ -47,7 +49,7 @@ export default function HeroSection() {
            <ChevronRight/>
           </Link> */}
                 {isAuthenticated && (
-                <p className="mt-5 text-gray-600">Welcome back! Ready to<Link to="/discover" className="text-black transition-all duration-200 hover:underline"> explore? </Link></p>
+                <p className="mt-5 text-gray-600">Welcome back! <span className="font-medium">{user?.first_name}</span> Ready to<Link to="/discover" className="text-black transition-all duration-200 hover:underline"> explore? </Link></p>
                 )}
             </div>
             <div>

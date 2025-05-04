@@ -33,9 +33,10 @@ import FeaturesPage from "./pages/FeaturesPage"
 import CommunityGuidelinesPage from "./pages/CommunityGuidelinesPage"
 import HelpCenterPage from "./pages/HelpCenterPage"
 import CareersPage from "./pages/CareersPage"
-import CreateCommunityPage from "./pages/CreateCommunityPage"
+// import CreateCommunityPage from "./pages/CreateCommunityPage"
 import CommunitySuccessPage from "./pages/CommunitySuccessPage"
 import { Toaster } from "react-hot-toast"
+import CommunityCreation from "./pages/CommunityCreation"
 
 const App = () => {
   return (
@@ -57,7 +58,7 @@ const App = () => {
         <Route path="/experts" element={<AllExpertsPage />} />
         <Route path="/community-details/:id" element={<CommunityPage />} />
         <Route path="/category/:id" element={<CategoryPage />} />
-        <Route path="/create-community" element={<CreateCommunityPage />} />
+        <Route path="/create-community" element={<CommunityCreation />} />
         <Route path="/community-creation/successfull" element={<CommunitySuccessPage />} />
 
 

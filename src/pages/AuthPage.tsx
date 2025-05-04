@@ -11,6 +11,7 @@ import { toast } from "react-hot-toast"
 import { useDispatch, useSelector } from "react-redux"
 import { loginSuccess } from "@/store/authSlice"
 import { RootState } from "@/store/store"
+import { SERVER_URL } from "../../config/config" 
 
 // Community statistics data
 const communityStats = [
@@ -44,7 +45,7 @@ const testimonials = [
 ]
 
 // API URLs
-const API_BASE_URL = "http://127.0.0.1:8000/api/v1/auth"
+const API_BASE_URL = SERVER_URL
 const SIGNUP_URL = `${API_BASE_URL}/signup/`
 const LOGIN_URL = `${API_BASE_URL}/login/`
 
