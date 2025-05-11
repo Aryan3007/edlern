@@ -7,6 +7,8 @@ import { motion } from "framer-motion"
 
 export default function CommunitySuccessPage() {
   const navigate = useNavigate()
+  const communityId = window.location.pathname.split("/").pop() || "default-community-id"
+
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-4">
@@ -48,7 +50,7 @@ export default function CommunitySuccessPage() {
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }}>
           <Button
-            onClick={() => navigate("/community/feed")}
+            onClick={() => navigate(`/${communityId}/community/feed`)}
             className="bg-sky-600 hover:bg-sky-700 text-white px-6 py-3 rounded-md w-full transition-colors"
           >
             Enter Your Community

@@ -8,11 +8,20 @@ import { Label } from "@/components/ui/label"
 import { CreditCard, ArrowRight, Sparkles, Users, TrendingUp } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { motion } from "framer-motion"
-import { Link } from "react-router-dom"
+import { useSelector } from "react-redux"
+import { RootState } from "@/store/store"
+import { useNavigate } from "react-router-dom"
+import { toast } from "sonner"
+import axios from "axios"
 
 export default function CommunityCreation() {
   const [open, setOpen] = useState(false)
   const [activeStep, setActiveStep] = useState(0)
+  const [communityName, setCommunityName] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
+  const navigate = useNavigate()
+  const accessToken = useSelector((state: RootState) => state.auth.accessToken)
 
   // Auto-advance steps
   useEffect(() => {
@@ -47,9 +56,73 @@ export default function CommunityCreation() {
     },
   ]
 
-  const handleStepClick = (index: number) => {
+
+
+  const handleStepClick = (index: number): void => {
     setActiveStep(index)
   }
+
+  interface CreateCommunityResponse {
+    detail?: string;
+    data?: {
+      community_id: string;
+    };
+  }
+
+  const handleCreateCommunity = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+    e.preventDefault();
+
+    if (!communityName.trim()) {
+      setError("Please enter a community name");
+      toast.error("Community name is required", {
+        description: "Please provide a valid community name to proceed.",
+        duration: 5000,
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    setError("");
+    toast("Creating your community...", {
+      description: "Please wait while we set up your community.",
+      duration: 5000,
+    });
+
+    try {
+      const response = await axios.post(
+        'https://edlern.weepul.in.net/api/v1/community/',
+        { name: communityName },
+        {
+          headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      const data: CreateCommunityResponse = response.data;
+
+      if (response.status < 200 || response.status >= 300) {
+        throw new Error(data.detail || 'Failed to create community');
+      }
+
+      toast.success("Community created successfully!", {
+        description: "Your community has been created. Redirecting to the success page...",
+        duration: 5000,
+      });
+
+      const communityId = data?.data?.community_id;
+      navigate(`/community-creation/successfull/${communityId}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong');
+      toast.error("Failed to create community", {
+        description: err instanceof Error ? err.message : "An unexpected error occurred. Please try again.",
+        duration: 5000,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -75,7 +148,7 @@ export default function CommunityCreation() {
     <main className="h-screen w-full flex flex-col items-center justify-between bg-white overflow-hidden">
       <div className="container px-4 flex flex-col h-full justify-center">
         <div className="text-center my-6">
-        <img className="h-12 mx-auto" src="/logo.png" alt="" />
+          <img className="h-12 mx-auto" src="/logo.png" alt="" />
 
           <h2 className="text-3xl font-bold text-gray-800 mt-4 tracking-tight">
             Build a community around your passion.
@@ -238,8 +311,7 @@ export default function CommunityCreation() {
           <div className="bg-gradient-to-r from-sky-50 to-blue-50 p-6">
             <DialogHeader className="pb-2">
               <div className="text-center mb-2">
-              <img className="h-12 mx-auto" src="/logo.png" alt="" />
-
+                <img className="h-12 mx-auto" src="/logo.png" alt="" />
               </div>
               <DialogTitle className="text-center text-xl font-bold tracking-tight">Create your community</DialogTitle>
               <DialogDescription className="text-center text-gray-600">
@@ -248,19 +320,21 @@ export default function CommunityCreation() {
             </DialogHeader>
           </div>
 
-          <div className="space-y-6 p-6">
+          <form onSubmit={handleCreateCommunity} className="space-y-6 p-6">
             <div className="space-y-2">
               <Label htmlFor="group-name" className="text-sm font-medium">
-                Group name
+                Community name
               </Label>
               <Input
                 id="group-name"
+                value={communityName}
+                onChange={(e) => setCommunityName(e.target.value)}
                 placeholder="Enter your group name"
                 className="h-11 rounded-lg border-gray-200 focus:border-sky-500 focus:ring-sky-500"
               />
               <p className="text-xs text-gray-500 flex justify-between">
                 <span>You can change this later</span>
-                <span>0 / 30</span>
+                <span>{communityName.length} / 30</span>
               </p>
             </div>
             <div className="space-y-2">
@@ -272,22 +346,31 @@ export default function CommunityCreation() {
                   id="card-number"
                   placeholder="Card number"
                   className="pl-10 h-11 rounded-lg border-gray-200 focus:border-sky-500 focus:ring-sky-500"
+                  disabled // Disabled as per requirement to only use community name
                 />
                 <CreditCard className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                 <Button
+                  type="button"
                   variant="outline"
                   size="sm"
                   className="absolute right-1 top-1 h-9 bg-white text-sky-600 hover:text-sky-700 hover:bg-gray-50 font-medium"
+                  disabled
                 >
                   Autofill
                 </Button>
               </div>
             </div>
-            <Link to={"/community-creation/successfull"}> 
-            <Button className="w-full bg-sky-600 hover:bg-sky-700 h-11 rounded-lg font-medium transition-all hover:shadow-md">
-              START FREE TRIAL
+            
+            {error && <p className="text-sm text-red-600">{error}</p>}
+            
+            <Button 
+              type="submit"
+              className="w-full bg-sky-600 hover:bg-sky-700 h-11 rounded-lg font-medium transition-all hover:shadow-md"
+              disabled={isLoading}
+            >
+              {isLoading ? "CREATING..." : "START FREE TRIAL"}
             </Button>
-            </Link>
+            
             <p className="text-xs mt-4 text-gray-500 text-center">
               1st charge will be on May 18, 2025 for $99. We'll email you 3-days before to remind you. You can cancel
               anytime with 1-click.{" "}
@@ -296,7 +379,7 @@ export default function CommunityCreation() {
               </a>
               .
             </p>
-          </div>
+          </form>
         </DialogContent>
       </Dialog>
     </main>

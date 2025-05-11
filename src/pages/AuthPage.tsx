@@ -7,11 +7,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Link } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
-import { toast } from "react-hot-toast"
 import { useDispatch, useSelector } from "react-redux"
 import { loginSuccess } from "@/store/authSlice"
 import { RootState } from "@/store/store"
-import { SERVER_URL } from "../../config/config" 
+import { SERVER_URL } from "../../config/config"
+import { toast } from "sonner"
 
 // Community statistics data
 const communityStats = [
@@ -199,13 +199,19 @@ export default function AuthPage() {
         // ✅ Dispatch to Redux store
         dispatch(loginSuccess(data.data))
 
-        toast.success("Login successful!")
+        toast.success("Login Successful", {
+          description: "You have successfully logged in. Redirecting to the dashboard...",
+        })
         navigate("/")
       } else {
-        toast.error(data.message || "Login failed. Please check your credentials.")
+        toast.error("Login Failed", {
+          description: data.message || "Please check your credentials and try again.",
+        })
       }
     } catch (error) {
-      toast.error("An error occurred. Please try again.")
+      toast.error("Error", {
+        description: "An unexpected error occurred. Please try again later.",
+      })
       console.error("Login error:", error)
     } finally {
       setIsLoading(false)
@@ -234,7 +240,9 @@ export default function AuthPage() {
       const data = await response.json()
 
       if (response.ok && data.success) {
-        toast.success(data.message || "Signup successful! Please check your email for verification.")
+        toast.success("Signup Successful", {
+          description: data.message || "Please check your email for verification instructions.",
+        })
         // Switch to login tab after successful signup
         setActiveTab("login")
         // Reset form
@@ -246,10 +254,15 @@ export default function AuthPage() {
           confirmPassword: ""
         })
       } else {
-        toast.error(data.message || "Signup failed. Please try again.")
+        toast.error("Signup Failed", {
+
+          description: data.message || "An error occurred during signup. Please try again.",
+        })
       }
     } catch (error) {
-      toast.error("An error occurred. Please try again.")
+      toast.error("Error", {
+        description: "An unexpected error occurred. Please try again later.",
+      })
       console.error("Signup error:", error)
     } finally {
       setIsLoading(false)
@@ -368,8 +381,8 @@ export default function AuthPage() {
               <button
                 onClick={() => setActiveTab("login")}
                 className={`pb-3 px-4 font-medium text-sm transition-colors ${activeTab === "login"
-                    ? "text-gray-900 border-b-2 border-sky-500"
-                    : "text-gray-500 hover:text-gray-700"
+                  ? "text-gray-900 border-b-2 border-sky-500"
+                  : "text-gray-500 hover:text-gray-700"
                   }`}
                 disabled={isLoading}
               >
@@ -378,8 +391,8 @@ export default function AuthPage() {
               <button
                 onClick={() => setActiveTab("signup")}
                 className={`pb-3 px-4 font-medium text-sm transition-colors ${activeTab === "signup"
-                    ? "text-gray-900 border-b-2 border-sky-500"
-                    : "text-gray-500 hover:text-gray-700"
+                  ? "text-gray-900 border-b-2 border-sky-500"
+                  : "text-gray-500 hover:text-gray-700"
                   }`}
                 disabled={isLoading}
               >

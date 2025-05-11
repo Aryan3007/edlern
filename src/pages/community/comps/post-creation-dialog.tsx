@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, ChangeEvent } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
@@ -10,69 +10,268 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Separator } from "@/components/ui/separator"
-import { Bold, Italic, List, ListOrdered, ImageIcon, Video, Link, AtSign, X, Plus } from "lucide-react"
+import { 
+  Bold, 
+  Italic, 
+  List, 
+  ListOrdered, 
+  ImageIcon, 
+ 
+  Link as LinkIcon, 
+  AtSign, 
+  X, 
+  Plus, 
+  Youtube, 
+  Loader2 
+} from "lucide-react"
+import { toast } from "sonner"
+import { RootState } from "@/store/store"
+import { useSelector } from "react-redux"
 
-export function PostCreationDialog() {
-  const [open, setOpen] = useState(false)
-  const [postContent, setPostContent] = useState("")
-  const [pollOptions, setPollOptions] = useState(["", ""])
-  const [mediaPreview, setMediaPreview] = useState<string | null>(null)
-  const [mediaType, setMediaType] = useState<"image" | "video" | null>(null)
+// Types
+interface Poll {
+  question: string;
+  options: string[];
+  duration: "1day" | "3days" | "7days";
+}
 
-  const handleAddPollOption = () => {
-    if (pollOptions.length < 5) {
-      setPollOptions([...pollOptions, ""])
-    }
-  }
+interface Link {
+  url: string;
+}
+
+interface YoutubeLink {
+  url: string;
+}
+
+interface Attachment {
+  file: File;
+  preview: string;
+}
+
+export function PostCreationDialog({communityId}: {communityId: string}) {
+ 
+  const accessToken = useSelector((state: RootState) => state.auth.accessToken)
+
+  // Form state
+  const [open, setOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [postContent, setPostContent] = useState("");
+  
+  // Poll state
+  const [isPollActive, setIsPollActive] = useState(false);
+  const [pollData, setPollData] = useState<Poll>({
+    question: "",
+    options: ["", ""],
+    duration: "1day"
+  });
+  
+  // Media state
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
+  
+  // Links state
+  const [links, setLinks] = useState<Link[]>([{ url: "" }]);
+  const [youtubeLinks, setYoutubeLinks] = useState<YoutubeLink[]>([{ url: "" }]);
+
+  // Handlers for poll options
+  const handlePollQuestionChange = (value: string) => {
+    setPollData({ ...pollData, question: value });
+  };
 
   const handlePollOptionChange = (index: number, value: string) => {
-    const newOptions = [...pollOptions]
-    newOptions[index] = value
-    setPollOptions(newOptions)
-  }
+    const newOptions = [...pollData.options];
+    newOptions[index] = value;
+    setPollData({ ...pollData, options: newOptions });
+  };
+
+  const handleAddPollOption = () => {
+    if (pollData.options.length < 5) {
+      setPollData({ ...pollData, options: [...pollData.options, ""] });
+    }
+  };
 
   const handleRemovePollOption = (index: number) => {
-    if (pollOptions.length > 2) {
-      const newOptions = [...pollOptions]
-      newOptions.splice(index, 1)
-      setPollOptions(newOptions)
+    if (pollData.options.length > 2) {
+      const newOptions = [...pollData.options];
+      newOptions.splice(index, 1);
+      setPollData({ ...pollData, options: newOptions });
     }
-  }
+  };
 
-  const handleMediaUpload = (type: "image" | "video") => {
-    // In a real app, this would open a file picker
-    // For demo purposes, we'll just set a placeholder
-    setMediaType(type)
-    setMediaPreview(
-      type === "image"
-        ? "/placeholder.svg?height=300&width=500&text=Image+Preview"
-        : "/placeholder.svg?height=300&width=500&text=Video+Preview",
-    )
-  }
+  const handlePollDurationChange = (duration: "1day" | "3days" | "7days") => {
+    setPollData({ ...pollData, duration });
+  };
 
-  const handleRemoveMedia = () => {
-    setMediaPreview(null)
-    setMediaType(null)
-  }
+  // Handlers for media uploads
+  const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
 
-  const handleSubmit = () => {
-    // In a real app, this would submit the post data
-    console.log("Post content:", postContent)
-    console.log("Media:", mediaType, mediaPreview)
-    console.log("Poll options:", pollOptions)
+    const newAttachments: Attachment[] = [];
+    
+    Array.from(files).forEach(file => {
+      // Check file type and size
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit example
+        toast.error("File too large",{
+          description: `${file.name} exceeds the 5MB size limit.`,
+         
+        });
+        return;
+      }
+      
+      const filePreview = URL.createObjectURL(file);
+      newAttachments.push({ file, preview: filePreview });
+    });
+    
+    setAttachments([...attachments, ...newAttachments]);
+    e.target.value = ''; // Reset input
+  };
 
-    // Reset form and close dialog
-    setPostContent("")
-    setMediaPreview(null)
-    setMediaType(null)
-    setPollOptions(["", ""])
-    setOpen(false)
-  }
+  const handleRemoveAttachment = (index: number) => {
+    const newAttachments = [...attachments];
+    URL.revokeObjectURL(newAttachments[index].preview); // Clean up preview URL
+    newAttachments.splice(index, 1);
+    setAttachments(newAttachments);
+  };
+
+  // Handlers for links
+  const handleLinkChange = (index: number, url: string) => {
+    const newLinks = [...links];
+    newLinks[index] = { url };
+    setLinks(newLinks);
+  };
+
+  const handleAddLink = () => {
+    setLinks([...links, { url: "" }]);
+  };
+
+  const handleRemoveLink = (index: number) => {
+    if (links.length > 1) {
+      const newLinks = [...links];
+      newLinks.splice(index, 1);
+      setLinks(newLinks);
+    } else {
+      // Reset to empty if it's the last one
+      setLinks([{ url: "" }]);
+    }
+  };
+
+  // Handlers for YouTube links
+  const handleYoutubeLinkChange = (index: number, url: string) => {
+    const newYoutubeLinks = [...youtubeLinks];
+    newYoutubeLinks[index] = { url };
+    setYoutubeLinks(newYoutubeLinks);
+  };
+
+  const handleAddYoutubeLink = () => {
+    setYoutubeLinks([...youtubeLinks, { url: "" }]);
+  };
+
+  const handleRemoveYoutubeLink = (index: number) => {
+    if (youtubeLinks.length > 1) {
+      const newYoutubeLinks = [...youtubeLinks];
+      newYoutubeLinks.splice(index, 1);
+      setYoutubeLinks(newYoutubeLinks);
+    } else {
+      // Reset to empty if it's the last one
+      setYoutubeLinks([{ url: "" }]);
+    }
+  };
+
+  // Form submission
+  const handleSubmit = async () => {
+    if (!postContent.trim() && attachments.length === 0 && !isPollActive) {
+      toast.error("Empty post",{
+        description: "Please add some content, media, or a poll to your post.",
+    
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      const formData = new FormData();
+      
+      // Add content
+      formData.append('content', postContent);
+      
+      // Add attachments
+      attachments.forEach(attachment => {
+        formData.append('attachments', attachment.file);
+      });
+      
+      // Add links if any
+      const validLinks = links.filter(link => link.url.trim() !== "");
+      if (validLinks.length > 0) {
+        formData.append('links', validLinks.map(link => link.url).join(','));
+      }
+      
+      // Add YouTube links if any
+      const validYoutubeLinks = youtubeLinks.filter(link => link.url.trim() !== "");
+      if (validYoutubeLinks.length > 0) {
+        formData.append('youtube_links', validYoutubeLinks.map(link => link.url).join(','));
+      }
+      
+      // Add poll if active
+      if (isPollActive && pollData.question.trim() !== "" && pollData.options.filter(opt => opt.trim() !== "").length >= 2) {
+        const pollPayload = {
+          question: pollData.question,
+          options: pollData.options.filter(opt => opt.trim() !== ""),
+        };
+        formData.append('poll', JSON.stringify(pollPayload));
+      }
+
+      // API call
+      const response = await fetch(`https://edlern.weepul.in.net/api/v1/community/${communityId}/feed/posts/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      // Success
+      toast.success( "Post created successfully!",{
+        description: "Your post has been published to the community feed.",
+        duration: 5000,
+      });
+
+      // Reset form and close dialog
+      resetForm();
+      setOpen(false);
+
+    } catch (error) {
+      console.error("Error submitting post:", error);
+      toast.error("Failed to create post",{
+        description: "There was an error publishing your post. Please try again.",
+        duration: 5000,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const resetForm = () => {
+    setPostContent("");
+    setAttachments([]);
+    setLinks([{ url: "" }]);
+    setYoutubeLinks([{ url: "" }]);
+    setPollData({
+      question: "",
+      options: ["", ""],
+      duration: "1day"
+    });
+    setIsPollActive(false);
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="py-0" asChild>
-        <div className="flex gap-3 p-2 cursor-pointer transition-colors rounded-md">
+      <DialogTrigger className="py-2 w-full" asChild>
+        <div className="flex gap-3 p-2 cursor-pointer transition-colors rounded-md border">
           <Avatar className="h-10 w-10">
             <AvatarImage src="/placeholder.svg?height=40&width=40" alt="User" />
             <AvatarFallback>U</AvatarFallback>
@@ -100,31 +299,67 @@ export function PostCreationDialog() {
               onChange={(e) => setPostContent(e.target.value)}
             />
 
-            {mediaPreview && (
-              <div className="relative mt-3 rounded-md overflow-hidden">
-                <img
-                  src={mediaPreview || "/placeholder.svg"}
-                  alt="Media preview"
-                  className="w-full h-auto object-cover"
-                />
-                <Button
-                  variant="destructive"
-                  size="icon"
-                  className="absolute top-2 right-2 h-8 w-8 rounded-full"
-                  onClick={handleRemoveMedia}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
+            {/* Attachments preview */}
+            {attachments.length > 0 && (
+              <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {attachments.map((attachment, index) => (
+                  <div key={index} className="relative rounded-md overflow-hidden">
+                    {attachment.file.type.startsWith('image/') ? (
+                      <img
+                        src={attachment.preview}
+                        alt={`Attachment ${index + 1}`}
+                        className="w-full h-auto object-cover"
+                      />
+                    ) : attachment.file.type.startsWith('video/') ? (
+                      <video
+                        src={attachment.preview}
+                        controls
+                        className="w-full h-auto"
+                      />
+                    ) : (
+                      <div className="bg-gray-100 p-4 rounded flex items-center justify-center">
+                        <span>{attachment.file.name}</span>
+                      </div>
+                    )}
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      className="absolute top-2 right-2 h-8 w-8 rounded-full"
+                      onClick={() => handleRemoveAttachment(index)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {/* Poll preview if active */}
+            {isPollActive && pollData.question && (
+              <div className="mt-3 border rounded-md p-3 bg-gray-50">
+                <h3 className="font-medium">{pollData.question}</h3>
+                <div className="mt-2 space-y-1">
+                  {pollData.options.filter(opt => opt.trim() !== "").map((option, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full border border-gray-300"></div>
+                      <span>{option}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-2 text-sm text-gray-500">
+                  Poll duration: {pollData.duration === "1day" ? "1 Day" : pollData.duration === "3days" ? "3 Days" : "1 Week"}
+                </div>
               </div>
             )}
           </div>
         </div>
 
         <Tabs defaultValue="format">
-          <TabsList className="grid grid-cols-4">
+          <TabsList className="grid grid-cols-5">
             <TabsTrigger value="format">Format</TabsTrigger>
             <TabsTrigger value="media">Media</TabsTrigger>
-            <TabsTrigger value="poll">Poll</TabsTrigger>
+            <TabsTrigger value="links">Links</TabsTrigger>
+            <TabsTrigger value="poll" onClick={() => setIsPollActive(true)}>Poll</TabsTrigger>
             <TabsTrigger value="mention">Mention</TabsTrigger>
           </TabsList>
 
@@ -142,22 +377,92 @@ export function PostCreationDialog() {
               <Button variant="outline" size="icon" className="h-9 w-9">
                 <ListOrdered className="h-4 w-4" />
               </Button>
-              <Button variant="outline" size="icon" className="h-9 w-9">
-                <Link className="h-4 w-4" />
-              </Button>
             </div>
           </TabsContent>
 
           <TabsContent value="media" className="py-2">
-            <div className="flex gap-2">
-              <Button variant="outline" className="gap-2" onClick={() => handleMediaUpload("image")}>
-                <ImageIcon className="h-4 w-4" />
-                Add Image
-              </Button>
-              <Button variant="outline" className="gap-2" onClick={() => handleMediaUpload("video")}>
-                <Video className="h-4 w-4" />
-                Add Video
-              </Button>
+            <div className="space-y-4">
+              <div className="flex gap-2">
+                <Label htmlFor="file-upload" className="cursor-pointer">
+                  <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors">
+                    <ImageIcon className="h-4 w-4" />
+                    <span>Add Media</span>
+                  </div>
+                  <input
+                    id="file-upload"
+                    type="file"
+                    multiple
+                    accept="image/*,video/*"
+                    className="hidden"
+                    onChange={handleFileUpload}
+                  />
+                </Label>
+              </div>
+              
+              {/* Current attachments count */}
+              {attachments.length > 0 && (
+                <p className="text-sm text-gray-500">
+                  {attachments.length} {attachments.length === 1 ? 'file' : 'files'} attached
+                </p>
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="links" className="py-2">
+            <div className="space-y-4">
+              <div>
+                <Label className="text-sm font-medium">Website Links</Label>
+                {links.map((link, index) => (
+                  <div key={`link-${index}`} className="flex items-center gap-2 mt-2">
+                    <LinkIcon className="h-4 w-4 text-gray-500" />
+                    <Input
+                      placeholder="https://example.com"
+                      value={link.url}
+                      onChange={(e) => handleLinkChange(index, e.target.value)}
+                      className="flex-1"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-gray-500"
+                      onClick={() => handleRemoveLink(index)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+                <Button variant="outline" size="sm" className="mt-2 gap-1" onClick={handleAddLink}>
+                  <Plus className="h-3 w-3" />
+                  Add Link
+                </Button>
+              </div>
+              
+              <div>
+                <Label className="text-sm font-medium">YouTube Links</Label>
+                {youtubeLinks.map((link, index) => (
+                  <div key={`youtube-${index}`} className="flex items-center gap-2 mt-2">
+                    <Youtube className="h-4 w-4 text-gray-500" />
+                    <Input
+                      placeholder="https://youtube.com/watch?v=..."
+                      value={link.url}
+                      onChange={(e) => handleYoutubeLinkChange(index, e.target.value)}
+                      className="flex-1"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-gray-500"
+                      onClick={() => handleRemoveYoutubeLink(index)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+                <Button variant="outline" size="sm" className="mt-2 gap-1" onClick={handleAddYoutubeLink}>
+                  <Plus className="h-3 w-3" />
+                  Add YouTube Link
+                </Button>
+              </div>
             </div>
           </TabsContent>
 
@@ -165,13 +470,18 @@ export function PostCreationDialog() {
             <div className="space-y-4">
               <div>
                 <Label className="text-sm font-medium">Poll Question</Label>
-                <Input placeholder="Ask a question..." className="mt-1" />
+                <Input 
+                  placeholder="Ask a question..." 
+                  className="mt-1" 
+                  value={pollData.question}
+                  onChange={(e) => handlePollQuestionChange(e.target.value)}
+                />
               </div>
 
               <div className="space-y-2">
                 <Label className="text-sm font-medium">Options</Label>
                 <RadioGroup value="option-0">
-                  {pollOptions.map((option, index) => (
+                  {pollData.options.map((option, index) => (
                     <div key={index} className="flex items-center gap-2">
                       <RadioGroupItem value={`option-${index}`} id={`option-${index}`} className="cursor-default" />
                       <Input
@@ -180,7 +490,7 @@ export function PostCreationDialog() {
                         onChange={(e) => handlePollOptionChange(index, e.target.value)}
                         className="flex-1"
                       />
-                      {pollOptions.length > 2 && (
+                      {pollData.options.length > 2 && (
                         <Button
                           variant="ghost"
                           size="icon"
@@ -194,7 +504,7 @@ export function PostCreationDialog() {
                   ))}
                 </RadioGroup>
 
-                {pollOptions.length < 5 && (
+                {pollData.options.length < 5 && (
                   <Button variant="outline" size="sm" className="mt-2 gap-1" onClick={handleAddPollOption}>
                     <Plus className="h-3 w-3" />
                     Add Option
@@ -204,7 +514,11 @@ export function PostCreationDialog() {
 
               <div>
                 <Label className="text-sm font-medium">Poll Duration</Label>
-                <RadioGroup defaultValue="1day" className="mt-2">
+                <RadioGroup 
+                  value={pollData.duration} 
+                  onValueChange={(value) => handlePollDurationChange(value as "1day" | "3days" | "7days")}
+                  className="mt-2"
+                >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="1day" id="1day" />
                     <Label htmlFor="1day">1 Day</Label>
@@ -256,7 +570,14 @@ export function PostCreationDialog() {
           <Button variant="outline" onClick={() => setOpen(false)}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit}>Post</Button>
+          <Button 
+            onClick={handleSubmit} 
+            disabled={isSubmitting}
+            className="gap-2"
+          >
+            {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+            {isSubmitting ? "Posting..." : "Post"}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

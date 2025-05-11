@@ -5,7 +5,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Bell, MessageSquare, Search, ChevronDown, Menu, X, User, Settings, BookOpen, LogOut } from "lucide-react"
+import { Bell, Search, ChevronDown, Menu, X, User, Settings, BookOpen, LogOut, MessageSquare } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,11 +22,14 @@ import { Link, useParams } from "react-router-dom"
 import { ThemeToggle } from "./theme-toggle"
 
 const navItems = [
-  { name: "Community", to: "/community/feed" },
-  { name: "Classroom", to: "/community/classroom" },
-  { name: "Members", to: "/community/members" },
-  { name: "Leaderboards", to: "/community/leaderboards" },
-  { name: "About", to: "/community/about" },
+  { name: "Community", to: "/30/community/feed" },
+  { name: "Members", to: "/30/community/members" },
+  { name: "Courses", to: "/30/community/classroom" },
+  { name: "Leaderboards", to: "/30/community/leaderboards" },
+  { name: "Events", to: "/30/community/events" },
+  // { name: "Chat", to: "/30/community/messages" },
+  { name: "About", to: "/30/community/about" },
+  // { name: "About", to: "/30/community/about" },
 ]
 
 const communities = [
@@ -74,8 +77,8 @@ export default function Header() {
   const isAdmin = true // This would be determined by user role in a real app
 
   return (
-    <header className="sticky  top-0 z-50 w-full border-b bg-background backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <div className="container  max-w-7xl mx-auto flex h-16 items-center px-2">
+    <header className="sticky top-0 z-50 w-full border-b bg-background backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <div className="max-w-7xl w-full justify-between mx-auto flex h-16 items-center px-2">
         <div className="flex items-center gap-2 mr-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -194,48 +197,15 @@ export default function Header() {
         )}
 
         <div className="flex items-center gap-2">
-          <Link to="/community/admin/dashboard" className="hidden lg:flex">
-            <Button variant="outline">Admin</Button>
-          </Link>
           <ThemeToggle />
-          <Link to="/" className="hidden lg:flex">
-            <Button variant="outline" size="icon"><LogOut className="text-red-500 h-5 w-5" /></Button>
-          </Link>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative">
+          <Link to="/30/community/messages">
+          <Button variant="ghost" size="icon" className="relative">
                 <MessageSquare className="h-5 w-5" />
                 <span className="absolute -top-1 -right-1 flex h-4 text-white w-4 items-center justify-center rounded-full bg-sky-700 text-[10px] text-sky-700-foreground">
                   3
                 </span>
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[300px]">
-              <DropdownMenuLabel>Messages</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {[1, 2, 3].map((i) => (
-                <DropdownMenuItem key={i} className="flex items-start gap-2 py-2 cursor-pointer">
-                  <Avatar className="h-8 w-8 mt-1">
-                    <AvatarImage src={`/placeholder.svg?height=32&width=32&text=U${i}`} />
-                    <AvatarFallback>U{i}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col">
-                    <span className="font-medium">User {i}</span>
-                    <span className="text-xs text-muted-foreground line-clamp-1">
-                      Hey, check out this new content I just posted...
-                    </span>
-                    <span className="text-xs text-muted-foreground mt-1">2 min ago</span>
-                  </div>
-                </DropdownMenuItem>
-              ))}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="justify-center">
-                <Link to="/community/messages" className="text-sky-700 text-sm font-medium">
-                  View all messages
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          </Link>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

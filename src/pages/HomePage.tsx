@@ -6,6 +6,7 @@ import FeaturesSection from '@/section/features-section'
 import Footer from '@/section/footer'
 import Hero from '@/section/Hero'
 import PricingSection from '@/section/pricing-section'
+import TabsSection from '@/section/TabsSection'
 import { TestimonialsSection } from '@/section/testimonials-section'
 import { useEffect } from 'react'
 
@@ -20,6 +21,7 @@ const HomePage = () => {
     <div>
        <Navbar />
         <Hero/>
+        <TabsSection/>
         <FeaturesSection/>
         <CommunitySection/>
         <TestimonialsSection/>

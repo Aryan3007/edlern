@@ -35,14 +35,16 @@ import HelpCenterPage from "./pages/HelpCenterPage"
 import CareersPage from "./pages/CareersPage"
 // import CreateCommunityPage from "./pages/CreateCommunityPage"
 import CommunitySuccessPage from "./pages/CommunitySuccessPage"
-import { Toaster } from "react-hot-toast"
 import CommunityCreation from "./pages/CommunityCreation"
+import { Toaster } from "./components/ui/sonner"
+import CreateCommunityPage from "./pages/CreateCommunityPage"
+import CommunityWelcomePage from "./pages/community/pages/CommunityWelcomePage"
+import EventsPage from "./pages/community/pages/EventsPage"
 
 const App = () => {
   return (
     <div>
-            <Toaster position="bottom-right" reverseOrder={false} />
-
+  <Toaster />
       <Routes>
         {/* Normal routes */}
         <Route path="/" element={<HomePage />} />
@@ -59,13 +61,16 @@ const App = () => {
         <Route path="/community-details/:id" element={<CommunityPage />} />
         <Route path="/category/:id" element={<CategoryPage />} />
         <Route path="/create-community" element={<CommunityCreation />} />
-        <Route path="/community-creation/successfull" element={<CommunitySuccessPage />} />
+        <Route path="/create-community-page" element={<CreateCommunityPage />} />
+        <Route path="/community-creation/successfull/:community_id" element={<CommunitySuccessPage />} />
 
 
         {/* Community routes */} 
-        <Route path="/community/*" element={
+        <Route path="/:community_id/community/*" element={
           <Layout>
           <Routes>
+          <Route path="welcome" element={<CommunityWelcomePage communityId={"30"} />} />
+          <Route path="events" element={<EventsPage />} />
           <Route path="feed" element={<CommunityPageFeed />} />
           <Route path="classroom" element={<ClassroomPage />} />
           <Route path="classroom/:courseId" element={<CourseDetailPage />} />

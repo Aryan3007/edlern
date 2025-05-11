@@ -1,18 +1,19 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import axios from "axios"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   Heart,
   MessageSquare,
   MoreHorizontal,
   Share2,
   Star,
-  CheckCircle2,
   Filter,
   Maximize2,
   ChevronLeft,
@@ -20,6 +21,7 @@ import {
   Send,
   MoreVertical,
   X,
+  LinkIcon,
 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import {
@@ -34,170 +36,78 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { PostCreationDialog } from "./post-creation-dialog"
+import { useSelector } from "react-redux"
+import type { RootState } from "@/store/store"
 
-// Mock data for sample images - in a real app this would come from your API
-const mockImages = {
-  1: ["/placeholder.svg?height=600&width=600&text=Image+1"],
-  2: [
-    "/placeholder.svg?height=600&width=600&text=Video+Thumbnail",
-    "/placeholder.svg?height=600&width=600&text=Additional+Image",
-  ],
-  4: [
-    "/placeholder.svg?height=600&width=600&text=Before+Image",
-    "/placeholder.svg?height=600&width=600&text=After+Image",
-    "/placeholder.svg?height=600&width=600&text=Progress+Image",
-  ],
-} as const
-
-// Mock comments data
-const mockComments = {
-  1: [
-    {
-      id: 1,
-      author: "Mike T",
-      avatar: "/placeholder.svg?height=32&width=32&text=MT",
-      content: "This community has been life-changing!",
-      timestamp: "1h ago",
-    },
-    {
-      id: 2,
-      author: "Sarah L",
-      avatar: "/placeholder.svg?height=32&width=32&text=SL",
-      content: "Just signed up! Excited to be here.",
-      timestamp: "30m ago",
-    },
-  ],
-  2: [
-    {
-      id: 1,
-      author: "David K",
-      avatar: "/placeholder.svg?height=32&width=32&text=DK",
-      content: "When is the next course dropping?",
-      timestamp: "2h ago",
-    },
-    {
-      id: 2,
-      author: "Emma R",
-      avatar: "/placeholder.svg?height=32&width=32&text=ER",
-      content: "Already subscribed. Worth every penny!",
-      timestamp: "1h ago",
-    },
-  ],
-  3: [
-    {
-      id: 1,
-      author: "James P",
-      avatar: "/placeholder.svg?height=32&width=32&text=JP",
-      content: "Been following this routine for a month. Great results!",
-      timestamp: "3h ago",
-    },
-  ],
-  4: [
-    {
-      id: 1,
-      author: "Linda M",
-      avatar: "/placeholder.svg?height=32&width=32&text=LM",
-      content: "Amazing transformation!",
-      timestamp: "5h ago",
-    },
-    {
-      id: 2,
-      author: "Carlos D",
-      avatar: "/placeholder.svg?height=32&width=32&text=CD",
-      content: "What was your diet like?",
-      timestamp: "4h ago",
-    },
-  ],
-  5: [
-    {
-      id: 1,
-      author: "Priya N",
-      avatar: "/placeholder.svg?height=32&width=32&text=PN",
-      content: "I moved out at 22 and it was the best decision.",
-      timestamp: "10h ago",
-    },
-    {
-      id: 2,
-      author: "Tom W",
-      avatar: "/placeholder.svg?height=32&width=32&text=TW",
-      content: "Have you tried explaining your goals to them?",
-      timestamp: "8h ago",
-    },
-  ],
+// Types for API response
+interface Post {
+  id: number
+  author: string
+  author_name: string
+  content: string
+  topic: string
+  is_active: boolean
+  content_type: number
+  object_id: number
+  content_object: string
+  attachments: Attachment[]
+  youtube_links: string[]
+  links: string[]
+  poll: Poll | null
+  created_at: string
+  is_pinned: boolean
+  comments: Comment[]
+  total_likes: number
+  total_comments: number
 }
 
-const posts = [
-  {
-    id: 1,
-    author: {
-      name: "Hamza Ahmed",
-      image: "/placeholder.svg?height=40&width=40&text=HA",
-      verified: true,
-    },
-    content:
-      "🔥 SIGN UP NOW! 🔥 Join the ultimate community for self-improvement. We're all about helping you level up in every aspect of life. Fast forward to today, I'm the envy goal for my life. I want to give back to the community which has helped me grow. Post more of what you want to see!",
-    time: "2h ago",
-    likes: 174,
-    comments: 34,
-    pinned: true,
-  },
-  {
-    id: 2,
-    author: {
-      name: "Hamza Ahmed",
-      image: "/placeholder.svg?height=40&width=40&text=HA",
-      verified: true,
-    },
-    content:
-      "Netflix, but for self improvement\n\nJust go take a look at this video where I explain what my new product is. I think you'll really like it. It's the best deal on courses for young men. And you'll be able to make progress faster than ever. Just go take a look at this video where I explain what my new product is. I think you'll really like it. It's the best deal on courses for young men. And you'll be able to make progress faster than ever. Just go take a look at this video where I explain what my new product is. I think you'll really like it. It's the best deal on courses for young men. And you'll be able to make progress faster than ever.",
-    time: "5h ago",
-    likes: 128,
-    comments: 26,
-    media: "/placeholder.svg?height=200&width=400&text=Video+Thumbnail",
-  },
-  {
-    id: 3,
-    author: {
-      name: "Aaron Barayeyan",
-      image: "/placeholder.svg?height=40&width=40&text=AB",
-      verified: false,
-    },
-    content:
-      "✅ THE BEST EXERCISE FOR EACH MUSCLE GROUP\n\nGetting strong is the foundation for everything else you're going to do. You build discipline, just getting up and completing ability everyday, strength, power, and finally confidence.",
-    time: "8h ago",
-    likes: 95,
-    comments: 12,
-  },
-  {
-    id: 4,
-    author: {
-      name: "Sergio Pereira",
-      image: "/placeholder.svg?height=40&width=40&text=SP",
-      verified: false,
-    },
-    content:
-      "Old physique vs New 🔥 🔥 🔥\n\nFound some old photos of myself... Looking at them makes be a bit upset that I'm not at that level anymore. Yes I was injured. Yes I couldn't train properly, but still sad 😔",
-    time: "12h ago",
-    likes: 57,
-    comments: 8,
-    media: "/placeholder.svg?height=200&width=400&text=Before+and+After",
-  },
-  {
-    id: 5,
-    author: {
-      name: "Rahul S",
-      image: "/placeholder.svg?height=40&width=40&text=RS",
-      verified: false,
-    },
-    content:
-      "I want to move out from my parents house\n\nI know that if I'm allowed to move out from my parent's house to gain more life experience, I'll be able to grow faster. But my parents are stopping me from leaving...",
-    time: "1d ago",
-    likes: 42,
-    comments: 15,
-  },
-]
+interface Attachment {
+  id: number
+  file: string
+  file_type: string
+}
 
-export function CommunityFeed() {
+interface Poll {
+  id: number
+  question: string
+  options: PollOption[]
+  duration: string
+  end_date: string
+}
+
+interface PollOption {
+  id: number
+  text: string
+  votes: number
+}
+
+interface Comment {
+  id: number
+  author: string
+  author_name: string
+  content: string
+  created_at: string
+  total_likes: number
+}
+
+interface ApiResponse {
+  message: string
+  success: boolean
+  data: {
+    next: string | null
+    previous: string | null
+    count: number
+    limit: number
+    current_page: number
+    total_pages: number
+    results: Post[]
+  }
+}
+
+export function CommunityFeed({ communityId }: { communityId: string }) {
+  const accessToken = useSelector((state: RootState) => state.auth.accessToken)
+
+  // State
   const [activeTab, setActiveTab] = useState("all")
   const [showFilterDialog, setShowFilterDialog] = useState(false)
   const [filters, setFilters] = useState({
@@ -205,102 +115,261 @@ export function CommunityFeed() {
     withMedia: false,
     popular: false,
   })
-  const [selectedPost, setSelectedPost] = useState<{ id: number; author: { name: string; image: string; verified: boolean }; content: string; time: string; likes: number; comments: number; pinned?: boolean; media?: string } | null>(null)
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null)
   const [newComment, setNewComment] = useState("")
-  const [postComments, setPostComments] = useState<{ [key: number]: { id: number; author: string; avatar: string; content: string; timestamp: string; }[] }>(mockComments)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [showComments, setShowComments] = useState(false)
+  const [posts, setPosts] = useState<Post[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  
 
+  // Fetch posts from API
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        setLoading(true)
+        const response = await axios.get<ApiResponse>(
+          `https://edlern.weepul.in.net/api/v1/community/${communityId}/feed/posts/`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
+        )
+
+        if (response.data.success) {
+          // Extract posts from the results array
+          setPosts(response.data.data.results || [])
+        } else {
+          setError("Failed to fetch posts")
+        }
+      } catch (err) {
+        console.error("Error fetching posts:", err)
+        setError("An error occurred while fetching posts")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (accessToken) {
+      fetchPosts()
+    }
+  }, [communityId, accessToken])
+
+  // Filter posts based on active tab and filters
   const filteredPosts = posts.filter((post) => {
-    if (activeTab === "pinned" && !post.pinned) return false
-    if (filters.verified && !post.author.verified) return false
-    if (filters.withMedia && !post.media) return false
-    if (filters.popular && post.likes < 100) return false
+    if (activeTab === "pinned" && !post.is_pinned) return false
+    if (filters.withMedia && (!post.attachments || post.attachments.length === 0)) return false
+    if (filters.popular && post.total_likes < 100) return false
     return true
   })
 
-  interface Comment {
-    id: number
-    author: string
-    avatar: string
-    content: string
-    timestamp: string
-  }
-
-
-  const handleAddComment = (postId: number) => {
+  // Handle adding a comment
+  const handleAddComment = async (postId: number) => {
     if (!newComment.trim()) return
 
-    const newCommentObj: Comment = {
-      id: Math.max(...postComments[postId].map((c) => c.id), 0) + 1,
-      author: "You",
-      avatar: "/placeholder.svg?height=32&width=32&text=You",
-      content: newComment,
-      timestamp: "Just now",
+    try {
+      // API call to add comment would go here
+      // For now, just update the UI optimistically
+      const updatedPosts = posts.map((post) => {
+        if (post.id === postId) {
+          const updatedComments = post.comments ? [...post.comments] : []
+          updatedComments.push({
+            id: Math.random(), // Temporary ID until API response
+            author: "current_user_id", // This would come from your auth state
+            author_name: "You",
+            content: newComment,
+            created_at: new Date().toISOString(),
+            total_likes: 0,
+          })
+
+          return {
+            ...post,
+            comments: updatedComments,
+            total_comments: (post.total_comments || 0) + 1,
+          }
+        }
+        return post
+      })
+
+      setPosts(updatedPosts)
+      setNewComment("")
+    } catch (err) {
+      console.error("Error adding comment:", err)
     }
-
-    setPostComments({
-      ...postComments,
-      [postId]: [...postComments[postId], newCommentObj],
-    })
-
-    setNewComment("")
   }
 
+  // Image navigation for post with multiple attachments
   const nextImage = () => {
-    if (!selectedPost) return
-    const images = selectedPost ? mockImages[selectedPost.id as keyof typeof mockImages] || [] : []
-    if (images.length <= 1) return
-    setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1))
+    if (!selectedPost || !selectedPost.attachments || selectedPost.attachments.length <= 1) return
+    setCurrentImageIndex((prev) => (prev === selectedPost.attachments.length - 1 ? 0 : prev + 1))
   }
 
   const prevImage = () => {
-    if (!selectedPost) return
-    const images = mockImages[selectedPost.id as keyof typeof mockImages] || []
-    if (images.length <= 1) return
-    setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))
+    if (!selectedPost || !selectedPost.attachments || selectedPost.attachments.length <= 1) return
+    setCurrentImageIndex((prev) => (prev === 0 ? selectedPost.attachments.length - 1 : prev - 1))
   }
 
+  // Open post detail view
   const openPostDetail = (post: Post) => {
     setSelectedPost(post)
     setCurrentImageIndex(0)
-    setShowComments(false) // Reset comments view when opening a new post
+    setShowComments(false)
   }
 
+  // Close post detail view
   const closePostDetail = () => {
     setSelectedPost(null)
     setCurrentImageIndex(0)
   }
 
-  interface Post {
-    id: number
-    author: {
-      name: string
-      image: string
-      verified: boolean
-    }
-    content: string
-    time: string
-    likes: number
-    comments: number
-    pinned?: boolean
-    media?: string
-  }
-
+  // Toggle comments view
   const toggleComments = (postId: number) => {
+    const post = posts.find((p) => p.id === postId)
+    if (!post) return
+
     if (selectedPost?.id === postId) {
       setShowComments(!showComments)
     } else {
-      openPostDetail(posts.find((p) => p.id === postId) as Post)
+      openPostDetail(post)
       setShowComments(true)
     }
+  }
+
+  // Format date to relative time
+  const formatRelativeTime = (dateString: string) => {
+    if (!dateString) return "Unknown time"
+
+    try {
+      const date = new Date(dateString)
+      const now = new Date()
+      const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
+
+      if (diffInSeconds < 60) return `${diffInSeconds}s ago`
+      if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`
+      if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`
+      return `${Math.floor(diffInSeconds / 86400)}d ago`
+    } catch (e) {
+      console.error("Error formatting date:", e)
+      return "Invalid date"
+    }
+  }
+
+  // Safely get author's first character for avatar fallback
+  const getAuthorInitial = (authorName: string | undefined) => {
+    if (!authorName || typeof authorName !== "string") return "U"
+    return authorName.charAt(0) || "U"
+  }
+
+  // Render content based on post type
+  const renderPostContent = (post: Post) => {
+    if (!post) return null
+
+    return (
+      <div className="flex-1 whitespace-pre-line">
+        {post.content}
+
+        {/* Render links if present */}
+        {post.links && post.links.length > 0 && (
+          <div className="mt-3 space-y-2">
+            {post.links.map((link, index) => (
+              <div key={index} className="flex items-center gap-2 text-blue-600 hover:underline">
+                <LinkIcon className="h-4 w-4" />
+                <a href={link} target="_blank" rel="noopener noreferrer">
+                  {link}
+                </a>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Render YouTube links if present */}
+        {post.youtube_links && post.youtube_links.length > 0 && (
+          <div className="mt-3 space-y-3">
+            {post.youtube_links.map((link, index) => (
+              <div key={index} className="aspect-video rounded-md overflow-hidden">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src={link.replace("watch?v=", "embed/")}
+                  title={`YouTube video ${index + 1}`}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Render poll if present */}
+        {post.poll && (
+          <div className="mt-3 border rounded-md p-3 bg-gray-50">
+            <h3 className="font-medium">{post.poll.question}</h3>
+            <div className="mt-2 space-y-2">
+              {post.poll.options.map((option, i) => (
+                <div key={i} className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded-full border border-gray-300"></div>
+                    <span>{option.text}</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2.5">
+                    <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${option.votes}%` }}></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-2 text-sm text-gray-500">
+              Poll ends: {post.poll.end_date ? new Date(post.poll.end_date).toLocaleDateString() : "Unknown"}
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // Render post skeleton loaders
+  const renderSkeletons = () => {
+    return Array(3)
+      .fill(0)
+      .map((_, index) => (
+        <Card key={`skeleton-${index}`} className="overflow-hidden gap-0 p-0">
+          <CardHeader className="p-4 flex flex-row items-start gap-3">
+            <Skeleton className="h-10 w-10 rounded-full" />
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-4 w-[150px]" />
+              <Skeleton className="h-3 w-[100px]" />
+            </div>
+            <Skeleton className="h-8 w-8 rounded-md" />
+            <Skeleton className="h-8 w-8 rounded-md" />
+          </CardHeader>
+          <CardContent className="p-4 space-y-3">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-[200px] w-full rounded-md" />
+          </CardContent>
+          <CardFooter className="p-4 pt-0 flex justify-between">
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-8 w-16 rounded-full" />
+              <Skeleton className="h-8 w-16 rounded-full" />
+              <Skeleton className="h-6 w-6 rounded-full" />
+              <Skeleton className="h-6 w-6 rounded-full" />
+              <Skeleton className="h-6 w-6 rounded-full" />
+              <Skeleton className="h-4 w-[150px]" />
+            </div>
+            <Skeleton className="h-8 w-8 rounded-md" />
+          </CardFooter>
+        </Card>
+      ))
   }
 
   return (
     <div className="space-y-4">
       <Card className="p-2">
         <CardContent className="p-0">
-          <PostCreationDialog />
+          <PostCreationDialog communityId={communityId} />
         </CardContent>
       </Card>
 
@@ -326,14 +395,6 @@ export function CommunityFeed() {
               <DialogDescription>Select options to filter the posts you see</DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="verified"
-                  checked={filters.verified}
-                  onCheckedChange={(checked) => setFilters({ ...filters, verified: checked === true })}
-                />
-                <Label htmlFor="verified">Verified authors only</Label>
-              </div>
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="media"
@@ -371,31 +432,34 @@ export function CommunityFeed() {
       </div>
 
       <div className="space-y-6">
-        {filteredPosts.length > 0 ? (
+        {loading ? (
+          renderSkeletons()
+        ) : error ? (
+          <Card className="p-8 text-center">
+            <p className="text-red-500">{error}</p>
+            <Button variant="link" onClick={() => window.location.reload()}>
+              Try again
+            </Button>
+          </Card>
+        ) : filteredPosts.length > 0 ? (
           filteredPosts.map((post) => (
             <Card key={post.id} className="overflow-hidden gap-0 p-0">
               <CardHeader className="p-4 flex flex-row items-start gap-3">
                 <Avatar className="h-10 w-10">
-                  <AvatarImage src={post.author.image || "/placeholder.svg"} alt={post.author.name} />
-                  <AvatarFallback>{post.author.name.charAt(0)}</AvatarFallback>
+                  <AvatarImage src="/placeholder.svg" alt={post.author_name || "User"} />
+                  <AvatarFallback>{getAuthorInitial(post.author_name)}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium">{post.author.name}</span>
-                    {post.author.verified && (
-                      <Badge variant="outline" className="bg-lime-600/10 text-lime-600 h-5 px-1">
-                        <CheckCircle2 className="h-3 w-3 mr-1" />
-                        <span className="text-xs">Verified</span>
-                      </Badge>
-                    )}
-                    {post.pinned && (
+                    <span className="font-medium">{post.author_name || "Anonymous"}</span>
+                    {post.is_pinned && (
                       <Badge variant="outline" className="bg-amber-100 text-amber-700 h-5 px-1">
                         <Star className="h-3 w-3 mr-1 fill-amber-500 text-amber-500" />
                         <span className="text-xs">Pinned</span>
                       </Badge>
                     )}
                   </div>
-                  <p className="text-sm text-gray-500">{post.time}</p>
+                  <p className="text-sm text-gray-500">{formatRelativeTime(post.created_at)}</p>
                 </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -411,8 +475,13 @@ export function CommunityFeed() {
                 </DropdownMenu>
 
                 {/* Button to open post popup */}
-                <Dialog open={selectedPost?.id === post.id} onOpenChange={(open) => !open && closePostDetail()}>
-
+                <Dialog
+                  open={selectedPost?.id === post.id}
+                  onOpenChange={(open) => {
+                    if (!open) closePostDetail()
+                    // Don't set it to open here - only let it be opened via explicit triggers
+                  }}
+                >
                   <DialogTrigger asChild>
                     <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => openPostDetail(post)}>
                       <Maximize2 className="h-4 w-4" />
@@ -421,29 +490,27 @@ export function CommunityFeed() {
                   <DialogContent className="sm:max-w-[425px] md:max-w-[700px] lg:max-w-[900px] p-0 overflow-hidden max-h-[90vh] flex flex-col">
                     {/* Post header - always visible */}
                     <div className="p-4 border-b flex items-center gap-3 sticky top-0 bg-background z-10">
-
                       <Avatar className="h-10 w-10">
                         {selectedPost && (
                           <>
-                            <AvatarImage
-                              src={selectedPost.author.image || "/placeholder.svg"}
-                              alt={selectedPost.author.name}
-                            />
-                            <AvatarFallback>{selectedPost.author.name.charAt(0)}</AvatarFallback>
+                            <AvatarImage src="/placeholder.svg" alt={selectedPost.author_name || "User"} />
+                            <AvatarFallback>{getAuthorInitial(selectedPost.author_name)}</AvatarFallback>
                           </>
                         )}
                       </Avatar>
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium">{selectedPost?.author.name}</span>
-                          {selectedPost?.author.verified && (
-                            <Badge variant="outline" className="bg-lime-600/10 text-lime-600 h-5 px-1">
-                              <CheckCircle2 className="h-3 w-3 mr-1" />
-                              <span className="text-xs">Verified</span>
+                          <span className="font-medium">{selectedPost?.author_name || "Anonymous"}</span>
+                          {selectedPost?.is_pinned && (
+                            <Badge variant="outline" className="bg-amber-100 text-amber-700 h-5 px-1">
+                              <Star className="h-3 w-3 mr-1 fill-amber-500 text-amber-500" />
+                              <span className="text-xs">Pinned</span>
                             </Badge>
                           )}
                         </div>
-                        <p className="text-sm text-gray-500">{selectedPost?.time}</p>
+                        <p className="text-sm text-gray-500">
+                          {selectedPost && formatRelativeTime(selectedPost.created_at)}
+                        </p>
                       </div>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -466,55 +533,54 @@ export function CommunityFeed() {
                     <div className="flex-1 overflow-y-auto">
                       {/* Post content */}
                       <div className="p-4">
-                        <p className="whitespace-pre-line mb-4">{selectedPost?.content}</p>
+                        {selectedPost && renderPostContent(selectedPost)}
 
                         {/* Media content */}
-                        {selectedPost &&
-                          (mockImages[selectedPost.id as keyof typeof mockImages]?.length > 0 ? (
-                            <div className="relative w-full mb-4">
-                              <img
-                                src={mockImages[selectedPost.id as keyof typeof mockImages][currentImageIndex] || "/placeholder.svg"}
-                                alt={`Media ${currentImageIndex + 1}`}
-                                className="w-full h-auto rounded-md"
-                              />
+                        {selectedPost && selectedPost.attachments && selectedPost.attachments.length > 0 && (
+                          <div className="relative w-full mb-4 mt-4">
+                            <img
+                              src={selectedPost.attachments[currentImageIndex]?.file || "/placeholder.svg"}
+                              alt={`Media ${currentImageIndex + 1}`}
+                              className="w-full h-auto rounded-md"
+                            />
 
-                              {/* Navigation arrows - only show if multiple images */}
-                              {mockImages[selectedPost.id as keyof typeof mockImages]?.length > 1 && (
-                                <>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1"
-                                    onClick={(e) => {
-                                      e.stopPropagation()
-                                      prevImage()
-                                    }}
-                                  >
-                                    <ChevronLeft className="h-6 w-6" />
-                                  </Button>
+                            {/* Navigation arrows - only show if multiple images */}
+                            {selectedPost.attachments.length > 1 && (
+                              <>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    prevImage()
+                                  }}
+                                >
+                                  <ChevronLeft className="h-6 w-6" />
+                                </Button>
 
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1"
-                                    onClick={(e) => {
-                                      e.stopPropagation()
-                                      nextImage()
-                                    }}
-                                  >
-                                    <ChevronRight className="h-6 w-6" />
-                                  </Button>
-                                </>
-                              )}
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    nextImage()
+                                  }}
+                                >
+                                  <ChevronRight className="h-6 w-6" />
+                                </Button>
+                              </>
+                            )}
 
-                              {/* Image counter */}
-                              {mockImages[selectedPost.id as keyof typeof mockImages].length > 1 && (
-                                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-2 py-1 rounded-full text-xs">
-                                  {currentImageIndex + 1} / {mockImages[selectedPost.id as keyof typeof mockImages].length}
-                                </div>
-                              )}
-                            </div>
-                          ) : null)}
+                            {/* Image counter */}
+                            {selectedPost.attachments.length > 1 && (
+                              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-2 py-1 rounded-full text-xs">
+                                {currentImageIndex + 1} / {selectedPost.attachments.length}
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
 
                       {/* Post engagement stats */}
@@ -538,11 +604,12 @@ export function CommunityFeed() {
                             />
                           </div>
                           <span className="text-sm text-gray-600">
-                            Liked by Aryan and {(selectedPost?.likes ?? 0) - 1} others
+                            {selectedPost &&
+                              `Liked by ${selectedPost.total_likes > 0 ? "Aryan and " + (selectedPost.total_likes - 1) + " others" : "no one yet"}`}
                           </span>
                         </div>
                         <div className="flex items-center gap-4 text-sm text-gray-600">
-                          <span>{selectedPost?.comments} comments</span>
+                          <span>{selectedPost?.total_comments || 0} comments</span>
                         </div>
                       </div>
 
@@ -578,28 +645,33 @@ export function CommunityFeed() {
                       <div className="p-4">
                         <h3 className="font-medium mb-4">Comments</h3>
                         <div className="space-y-4">
-                          {selectedPost &&
-                            postComments[selectedPost.id]?.map((comment) => (
+                          {selectedPost && selectedPost.comments && selectedPost.comments.length > 0 ? (
+                            selectedPost.comments.map((comment) => (
                               <div key={comment.id} className="flex gap-3">
                                 <Avatar className="h-8 w-8 mt-1">
-                                  <AvatarImage src={comment.avatar || "/placeholder.svg"} alt={comment.author} />
-                                  <AvatarFallback>{comment.author.charAt(0)}</AvatarFallback>
+                                  <AvatarImage src="/placeholder.svg" alt={comment.author_name || "User"} />
+                                  <AvatarFallback>{getAuthorInitial(comment.author_name)}</AvatarFallback>
                                 </Avatar>
                                 <div className="flex-1">
                                   <div className="bg-background rounded-2xl p-3">
                                     <div className="flex justify-between items-start mb-1">
-                                      <span className="font-medium text-sm">{comment.author}</span>
+                                      <span className="font-medium text-sm">{comment.author_name || "Anonymous"}</span>
                                     </div>
                                     <p className="text-sm">{comment.content}</p>
                                   </div>
                                   <div className="flex gap-4 mt-1 text-xs text-gray-500">
-                                    <span className="text-xs text-gray-500">{comment.timestamp}</span>
+                                    <span className="text-xs text-gray-500">
+                                      {formatRelativeTime(comment.created_at)}
+                                    </span>
                                     <button className="hover:text-gray-800 font-medium">Like</button>
                                     <button className="hover:text-gray-800 font-medium">Reply</button>
                                   </div>
                                 </div>
                               </div>
-                            ))}
+                            ))
+                          ) : (
+                            <p className="text-gray-500 text-sm">No comments yet. Be the first to comment!</p>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -640,11 +712,12 @@ export function CommunityFeed() {
                 </Dialog>
               </CardHeader>
               <CardContent className="p-4 flex flex-col lg:flex-row gap-8">
-                <div className="flex-1 whitespace-pre-line">{post.content}</div>
-                {post.media && (
+                {renderPostContent(post)}
+
+                {post.attachments && post.attachments.length > 0 && (
                   <div onClick={() => toggleComments(post.id)} className="rounded-md overflow-hidden w-full lg:w-56">
                     <img
-                      src={post.media || "/placeholder.svg"}
+                      src={post.attachments[0]?.file || "/placeholder.svg"}
                       alt="Post media"
                       className="w-full h-auto object-cover"
                     />
@@ -655,7 +728,7 @@ export function CommunityFeed() {
                 <div className="flex items-center gap-2">
                   <Button variant="ghost" size="sm" className="gap-1 text-gray-600 hover:text-pink-600">
                     <Heart className="h-4 w-4" />
-                    <span>{post.likes}</span>
+                    <span>{post.total_likes || 0}</span>
                   </Button>
                   <Button
                     variant="ghost"
@@ -664,7 +737,7 @@ export function CommunityFeed() {
                     onClick={() => toggleComments(post.id)}
                   >
                     <MessageSquare className="h-4 w-4" />
-                    <span>{post.comments}</span>
+                    <span>{post.total_comments || 0}</span>
                   </Button>
                   <div className="flex -space-x-1 p-2 overflow-hidden">
                     <img
@@ -688,13 +761,17 @@ export function CommunityFeed() {
                       className="inline-block size-6 rounded-full ring-2 ring-white"
                     />
                   </div>
-                  <h1 className="text-gray-600 lg:flex hidden">Liked by Aryan and {post.likes - 1} others</h1>
+                  <h1 className="text-gray-600 lg:flex hidden">
+                    Liked by Aryan and {post.total_likes > 0 ? post.total_likes - 1 : 0} others
+                  </h1>
                 </div>
                 <Button variant="ghost" size="sm" className="text-gray-600 hover:text-sky-600">
                   <Share2 className="h-4 w-4" />
                 </Button>
               </CardFooter>
-              <h1 className="text-gray-600 px-4 pb-2 flex lg:hidden">Liked by Aryan and {post.likes - 1} others</h1>
+              <h1 className="text-gray-600 px-4 pb-2 flex lg:hidden">
+                Liked by Aryan and {post.total_likes > 0 ? post.total_likes - 1 : 0} others
+              </h1>
             </Card>
           ))
         ) : (
