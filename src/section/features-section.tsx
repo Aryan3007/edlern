@@ -108,7 +108,7 @@ export default function FeaturesSectionPro() {
   }
 
   return (
-    <section ref={sectionRef} className="py-16 md:py-24 bg-white :bg-gray-900 overflow-hidden">
+    <section id="features" ref={sectionRef} className="py-16 md:py-24 bg-white :bg-gray-900 overflow-hidden">
       <div className="container mx-auto px-4 md:px-6 max-w-7xl">
         <motion.div
           initial="hidden"

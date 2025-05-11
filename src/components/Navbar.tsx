@@ -30,10 +30,10 @@ import { logout } from '@/store/authSlice';
 
 const navItems = [
   // { name: "Home", href:"/", hasDropdown: false },
-  { name: "Product", href: "", hasDropdown: true },
-  { name: "Resources", href: "", hasDropdown: true },
+  { name: "features", href: "", hasDropdown: false },
+  { name: "Digital Resources", href: "", hasDropdown: true },
   { name: "Discover", href: "/discover", hasDropdown: false },
-  { name: "Pricing", href: "", hasDropdown: false },
+  { name: "pricing", href: "", hasDropdown: false },
   { name: "About", href: "/about", hasDropdown: false },
 ];
 
@@ -211,6 +211,15 @@ const Navbar: React.FC = () => {
     return classes.filter(Boolean).join(' ');
   };
 
+
+  const smoothScrollToSection = (sectionName: string) => {
+    const sectionElement = document.getElementById(sectionName);
+    if (sectionElement) {
+      window.scrollTo({ top: sectionElement.offsetTop, behavior: "smooth" });
+    }
+  };
+
+
   return (
     <>
       <header
@@ -227,27 +236,34 @@ const Navbar: React.FC = () => {
             </Link>
 
             <nav className="hidden lg:flex items-center space-x-1">
-              {navItems.map((item) => (
-                <button
-                  key={item.name}
-                  onClick={() => item.hasDropdown && toggleDropdown(item.name)}
-                  className={cn(
-                    "px-4 py-2 rounded-md hover:text-sky-500 flex items-center gap-1 transition-colors",
-                    activeDropdown === item.name && "text-sky-600",
-                  )}
-                >
-                  <Link to={item.href} className="flex items-center gap-1">
-                    {item.name}
-                  </Link>
-                  {item.hasDropdown &&
-                    (activeDropdown === item.name ? (
-                      <ChevronUp className="h-4 w-4" />
-                    ) : (
-                      <ChevronDown className="h-4 w-4" />
-                    ))}
-                </button>
-              ))}
-            </nav>
+  {navItems.map((item) => (
+    <button
+      key={item.name}
+      onClick={() => {
+        if (item.name === "features" || item.name === "pricing") {
+          smoothScrollToSection(item.name);
+        } else if (item.hasDropdown) {
+          toggleDropdown(item.name);
+        }
+      }}
+      className={cn(
+        "px-4 py-2 rounded-md hover:text-sky-500 flex items-center gap-1 transition-colors",
+        activeDropdown === item.name && "text-sky-600"
+      )}
+    >
+      <Link to={item.href} className="flex items-center capitalize gap-1">
+        {item.name}
+      </Link>
+      {item.hasDropdown &&
+        (activeDropdown === item.name ? (
+          <ChevronUp className="h-4 w-4" />
+        ) : (
+          <ChevronDown className="h-4 w-4" />
+        ))}
+    </button>
+  ))}
+</nav>
+
           </div>
 
           <div className="hidden lg:flex items-center gap-4">
@@ -298,7 +314,7 @@ const Navbar: React.FC = () => {
 
       {/* Desktop dropdown */}
       <AnimatePresence>
-        {(activeDropdown === "Product" || activeDropdown === "Resources") && (
+        {(activeDropdown === "Product" || activeDropdown === "Digital Resources") && (
           <>
             <motion.div
               className="fixed inset-0 bg-black/20 z-40 hidden lg:block"
@@ -375,7 +391,7 @@ const Navbar: React.FC = () => {
                   </div>
                 )}
 
-                {activeDropdown === "Resources" && (
+                {activeDropdown === "Digital Resources" && (
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div className="col-span-2">
                       <h3 className="text-lg font-medium mb-6">Resources</h3>
