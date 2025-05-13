@@ -46,8 +46,8 @@ const testimonials = [
 
 // API URLs
 const API_BASE_URL = SERVER_URL
-const SIGNUP_URL = `${API_BASE_URL}/signup/`
-const LOGIN_URL = `${API_BASE_URL}/login/`
+const SIGNUP_URL = `${API_BASE_URL}/api/v1/auth/signup/`
+const LOGIN_URL = `${API_BASE_URL}/api/v1/auth/login/`
 
 export default function AuthPage() {
   const navigate = useNavigate()

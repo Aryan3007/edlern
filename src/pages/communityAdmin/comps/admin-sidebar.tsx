@@ -18,21 +18,25 @@ import {
 import { useState } from "react"
 import { Link, useParams } from "react-router-dom"
 
-const adminNavItems = [
-  { name: "Dashboard", to: "/community/admin/dashboard", icon: <BarChart3 className="h-5 w-5" /> },
-  { name: "Members", to: "/community/admin/members", icon: <Users className="h-5 w-5" /> },
-  { name: "Content", to: "/community/admin/content", icon: <FileText className="h-5 w-5" /> },
-  { name: "Courses", to: "/community/admin/courses", icon: <BookOpen className="h-5 w-5" /> },
-  { name: "Messages", to: "/community/admin/messages", icon: <MessageSquare className="h-5 w-5" /> },
-  { name: "Reports", to: "/community/admin/reports", icon: <Flag className="h-5 w-5" /> },
-  { name: "Notifications", to: "/community/admin/notifications", icon: <Bell className="h-5 w-5" /> },
-  { name: "Moderation", to: "/community/admin/moderation", icon: <ShieldAlert className="h-5 w-5" /> },
-  { name: "Settings", to: "/community/admin/settings", icon: <Settings className="h-5 w-5" /> },
-]
+
 
 export function AdminSidebar() {
   const { '*': pathname } = useParams()
+  const { community_id } = useParams<{ community_id: string }>();
+
   const [collapsed, setCollapsed] = useState(false)
+
+  const adminNavItems = [
+    { name: "Dashboard", to: `/${community_id}/community/admin/dashboard`, icon: <BarChart3 className="h-5 w-5" /> },
+    { name: "Members",to: `/${community_id}/community/admin/members`, icon: <Users className="h-5 w-5" /> },
+    { name: "Content", to: `/${community_id}/community/admin/content`, icon: <FileText className="h-5 w-5" /> },
+    { name: "Courses", to: `/${community_id}/community/admin/courses`, icon: <BookOpen className="h-5 w-5" /> },
+    { name: "Messages",to: `/${community_id}/community/admin/messages`, icon: <MessageSquare className="h-5 w-5" /> },
+    { name: "Reports", to: `/${community_id}/community/admin/reports`, icon: <Flag className="h-5 w-5" /> },
+    { name: "Notifications",to: `/${community_id}/community/admin/notifications`, icon: <Bell className="h-5 w-5" /> },
+    { name: "Moderation", to: `/${community_id}/community/admin/moderation`, icon: <ShieldAlert className="h-5 w-5" /> },
+    { name: "Settings",to: `/${community_id}/community/admin/settings`, icon: <Settings className="h-5 w-5" /> },
+  ]
 
   return (
     <aside

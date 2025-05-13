@@ -65,33 +65,32 @@ const TabsSection: React.FC = () => {
   const currentImage = currentTab?.image || "";
 
   return (
-    <div className="h-full mt-12 bg-white">
+    <div className="h-full pt-12 bg-white">
       {/* Header */}
       <header className=" py-4 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-center items-center gap-4">
-         
+
 
           {/* Tabs */}
           <nav className="flex flex-wrap items-center justify-between gap-2 sm:gap-4 p-2">
-  {tabs.map((tab) => (
-    <motion.button
-      key={tab.name}
-      variants={tabVariants}
-      initial="inactive"
-      animate={activeTab === tab.name ? "active" : "inactive"}
-      whileHover="hover"
-      onClick={() => setActiveTab(tab.name)}
-      className={`px-4 py-2 text-sm sm:text-base font-semibold rounded-full transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 ${
-        activeTab === tab.name
-          ? " text-white  shadow-md"
-          : "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-900"
-      }`}
-      aria-label={`Switch to ${tab.label} tab`}
-    >
-      {tab.name}
-    </motion.button>
-  ))}
-</nav>
+            {tabs.map((tab) => (
+              <motion.button
+                key={tab.name}
+                variants={tabVariants}
+                initial="inactive"
+                animate={activeTab === tab.name ? "active" : "inactive"}
+                whileHover="hover"
+                onClick={() => setActiveTab(tab.name)}
+                className={`px-4 py-2 text-sm sm:text-base font-semibold rounded-full transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 ${activeTab === tab.name
+                    ? " text-white  shadow-md"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-900"
+                  }`}
+                aria-label={`Switch to ${tab.label} tab`}
+              >
+                {tab.name}
+              </motion.button>
+            ))}
+          </nav>
 
         </div>
       </header>

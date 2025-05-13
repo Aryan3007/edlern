@@ -29,7 +29,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1 p-2 max-w-7xl mx-auto  bg-background">{children}</main>
+      <main className="flex-1 p-2   bg-background">{children}</main>
     </div>
   );
 };

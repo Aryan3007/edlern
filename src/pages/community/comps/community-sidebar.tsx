@@ -12,7 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 export function CommunitySidebar({communityId}: { communityId: string }) {
   interface CommunityData {
     name?: string;
-    cover_image?: string;
+    banner_image?: string;
     description?: string;
     slug?: string;
     members_count?: number | string;
@@ -37,14 +37,13 @@ export function CommunitySidebar({communityId}: { communityId: string }) {
       
       try {
         const response = await axios.get(
-          `https://edlern.weepul.in.net/api/v1/community/${communityId}/`, 
+          `https://edlern.toolsfactory.tech/api/v1/community/${communityId}/`, 
           {
             headers: {
               'Authorization': `Bearer ${accessToken}`
             }
           }
         )
-        
         setCommunity(response.data.data)
       } catch (err) {
         console.error("Error fetching community data:", err)
@@ -64,7 +63,7 @@ export function CommunitySidebar({communityId}: { communityId: string }) {
   
    return (
     <div className="space-y-6">
-      <Card className="p-4 gap-2">
+      <Card className="p-4  gap-2">
         {loading ? (
           <>
             <CardHeader className="p-0">
@@ -113,7 +112,7 @@ export function CommunitySidebar({communityId}: { communityId: string }) {
             <CardContent className="space-y-2 p-0">
               <div className="aspect-video w-full overflow-hidden rounded-md">
                 <img
-                  src={communityData?.cover_image || `/placeholder.svg?height=200&width=400&text=${communityData?.name || "Community"}`}
+                  src={communityData?.banner_image || `/placeholder.svg?height=200&width=400&text=${communityData?.name || "Community"}`}
                   alt="Community banner"
                   className="w-full h-full object-cover"
                 />

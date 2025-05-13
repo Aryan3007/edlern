@@ -33,9 +33,7 @@ import FeaturesPage from "./pages/FeaturesPage"
 import CommunityGuidelinesPage from "./pages/CommunityGuidelinesPage"
 import HelpCenterPage from "./pages/HelpCenterPage"
 import CareersPage from "./pages/CareersPage"
-// import CreateCommunityPage from "./pages/CreateCommunityPage"
 import CommunitySuccessPage from "./pages/CommunitySuccessPage"
-import CommunityCreation from "./pages/CommunityCreation"
 import { Toaster } from "./components/ui/sonner"
 import CreateCommunityPage from "./pages/CreateCommunityPage"
 import CommunityWelcomePage from "./pages/community/pages/CommunityWelcomePage"
@@ -60,7 +58,6 @@ const App = () => {
         <Route path="/experts" element={<AllExpertsPage />} />
         <Route path="/community-details/:id" element={<CommunityPage />} />
         <Route path="/category/:id" element={<CategoryPage />} />
-        <Route path="/create-community" element={<CommunityCreation />} />
         <Route path="/create-community-page" element={<CreateCommunityPage />} />
         <Route path="/community-creation/successfull/:community_id" element={<CommunitySuccessPage />} />
 
@@ -85,7 +82,7 @@ const App = () => {
         </Layout>
       } />  
       
-      <Route path="/community/admin/*" element={
+      <Route path=":community_id/community/admin/*" element={
           <AdminLayout>
           <Routes>
           <Route path="dashboard" element={<AdminPage />} />
@@ -96,7 +93,7 @@ const App = () => {
           <Route path="reports" element={<AdminReportsPage />} />
           <Route path="notifications" element={<AdminNotificationsPage />} />
           <Route path="moderation" element={<AdminModerationPage />} />
-          <Route path="settings" element={<AdminSettingsPage />} />
+          <Route path="moderation" element={<AdminSettingsPage />} />
        
           </Routes>
         </AdminLayout>
@@ -105,27 +102,7 @@ const App = () => {
     
 
 
-        {/* Community routes under Layout */}
-        {/* <Route path="/community/*" element={
-          <Layout>
-            <Routes>
-              <Route path="dashboard" element={<DashboardPage />} />
-              <Route path="blog" element={<CommunityBlog />} />
-              <Route path="explore" element={<ExplorePage />} />
-              <Route path="members" element={<MembersPage />} />
-              <Route path="courses" element={<AllCourses />} />
-              <Route path="courses/:courseId" element={<CoursesPage />} />
-              <Route path="events" element={<EventsPage />} />
-              <Route path="chat" element={<ChatPage />} />
-              <Route path="profile" element={<ProfilePage />} />
-
-
-              <Route path="manage/:communityId" element={<ManageCommunityPage />} />
-              <Route path="manage/:communityId/activity" element={<CommunityActivityPage />} />
-              <Route path="manage/:communityId/pending" element={<PendingApprovalsPage />} />
-            </Routes>
-          </Layout>
-        } /> */}
+       
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>

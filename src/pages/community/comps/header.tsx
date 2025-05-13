@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState, useMemo } from "react"
+import { useNavigate } from "react-router-dom"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -17,22 +18,35 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Skeleton } from "@/components/ui/skeleton"
 import { useMobile } from "@/hooks/use-mobile"
 import { Link, useParams } from "react-router-dom"
 import { ThemeToggle } from "./theme-toggle"
+import { useSelector } from "react-redux"
+import { RootState } from "@/store/store"
 
-const navItems = [
-  { name: "Community", to: "/30/community/feed" },
-  { name: "Members", to: "/30/community/members" },
-  { name: "Courses", to: "/30/community/classroom" },
-  { name: "Leaderboards", to: "/30/community/leaderboards" },
-  { name: "Events", to: "/30/community/events" },
-  // { name: "Chat", to: "/30/community/messages" },
-  { name: "About", to: "/30/community/about" },
-  // { name: "About", to: "/30/community/about" },
-]
+// Define the community type interface
+interface Community {
+  community_id?: number;
+  id?: number;
+  total_members?: number;
+  community_name?: string;
+  name?: string;
+  community_logo?: string;
+  image?: string;
+  role?: string;
+  members?: string;
+  current?: boolean;
+}
 
-const communities = [
+interface CommunityData {
+  community_id: number;
+  community_name: string;
+  community_logo: string;
+}
+
+// Default communities as fallback
+const defaultCommunities = [
   {
     id: 1,
     name: "Adonis Gang",
@@ -66,15 +80,144 @@ const communities = [
 export default function Header() {
   const pathname = useParams()
   const isMobile = useMobile()
+  const navigate = useNavigate()
   const [isSearchOpen, setIsSearchOpen] = useState(false)
-  const [currentCommunity, setCurrentCommunity] = useState(communities[0])
+  const [userCommunities, setUserCommunities] = useState<Community[]>([])
+  const [currentCommunity, setCurrentCommunity] = useState<Community | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  const handleCommunityChange = (community: (typeof communities)[0]) => {
-    setCurrentCommunity(community)
-    // In a real app, this would navigate or reload data for the selected community
+  const accessToken = useSelector((state: RootState) => state.auth.accessToken)
+
+  // Dynamic nav items based on current community
+  const navItems = useMemo(() => {
+    if (!currentCommunity) return [];
+    
+    const communityId = currentCommunity.community_id || currentCommunity.id;
+    return [
+      { name: "Community", to: `/${communityId}/community/feed` },
+      { name: "Members", to: `/${communityId}/community/members` },
+      { name: "Courses", to: `/${communityId}/community/classroom` },
+      { name: "Leaderboards", to: `/${communityId}/community/leaderboards` },
+      { name: "Events", to: `/${communityId}/community/events` },
+      // { name: "Chat", to: `/${communityId}/community/messages` },
+      { name: "About", to: `/${communityId}/community/about` },
+    ];
+  }, [currentCommunity]);
+
+  const getUserCommunities = async (accessToken: string) => {
+    try {
+      setLoading(true);
+      const response = await fetch('https://edlern.toolsfactory.tech/api/v1/accounts/my-communities/', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        }
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+  
+      const result = await response.json();
+      console.log('Communities fetched:', result.data);
+      
+      const formattedCommunities = result.data.map((community: CommunityData, index: number) => ({
+        ...community,
+        id: community.community_id,
+        name: community.community_name,
+        image: community.community_logo,
+        current: index === 0 // Set the first one as current by default
+      }));
+      
+      setUserCommunities(formattedCommunities);
+      
+      if (formattedCommunities.length > 0) {
+        setCurrentCommunity(formattedCommunities[0]);
+      }
+      
+      return formattedCommunities;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error('Failed to fetch communities:', error.message);
+      } else {
+        console.error('Failed to fetch communities:', error);
+      }
+      // Fall back to default communities on error
+      setUserCommunities(defaultCommunities);
+      setCurrentCommunity(defaultCommunities[0]);
+      return defaultCommunities;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCommunityChange = (community: Community) => {
+    // Update the current communities array to reflect the new selection
+    const updatedCommunities = userCommunities.map(comm => ({
+      ...comm,
+      current: comm.id === community.id || comm.community_id === community.community_id
+    }));
+    
+    setUserCommunities(updatedCommunities);
+    setCurrentCommunity(community);
+    
+    // Navigate to the community feed page
+    const communityId = community.community_id || community.id;
+    navigate(`/${communityId}/community/feed`);
+    
+    console.log(`Switched to community: ${community.name || community.community_name}`);
+  }
+  
+  useEffect(() => {
+    if (accessToken) {
+      getUserCommunities(accessToken);
+    } else {
+      // Fall back to default communities if no access token
+      setUserCommunities(defaultCommunities);
+      setCurrentCommunity(defaultCommunities[0]);
+      setLoading(false);
+    }
+  }, [accessToken]);
+
+  // Loading skeleton UI
+  if (loading || !currentCommunity) {
+    return (
+      <header className="sticky top-0 z-50 w-full border-b bg-background backdrop-blur supports-[backdrop-filter]:bg-background/80">
+        <div className="max-w-7xl w-full justify-between mx-auto flex h-16 items-center px-2">
+          <div className="flex items-center gap-2 mr-4">
+            <Skeleton className="h-8 w-8 rounded-full" />
+            <Skeleton className="h-6 w-32 hidden sm:inline-block" />
+          </div>
+          
+          {!isMobile && (
+            <>
+              <div className="flex-1 flex items-center max-w-md mx-4">
+                <Skeleton className="w-full h-9" />
+              </div>
+              <nav className="mx-6 flex items-center space-x-4 lg:space-x-6">
+                {[1, 2, 3, 4, 5].map(i => (
+                  <Skeleton key={i} className="h-4 w-16" />
+                ))}
+              </nav>
+            </>
+          )}
+          
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-8 w-8 rounded-full" />
+            <Skeleton className="h-8 w-8 rounded-full" /> 
+            <Skeleton className="h-8 w-8 rounded-full" />
+            <Skeleton className="h-8 w-8 rounded-full" />
+          </div>
+        </div>
+      </header>
+    );
   }
 
-  const isAdmin = true // This would be determined by user role in a real app
+  // Get name and image from either API format or default format
+  const communityName = currentCommunity.community_name || currentCommunity.name || "Community";
+  const communityImage = currentCommunity.community_logo || currentCommunity.image || "/placeholder.svg";
+  const isCreator = currentCommunity.role === "creator";
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background backdrop-blur supports-[backdrop-filter]:bg-background/80">
@@ -84,31 +227,34 @@ export default function Header() {
             <DropdownMenuTrigger asChild>
               <div className="flex items-center gap-2 cursor-pointer">
                 <Avatar className="h-8 w-8 ring-2 ring-sky-700/20">
-                  <AvatarImage src={currentCommunity.image || "/placeholder.svg"} alt={currentCommunity.name} />
+                  <AvatarImage src={communityImage} alt={communityName} />
                   <AvatarFallback className="bg-sky-700 text-sky-700-foreground">
-                    {currentCommunity.name.substring(0, 2)}
+                    {communityName.substring(0, 2)}
                   </AvatarFallback>
                 </Avatar>
-                <span className="font-semibold text-lg hidden sm:inline-block">{currentCommunity.name}</span>
+                <span className="font-semibold text-lg hidden sm:inline-block">{communityName}</span>
                 <ChevronDown className="h-4 w-4 text-muted-foreground" />
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-[280px]">
               <DropdownMenuLabel>Your Communities</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              {communities.map((community) => (
+              {userCommunities.map((community) => (
                 <DropdownMenuItem
-                  key={community.id}
-                  className={`flex items-center gap-3 py-2 ${community.current ? "bg-sky-700/10" : ""}`}
+                  key={community.id || community.community_id}
+                  className={`flex items-center gap-3 space-y-0.5 py-2 ${community.current ? "bg-sky-700/10" : ""}`}
                   onClick={() => handleCommunityChange(community)}
                 >
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={community.image || "/placeholder.svg"} alt={community.name} />
-                    <AvatarFallback>{community.name.substring(0, 2)}</AvatarFallback>
+                    <AvatarImage src={community.image || community.community_logo || "/placeholder.svg"} alt={community.name || community.community_name} />
+                    <AvatarFallback>{(community.name || community.community_name || "").substring(0, 2)}</AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col">
-                    <span className="font-medium">{community.name}</span>
-                    <span className="text-xs text-muted-foreground">{community.members} members</span>
+                    <span className="font-medium">{community.name || community.community_name}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {community.total_members || community.members || `Role: ${community.role || "Member"}`}
+                      {community.members || community.total_members ? " members" : ""}
+                    </span>
                   </div>
                   {community.current && (
                     <Badge className="ml-auto" variant="outline">
@@ -123,9 +269,14 @@ export default function Header() {
                   <span className="text-sky-700">Discover communities</span>
                 </Link>
               </DropdownMenuItem>
-              {isAdmin && (
+              <DropdownMenuItem>
+                <Link to="/create-community-page" className="flex items-center gap-2 w-full">
+                  <span className="text-sky-700">Create new community</span>
+                </Link>
+              </DropdownMenuItem>
+              {isCreator && (
                 <DropdownMenuItem>
-                  <Link to="/community/admin/dashboard" className="flex items-center gap-2 w-full">
+                  <Link to={`/${currentCommunity.community_id || currentCommunity.id}/community/admin/dashboard`} className="flex items-center gap-2 w-full">
                     <span className="text-sky-700">Admin Dashboard</span>
                   </Link>
                 </DropdownMenuItem>
@@ -157,8 +308,11 @@ export default function Header() {
                         <Link
                           key={item.name}
                           to={item.to}
-                          className={`px-2 py-1 rounded-md ${pathname["*"] === item.to.substring(1) ? "text-sky-700 border-b-2 border-sky-700 pb-3.5" : "text-foreground"
-                            }`}
+                          className={`px-2 py-1 rounded-md ${
+                            pathname["*"] === item.to.substring(1) 
+                              ? "text-sky-700 border-b-2 border-sky-700 pb-3.5" 
+                              : "text-foreground"
+                          }`}
                         >
                           {item.name}
                         </Link>
@@ -186,8 +340,11 @@ export default function Header() {
                 <Link
                   key={item.name}
                   to={item.to}
-                  className={`text-sm font-medium transition-colors hover:text-sky-700 ${pathname["*"] === item.to.replace("/community/", "") ? "text-sky-400" : "text-foreground"
-                    }`}
+                  className={`text-sm font-medium transition-colors hover:text-sky-700 ${
+                    pathname["*"] === item.to.replace(`/${currentCommunity?.community_id || currentCommunity?.id}/community/`, "") 
+                      ? "text-sky-400" 
+                      : "text-foreground"
+                  }`}
                 >
                   {item.name}
                 </Link>
@@ -198,13 +355,13 @@ export default function Header() {
 
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <Link to="/30/community/messages">
-          <Button variant="ghost" size="icon" className="relative">
-                <MessageSquare className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 flex h-4 text-white w-4 items-center justify-center rounded-full bg-sky-700 text-[10px] text-sky-700-foreground">
-                  3
-                </span>
-              </Button>
+          <Link to={`/${currentCommunity.community_id || currentCommunity.id}/community/messages`}>
+            <Button variant="ghost" size="icon" className="relative">
+              <MessageSquare className="h-5 w-5" />
+              <span className="absolute -top-1 -right-1 flex h-4 text-white w-4 items-center justify-center rounded-full bg-sky-700 text-[10px] text-sky-700-foreground">
+                3
+              </span>
+            </Button>
           </Link>
 
           <DropdownMenu>
@@ -242,7 +399,7 @@ export default function Header() {
               ))}
               <DropdownMenuSeparator />
               <DropdownMenuItem className="justify-center">
-                <Link to="/notifications" className="text-sky-700 text-sm font-medium">
+                <Link to={`/${currentCommunity.community_id || currentCommunity.id}/notifications`} className="text-sky-700 text-sm font-medium">
                   View all notifications
                 </Link>
               </DropdownMenuItem>
@@ -263,19 +420,19 @@ export default function Header() {
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 <DropdownMenuItem>
-                  <Link to="/community/profile" className="flex items-center w-full">
+                  <Link to={`/${currentCommunity.community_id || currentCommunity.id}/community/profile`} className="flex items-center w-full">
                     <User className="mr-2 h-4 w-4" />
                     <span>Profile</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Link to="/community/settings" className="flex items-center w-full">
+                  <Link to={`/${currentCommunity.community_id || currentCommunity.id}/community/settings`} className="flex items-center w-full">
                     <Settings className="mr-2 h-4 w-4" />
                     <span>Settings</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Link to="/community/my-courses" className="flex items-center w-full">
+                  <Link to={`/${currentCommunity.community_id || currentCommunity.id}/community/my-courses`} className="flex items-center w-full">
                     <BookOpen className="mr-2 h-4 w-4" />
                     <span>My Courses</span>
                   </Link>

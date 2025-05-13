@@ -1,212 +1,343 @@
+"use client"
+
+import { useEffect, useState, useCallback } from "react"
+import { useParams } from "react-router-dom"
+import { useSelector } from "react-redux"
+import { RootState } from "@/store/store"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { CheckCircle2, Search, Filter, Calendar, MapPin, MessageSquare, Link2 } from "lucide-react"
-import { useEffect } from "react"
+import { Search, Filter, Calendar, MessageSquare, PentagonIcon, RefreshCw } from "lucide-react"
+import { CommunitySidebar } from "../comps/community-sidebar"
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"
 
-const members = Array.from({ length: 20 }).map((_, i) => ({
-  id: i + 1,
-  name: `Member ${i + 1}`,
-  username: `member${i + 1}`,
-  image: `/placeholder.svg?height=40&width=40&text=M${i + 1}`,
-  level: Math.floor(Math.random() * 9) + 1,
-  points: Math.floor(Math.random() * 5000),
-  joinDate: `${Math.floor(Math.random() * 12) + 1} months ago`,
-  verified: Math.random() > 0.8,
-  bio: i % 3 === 0 ? "Spiritual student. On a mission to make peak performance effortless for entrepreneurs. Done 1000's of hours of research ✨" : 
-       i % 2 === 0 ? "Seeking Greatness." : "An ambitious",
-  location: i % 2 === 0 ? "Houston, Texas" : "K",
-  joinedDate: i % 3 === 0 ? "Oct 15, 2024" : i % 2 === 0 ? "Mar 12, 2024" : "Aug 31, 2024",
-  isOnline: Math.random() > 0.3,
-  rank: i % 4 + 1 // Rankings 1-4
-}))
+// Interface for individual member from API
+interface APIMember {
+  id: number
+  created_at: string
+  updated_at: string
+  role: "creator" | "member" | "admin"
+  status: "approved" | "pending" | "rejected"
+  reason: string | null
+  community: number
+  user: string
+  approved_by: string | null
+  fullname: string
+  profile_picture: string | null
+  bio: string
+}
+
+// Interface for API response
+interface APIResponse {
+  message: string
+  success: boolean
+  data: {
+    next: string | null
+    previous: string | null
+    count: number
+    limit: number
+    current_page: number
+    total_pages: number
+    results: APIMember[]
+  }
+}
+
+// Interface for member data used in UI
+interface Member {
+  id: number
+  name: string
+  image: string
+  bio: string
+  role: string
+  joinedDate: string
+}
 
 export default function MembersPage() {
-      useEffect(() => {
-        window.scrollTo({
-          top: 0,
-          behavior: "smooth",
-        });
-      }, []);
+  const { community_id } = useParams<{ community_id: string }>()
+  const accessToken = useSelector((state: RootState) => state.auth.accessToken)
+  const [members, setMembers] = useState<Member[]>([])
+  const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string | null>(null)
+  const [page, setPage] = useState<number>(1)
+  const [totalPages, setTotalPages] = useState<number>(1)
+  const [searchQuery, setSearchQuery] = useState<string>("")
+  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "role-asc" | "role-desc">("newest")
+  const [activeTab, setActiveTab] = useState<"all" | "creator" | "admin" | "member">("all")
+  const limit = 10
+
+// Debounce function with specific type for search handler
+// Debounce function with specific type for search handler
+const debounce = <T extends (query: string) => void>(func: T, delay: number) => {
+  let timeoutId: NodeJS.Timeout
+  return (query: string) => {
+    clearTimeout(timeoutId)
+    timeoutId = setTimeout(() => func(query), delay)
+  }
+}
+
+
+  const fetchMembers = useCallback(async () => {
+    if (!community_id || !accessToken) {
+      setError("Missing community ID or authentication token")
+      setLoading(false)
+      return
+    }
+
+    try {
+      setLoading(true)
+      const queryParams = new URLSearchParams({
+        page: String(page),
+        limit: String(limit),
+        ...(searchQuery && { search: searchQuery }),
+        ...(sortBy && { sort: sortBy === "newest" ? "-created_at" : sortBy === "oldest" ? "created_at" : sortBy === "role-asc" ? "role" : "-role" }),
+        ...(activeTab !== "all" && { role: activeTab }),
+      })
+
+      const response = await fetch(
+        `https://edlern.toolsfactory.tech/api/v1/community/${community_id}/members/?${queryParams}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`)
+      }
+
+      const data: APIResponse = await response.json()
+      if (!data.success) {
+        throw new Error(data.message)
+      }
+
+      const fetchedMembers: Member[] = data.data.results.map((member) => ({
+        id: member.id,
+        name: member.fullname,
+        image: member.profile_picture || `/placeholder.svg?height=40&width=40&text=${member.fullname.charAt(0)}`,
+        bio: member.bio || "No bio provided",
+        role: member.role,
+        joinedDate: new Date(member.created_at).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        }),
+      }))
+
+      setMembers(fetchedMembers)
+      setTotalPages(data.data.total_pages)
+      setError(null)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch members")
+    } finally {
+      setLoading(false)
+    }
+  }, [community_id, accessToken, page, searchQuery, sortBy, activeTab])
+
+  // Fetch members when dependencies change
+  useEffect(() => {
+    fetchMembers()
+  }, [fetchMembers])
+
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    })
+  }, [])
+
+  // Debounced search handler
+  const handleSearch = debounce((value: string) => {
+    setSearchQuery(value)
+    setPage(1) // Reset to first page on search
+  }, 300)
+
+  // Handle sort change
+  const handleSortChange = (value: "newest" | "oldest" | "role-asc" | "role-desc") => {
+    setSortBy(value)
+    setPage(1)
+  }
+
+  // Handle tab change
+  const handleTabChange = (value: string) => {
+    if (["all", "creator", "admin", "member"].includes(value)) {
+      setActiveTab(value as "creator" | "member" | "admin" | "all")
+      setPage(1)
+    }
+  }
+  // Handle page change
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage)
+    }
+  }
+
+  // Retry on error
+  const handleRetry = () => {
+    setError(null)
+    fetchMembers()
+  }
+
   return (
-    <div className="grid relative  grid-cols-1 lg:grid-cols-3 gap-6 lg:py-6 space-y-6">
-      <div className="lg:col-span-1 hidden lg:block ">
-        <div className="sticky top-[97px]"> 
-
-        <Card className="p-0 gap-1 py-4">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Adonis Gang</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="aspect-video w-full overflow-hidden rounded-md">
-              <img
-                src="/placeholder.svg?height=200&width=400&text=Adonis+Gang"
-                alt="Community banner"
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            <div className="text-sm text-gray-500">
-              <Link2 className="h-4 w-4 inline mr-1" />
-              skool.com/adonis-gang
-            </div>
-
-            <p className="text-sm">
-              Join the #1 masculine self-improvement community. Level up in all areas of your life and finally leave
-              Jeffery behind.
-            </p>
-
-            <div className="flex items-center gap-2">
-              <Badge variant="outline" className="bg-gray-100 text-gray-700">
-                Self Improvement Courses
-              </Badge>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2 text-center">
-              <div className="flex flex-col">
-                <span className="font-semibold text-lg">181.8k</span>
-                <span className="text-xs text-gray-500">Members</span>
+    <div className="container mx-auto px-4 py-6 max-w-7xl">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-1 hidden lg:block">
+          <div className="sticky top-[97px]">
+            <CommunitySidebar communityId={community_id || "exit"} />
+          </div>
+        </div>
+        <div className="lg:col-span-2">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl">Members</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {/* Search and Filters */}
+              <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                  <Input
+                    placeholder="Search by name or bio..."
+                    className="pl-10"
+                    onChange={(e) => handleSearch(e.target.value)}
+                    aria-label="Search members"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Select value={sortBy} onValueChange={handleSortChange}>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Sort by" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="newest">Newest First</SelectItem>
+                      <SelectItem value="oldest">Oldest First</SelectItem>
+                      <SelectItem value="role-asc">Role (A-Z)</SelectItem>
+                      <SelectItem value="role-desc">Role (Z-A)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button variant="outline" className="gap-2" disabled>
+                    <Filter className="h-4 w-4" />
+                    Filter
+                  </Button>
+                </div>
               </div>
-              <div className="flex flex-col">
-                <span className="font-semibold text-lg">222</span>
-                <span className="text-xs text-gray-500">Online</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="font-semibold text-lg">10</span>
-                <span className="text-xs text-gray-500">Admins</span>
-              </div>
-            </div>
 
-            <div className="flex flex-wrap gap-1">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <Avatar key={i} className="h-8 w-8">
-                  <AvatarImage src={`/placeholder.svg?height=32&width=32&text=U${i + 1}`} alt={`User ${i + 1}`} />
-                  <AvatarFallback>U{i + 1}</AvatarFallback>
-                </Avatar>
-              ))}
-            </div>
+              {/* Tabs for Role Filtering */}
+              <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full mb-6">
+                <TabsList className="grid grid-cols-3 w-full max-w-md">
+                  <TabsTrigger value="all">All</TabsTrigger>
+                  <TabsTrigger value="creator">Creators</TabsTrigger>
+                  <TabsTrigger value="member">Members</TabsTrigger>
+                </TabsList>
+                <TabsContent value={activeTab} />
+              </Tabs>
 
-            <Button className="w-full">INVITE PEOPLE</Button>
+              {/* Members List */}
+              {loading && page === 1 ? (
+                <div className="text-center py-6">
+                  <div className="animate-spin inline-block h-6 w-6 mr-2">
+                    <RefreshCw className="h-6 w-6 text-sky-600" />
+                  </div>
+                  Loading members...
+                </div>
+              ) : error ? (
+                <div className="text-center py-6 text-red-600">
+                  <p>{error}</p>
+                  <Button variant="outline" onClick={handleRetry} className="mt-4">
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Retry
+                  </Button>
+                </div>
+              ) : members.length === 0 ? (
+                <div className="text-center py-6">No members found</div>
+              ) : (
+                <div className="space-y-4">
+                  {members.map((member) => (
+                    <Card key={member.id} className="overflow-hidden hover:shadow-md transition-shadow">
+                      <CardContent className="p-4">
+                        <div className="flex flex-col sm:flex-row items-start gap-4">
+                          <Avatar className="h-16 w-16">
+                            <AvatarImage src={member.image} alt={member.name} />
+                            <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-2">
+                              <h3 className="font-medium text-lg">{member.name}</h3>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="gap-2"
+                                aria-label={`Chat with ${member.name}`}
+                              >
+                                <MessageSquare className="h-4 w-4" />
+                                Chat
+                              </Button>
+                            </div>
+                            <p className="text-sm text-gray-600 mb-3 line-clamp-2">{member.bio}</p>
+                            <div className="flex flex-col gap-1 text-sm text-gray-500">
+                              <div className="flex items-center gap-2">
+                                <PentagonIcon className="h-4 w-4" />
+                                <span className="capitalize">{member.role}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Calendar className="h-4 w-4" />
+                                <span>Joined {member.joinedDate}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
 
-          </CardContent>
-        </Card>
+              {/* Pagination */}
+              {totalPages > 1 && !loading && !error && (
+                <Pagination className="mt-6">
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious
+                        onClick={() => handlePageChange(page - 1)}
+                        className={page === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        aria-disabled={page === 1}
+                        aria-label="Previous page"
+                      />
+                    </PaginationItem>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                      <PaginationItem key={p}>
+                        <PaginationLink
+                          onClick={() => handlePageChange(p)}
+                          isActive={p === page}
+                          className="cursor-pointer"
+                          aria-label={`Page ${p}`}
+                          aria-current={p === page ? "page" : undefined}
+                        >
+                          {p}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+                    <PaginationItem>
+                      <PaginationNext
+                        onClick={() => handlePageChange(page + 1)}
+                        className={page === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        aria-disabled={page === totalPages}
+                        aria-label="Next page"
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
-      <Card className="col-span-2">
-        <CardHeader>
-          <CardTitle>Members</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
-              <Input placeholder="Search members..." className="pl-9" />
-            </div>
-            <div className="flex gap-2">
-              <Select defaultValue="newest">
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="newest">Newest</SelectItem>
-                  <SelectItem value="oldest">Oldest</SelectItem>
-                  <SelectItem value="points">Most Points</SelectItem>
-                  <SelectItem value="level">Highest Level</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button variant="outline" className="gap-2">
-                <Filter className="h-4 w-4" />
-                Filter
-              </Button>
-            </div>
-          </div>
-
-          <Tabs defaultValue="all" className="w-full mb-6">
-            <TabsList className="grid w-full max-w-md grid-cols-3">
-              <TabsTrigger value="all">All Members</TabsTrigger>
-              <TabsTrigger value="verified">Verified</TabsTrigger>
-              <TabsTrigger value="admins">Admins</TabsTrigger>
-            </TabsList>
-          </Tabs>
-
-          {/* List view similar to the screenshot */}
-          <div className="space-y-4">
-            {members.map((member) => (
-              <Card key={member.id} className="overflow-hidden hover:shadow-md transition-shadow">
-                <CardContent className="p-4">
-                  <div className="flex items-start">
-                    {/* Left side - Avatar with rank indicator */}
-                    <div className="relative mr-4">
-                      <Avatar className="h-16 w-16">
-                        <AvatarImage src={member.image || "/placeholder.svg"} alt={member.name} />
-                        <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <div className="absolute -bottom-1 -right-1 bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">
-                        {member.rank}
-                      </div>
-                      
-                    </div>
-                    
-                    {/* Center - Member information */}
-                    <div className="flex-1">
-                      <div className="flex items-center w-full justify-between gap-1 mb-1">
-                        <div className="flex items-center gap-2">
-
-                        <h3 className="font-medium text-lg">{member.name}</h3>
-                        {member.verified && <CheckCircle2 className="h-4 w-4 text-sky-700" />}
-                        </div>
-                        <div className="ml-4">
-                      <Button variant="outline" className="gap-2 px-4">
-                        <MessageSquare className="h-4 w-4" />
-                        <span>CHAT</span>
-                      </Button>
-                    </div>
-                        
-                      </div>
-                      <div className="text-sm text-gray-500 mb-1">@{member.username}</div>
-                      
-                      {/* Bio text */}
-                      <p className="text-sm max-w-lg mb-3">{member.bio}</p>
-                      
-                      {/* Status and information */}
-                      <div className="flex flex-col gap-1 text-sm text-gray-500">
-                        {member.isOnline && (
-                          <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                            <span>Online now</span>
-                          </div>
-                        )}
-                        <div className="flex items-center gap-2">
-                          <Calendar className="h-4 w-4" />
-                          <span>Joined {member.joinedDate}</span>
-                        </div>
-                        {member.location && (
-                          <div className="flex items-center gap-2">
-                            <MapPin className="h-4 w-4" />
-                            <span>{member.location}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    
-                    {/* Right side - Chat button */}
-                   
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <div className="flex justify-center mt-6">
-            <Button variant="outline">Load More</Button>
-          </div>
-        </CardContent>
-      </Card>
-      
     </div>
   )
 }
