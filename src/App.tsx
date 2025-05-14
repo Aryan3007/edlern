@@ -17,7 +17,6 @@ import CourseDetailPage from "./pages/community/pages/CourseDetailPage"
 import MessagesPage from "./pages/community/pages/MessagesPage"
 import ProfilePage from "./pages/community/pages/ProfilePage"
 import SettingsPage from "./pages/community/pages/SettingsPage"
-import MyCoursesPage from "./pages/community/pages/MyCoursesPage"
 import AdminPage from "./pages/communityAdmin/pages/AdminPage"
 import AdminLayout from "./pages/communityAdmin/Layout/AdminLayout"
 import AdminMembersPage from "./pages/communityAdmin/pages/AdminMembersPage"
@@ -76,7 +75,6 @@ const App = () => {
           <Route path="about" element={<AboutPage />} />
           <Route path="messages" element={<MessagesPage />} />
           <Route path="profile" element={<ProfilePage />} />
-          <Route path="my-courses" element={<MyCoursesPage />} />
           <Route path="/profile/setting" element={<SettingsPage />} />
           </Routes>
         </Layout>

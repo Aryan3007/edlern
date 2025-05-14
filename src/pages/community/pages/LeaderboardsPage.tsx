@@ -12,7 +12,7 @@ export default function LeaderboardsPage() {
         });
       }, []);
   return (
-    <div className="container lg:py-6 space-y-6">
+    <div className="max-w-7xl mx-auto lg:py-6 space-y-6">
       <UserLevelCard />
 
       <div className="text-sm text-gray-500">Last updated: Apr 24th 2025 1:21am</div>

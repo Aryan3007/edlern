@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import { loginSuccess } from "@/store/authSlice"
 import { RootState } from "@/store/store"
-import { SERVER_URL } from "../../config/config"
+import { SERVER_URL } from "../config/config"
 import { toast } from "sonner"
 
 // Community statistics data
